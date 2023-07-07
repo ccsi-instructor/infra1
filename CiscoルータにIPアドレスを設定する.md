@@ -1,18 +1,9 @@
 # Ciscoルータ
 
-構築手順
+## 画像を張り付ける
 
 
-ok
 ![img](image/1/a.png)
-
-
-ng
-! (image/1/a.png)
-
-
-ng
-(image/1/a.png)
 
 
 
