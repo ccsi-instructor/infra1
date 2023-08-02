@@ -19,9 +19,11 @@
 ## 1. ルータ1にStatic Routeを作成する
 
 1. ルータ1の管理画面に接続する  
-![img](image/02/01.png)
+<kbd>![img](image/02/01.png)</kbd>
 1. 管理画面のプロンプト表記を確認し、ルータ1に接続していることを確認する  
+<kbd>
 ![img](image/02/02.png)
+</kbd>
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
     Router1# ***congirure terminal***  
 ![img](image/02/03.png)
