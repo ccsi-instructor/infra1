@@ -25,7 +25,7 @@
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
     Router1# ***congirure terminal***  
 ![img](image/02/03.png)
-1. Static Routeを作成するコマンドを実行する
+1. Static Routeを作成するコマンドを実行する  
     Router1(config)# ***ip route 10.X.3.0 mask 255.255.255.0 10.X.2.254***
 
 
@@ -33,4 +33,6 @@
 
 
 ---
+<kbd>
 <style type="text/css">img { border: 1px #000000 solid; }</style>
+</kbd>
