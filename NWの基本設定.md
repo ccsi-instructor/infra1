@@ -9,6 +9,9 @@
 
 ## 演習の意図
     演習ガイドを参照して演習の意図をあらかじめ確認してください
+[ppt]
+- staticルートを構成し、Network1とNetwork3のルーティングを有効化する
+
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号
@@ -25,14 +28,14 @@
 
 ---
 
-## 1. ルータ1にStatic Routeを作成する
+## 1. ルータ1のStatic Routeを構成する
 
 1. ルータ1の管理画面に接続する  
 <kbd>![img](image/02/11.png)</kbd>
 1. 管理画面のプロンプト表記を確認し、ルータ1に接続していることを確認する  
 <kbd>![img](image/02/12.png)</kbd>
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
-    Router1# ***congirure terminal***  
+    Router1# ***configure terminal***  
 <kbd>![img](image/02/13.png)</kbd>
 1. Router1からNetwork3(10.X.3.0/24)宛のStatic Routeを作成するコマンドを実行する  
     Router1(config)# ***ip route 10.X.3.0 mask 255.255.255.0 10.X.2.254***
@@ -57,8 +60,35 @@
     Router1# ***ping 10.X.3.254 source 10.X.1.254***
 <kbd>![img](image/02/24.png)</kbd>
 
+---
+
+## 3. ルータ2のStatic Routeを構成する
+
+1. ルータ2の管理画面に接続する  
+<kbd>![img](image/02/31.png)</kbd>
+1. 管理画面のプロンプト表記を確認し、ルータ2に接続していることを確認する  
+<kbd>![img](image/02/32.png)</kbd>
+1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
+    Router1# ***conf t***  
+<kbd>![img](image/02/33.png)</kbd>
+> 【補足】  
+> Cisco IOSのコマンドは省略して入力できます。  
+> conf tはconfigure terminalの省略形です。  
+1. ルータ2の管理画面に接続す
 
 
+
+>> 
+保続  
+> 
+aaa
+aaa
+
+|【補足】|
+|Cisco IOSのコマンドは省略して入力できます。|
+|conf tはconfigure terminalの省略形です。|
+|左寄せ|
+|:-----|
 
 
 ---
