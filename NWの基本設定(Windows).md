@@ -49,22 +49,49 @@ Windows Server2では、Network1の経路情報としてRouter1をNextHopに指�
 1. 以下のコマンドを実行し、Windows Server1に接続していることを確認する  
     ＞ ***hostname***  
 <kbd>![img](image/03/15.png)</kbd>
-> 【補足】
-> hostnameコマンドはコンピュータの名前を表示します。
-> 複数のWindowsコンピュータを操作する環境において、操作対象のコンピュータを取り違えるトラブルを予防するのに効果的です。
-> Windows Server1のコンピュータ名には、"WSrv1-"という接頭辞がつけられています。
+    
+    > 【補足】
+    > hostnameコマンドはコンピュータの名前を表示します。
+    > 複数のWindowsコンピュータを操作する環境において、操作対象のコンピュータを取り違えるトラブルを予防するのに効果的です。
+     Windows Server1のコンピュータ名には、"WSrv1-"という接頭辞がつけられています。
+    
 1. 以下のコマンドを実行し、Windows Server1のStatic Routeを作成する  
     ＞ ***route add -p 10.X.2.0 mask 255.255.255.0 10.X.1.254***  
-    ＞ ***route add -p 10.X.3.0 mask 255.255.255.0 10.X.1.254***  
+    ＞ ***route add -p 10.X.3.0 mask 255.255.255.0 10.X.1.254***
 <kbd>![img](image/03/16.png)</kbd>
-> 【補足1】  
-> route addコマンドは、WindowsコンピュータにStatic Routeを作成します。
-> 以下の書式でパラメータを指定します。
-> route add ネットワークアドレス mask サブネットマスク ネクストホップ
-> 【補足2】  
-> このコマンドで作成したStatic RouteはOSの再起動により削除される一時的な設定です。
-> "-p"オプションを付与することで永続的(Permanent)な設定として保存されます。
-1. 以下のコマンドを実行し、Windows Server1のStatic Routeを作成する  
+    > 【補足1】
+    > route addコマンドは、WindowsコンピュータにStatic Routeを作成します。
+    > 以下の書式でパラメータを指定します。
+    > route add <ネットワークアドレス> mask <サブネットマスク> <ネクストホップ>
+
+    > 【補足2】
+    > このコマンドで作成したStatic RouteはOSの再起動により削除される一時的な設定です。
+    > "-p"オプションを付与することで永続的(Permanent)な設定として保存されます。
+
+---
+
+## 2. Windows Server1のStatic Routeを確認する
+
+1. Windows Server1のWindows PowerShellで以下のコマンドを実行し、Windows Server1のルーティングテーブルを確認する 
+    ＞ ***route print***  
+<kbd>![img](image/03/17.png)</kbd>
+    > 【確認ポイント】
+    > [アクティブ ルート]として、10.X.2.0宛と10.X.3.0宛のルーティングエントリ行が作成されており、NextHop(ゲートウェイ)としてRouter1のIPアドレス(10.X.1.254)が指定されていることを確認します。
+    > [固定ルート]としても、同じルーティング情報が登録されています。
+1. 以下のコマンドを実行し、Windows Server1からNetwork2宛とNetwork3宛の疎通を確認する  
+    ＞ ***ping 10.X.2.254 -S 10.X.1.104***  
+    ＞ ***ping 10.X.3.254 -S 10.X.1.104***  
+<kbd>![img](image/03/22.png)</kbd>
+    > 【補足】
+    > "-S"オプションを付与することで、ping送信時の送信元IPアドレスを指定できます。
+1. 以下のコマンドを実行し、Windows Server1からNetwork2宛とNetwork3宛の経路を確認する  
+    ＞ ***tracert 10.X.2.254***  
+    ＞ ***tracert 10.X.3.254***  
+<kbd>![img](image/03/23.png)</kbd>
+    > 【確認ポイント】
+    > route addコマンドでNextHopとして指定した10.X.1.254(Router1)を経由して宛先まで通信していることを確認する。
+
+
 
 
 ---
