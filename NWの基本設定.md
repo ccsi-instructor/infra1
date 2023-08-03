@@ -51,11 +51,14 @@
     Router1# ***show ip route***  
 1. ルーティングテーブルに、Router2をNext Hop(10.X.2.254)とするNetwork3(10.X.3.0/24)宛の経路情報が登録されていることを確認する  
 <kbd>![img](image/02/22.png)</kbd>
+> 【補足】  
+> ルーティング エントリ行の左端のアルファベットは、経路の学習方法を示します。
+> "S" は "Static" の意味です。
 1. 以下のコマンドを実行し、ルータ1のNetwork2のインターフェイスからルータ2への疎通を確認する  
     Router1# ***ping 10.X.2.254 source 10.X.2.253***
     Router1# ***ping 10.X.3.254 source 10.X.2.253***
 <kbd>![img](image/02/23.png)</kbd>
-1. 以下のコマンドを実行し、ルータ1のNetwork1のインターフェイスからからルータ2への疎通がまだ確立できないことを確認する  
+1. 以下のコマンドを実行し、ルータ1のNetwork1のインターフェイスからルータ2への疎通がまだ確立できないことを確認する  
     Router1# ***ping 10.X.2.254 source 10.X.1.254***
     Router1# ***ping 10.X.3.254 source 10.X.1.254***
 <kbd>![img](image/02/24.png)</kbd>
@@ -69,26 +72,47 @@
 1. 管理画面のプロンプト表記を確認し、ルータ2に接続していることを確認する  
 <kbd>![img](image/02/32.png)</kbd>
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
-    Router1# ***conf t***  
+    Router2# ***conf t***  
 <kbd>![img](image/02/33.png)</kbd>
 > 【補足】  
 > Cisco IOSのコマンドは省略して入力できます。  
 > conf tはconfigure terminalの省略形です。  
-1. ルータ2の管理画面に接続す
+1. Router2からNetwork1(10.X.1.0/24)宛のStatic Routeを作成するコマンドを実行する  
+    Router2(config)# ***ip route 10.X.1.0 mask 255.255.255.0 10.X.2.253***
+<kbd>![img](image/02/34.png)</kbd>
+
+---
+
+## 4. ルータ2のStatic Routeを確認する
+1. 以下のコマンドを実行し、グローバルコンフィギュレーションモードから特権モードに遷移する  
+    Router2(config)# ***end***  
+1. 以下のコマンドを実行し、ルータ2のルーティングテーブルを表示する  
+    Router2# ***show ip route***  
+1. ルーティングテーブルに、Router1をNext Hop(10.X.2.253)とするNetwork1(10.X.1.0/24)宛の経路情報が登録されていることを確認する  
+<kbd>![img](image/02/41.png)</kbd>
+1. 以下のコマンドを実行し、ルータ2のNetwork3のインターフェイスからルータ1への疎通を確認する  
+    Router2# ***ping 10.X.2.253 source 10.X.3.254***
+    Router2# ***ping 10.X.1.254 source 10.X.3.254***
+<kbd>![img](image/02/42.png)</kbd>
+> 【補足】  
+> Network1とNetwork3の疎通を確立するためには、以下の2つの経路情報が必要です。
+> ① Router1からNetwork3宛の経路情報
+> ② Router2からNetwork1宛の経路情報
+> ここまでの手順で、これらの経路情報をStatic Routeで2台のルータに構成しました。
 
 
+---
 
->> 
-保続  
-> 
-aaa
-aaa
-
-|【補足】|
-|Cisco IOSのコマンドは省略して入力できます。|
-|conf tはconfigure terminalの省略形です。|
-|左寄せ|
-|:-----|
+## 5. ルータのconfigを保存する
+1. ルータ1で以下のコマンドを実行し、configを保存する  
+    Router1# ***write***  
+<kbd>![img](image/02/51.png)</kbd>
+1. ルータ2で以下のコマンドを実行し、configを保存する  
+    Router2# ***wr***  
+<kbd>![img](image/02/52.png)</kbd>
+> 【補足】  
+> Cisco IOSのコマンドは省略して入力できます。  
+> wrはwriteの省略形です。 
 
 
 ---
