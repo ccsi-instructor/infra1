@@ -55,13 +55,21 @@
     > ルーティング エントリ行の左端のアルファベットは、経路の学習方法を示します。
     > "S" は "Static" の意味です。
 1. 以下のコマンドを実行し、Router1のNetwork2のインターフェイスからRouter2への疎通を確認する  
-    Router1# ***ping 10.X.2.254 source 10.X.2.253***
-    Router1# ***ping 10.X.3.254 source 10.X.2.253***
+    Router1# ***ping 10.X.2.254 source 10.X.2.253***  
+    Router1# ***ping 10.X.3.254 source 10.X.2.253***    
 <kbd>![img](image/02/23.png)</kbd>
 1. 以下のコマンドを実行し、Router1のNetwork1のインターフェイスからRouter2への疎通がまだ確立できないことを確認する  
-    Router1# ***ping 10.X.2.254 source 10.X.1.254***
-    Router1# ***ping 10.X.3.254 source 10.X.1.254***
+    Router1# ***ping 10.X.2.254 source 10.X.1.254***  
+    Router1# ***ping 10.X.3.254 source 10.X.1.254***  
 <kbd>![img](image/02/24.png)</kbd>
+    > 【補足】  
+    > Cisco IOSにおけるpingの実行結果の解釈は、以下のとおりです
+
+    |表記|意味|
+    |:-----|:-----|
+    |!|応答あり(通信成功)|
+    |.|応答なし(失敗)|
+    |U|到達不能(失敗)|
 
 ---
 
@@ -91,8 +99,8 @@
 1. ルーティングテーブルに、Router1をNext Hop(10.X.2.253)とするNetwork1(10.X.1.0/24)宛の経路情報が登録されていることを確認する  
 <kbd>![img](image/02/41.png)</kbd>
 1. 以下のコマンドを実行し、Router2のNetwork3のインターフェイスからRouter1への疎通を確認する  
-    Router2# ***ping 10.X.2.253 source 10.X.3.254***
-    Router2# ***ping 10.X.1.254 source 10.X.3.254***
+    Router2# ***ping 10.X.2.253 source 10.X.3.254***  
+    Router2# ***ping 10.X.1.254 source 10.X.3.254***  
 <kbd>![img](image/02/42.png)</kbd>
     > 【補足】  
     > Network1とNetwork3の疎通を確立するためには、以下の2つの経路情報が必要です。
