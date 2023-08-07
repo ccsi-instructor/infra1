@@ -1,29 +1,24 @@
 
 
-# Windowsの基本的なルーティングを設定する
+# Linuxの基本的なルーティングを設定する
 ---
 
 ## 概要
-この演習では、Windows Serverのルーティングを手作業で設定します。
+この演習では、Linux(CentOS7.9)のルーティングを手作業で設定します。
 ルーティングテーブルに静的経路(Static Route)を作成するコマンドを実行し、新しいルーティングエントリを追加します。
 
-Windows Server1では、2つのネットワーク(Network2とNetwork3)の経路情報として、Router1をNextHopに指定したStatic Routeを2つ作成します。
+Linux1では、2つのスタティックルートを作成します。  
 
-Windows Server2では、Network1の経路情報としてRouter1をNextHopに指定し、Network3の経路情報としてRouter2をNextHopに指定します。
-
-Windows Clientには、デフォルトゲートウェイを設定します。
+Linux2では、Network1とNetwork2の経路情報を集約し、集約経路としてスタティックルートを構成します。  
 
 ## 演習の意図
     演習ガイドを参照して演習の意図をあらかじめ確認してください
-[ppt]
-- staticルートを構成し、Windows Serverからリモートネットワーク宛のルーティングを構成する
 
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号
-- Windows Server1: WSrv1-yyMMddX (年月日とPod番号)
-- Windows Server2: WSrv2-yyMMddX (年月日とPod番号)
-- Windows Client: WinClient
+- Linux1: linux1
+- Linux2: linux2
 - Router1: CSR1
 - Router2: CSR2
 - Network1: 10.X.1.0/24
@@ -37,39 +32,88 @@ Windows Clientには、デフォルトゲートウェイを設定します。
 
 ---
 
-## 1. Windows Server1のStatic Routeを作成する
+## 1. Linux1のStatic Routeを作成する
 
-1. Windows Server1の管理画面に接続する  
-    <kbd>![img](image/03/11.png)</kbd>
-1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
-    <kbd>![img](image/03/12.png)</kbd>
-1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
-    <kbd>![img](image/03/13.png)</kbd>
-1. Windows PowerShellのウィンドウが表示されたことを確認する  
-    <kbd>![img](image/03/14.png)</kbd>
-1. 以下のコマンドを実行し、Windows Server1に接続していることを確認する  
+1. Linux1の管理画面に接続する  
+    <kbd>![img](image/04/11.png)</kbd>
+1. コマンドラインで以下のコマンドを実行し、Linux1にadminで接続していることを確認する  
     ＞ ***hostname***  
-    <kbd>![img](image/03/15.png)</kbd>
-    
-    > 【補足】
-    > hostnameコマンドはコンピュータの名前を表示します。
-    > 複数のWindowsコンピュータを操作する環境において、操作対象のコンピュータを取り違えるトラブルを予防するのに効果的です。
-     Windows Server1のコンピュータ名には、"WSrv1-"という接頭辞がつけられています。
-    
-1. 以下のコマンドを実行し、Windows Server1のStatic Routeを作成する  
-    ＞ ***route add -p 10.X.2.0 mask 255.255.255.0 10.X.1.254***  
-    ＞ ***route add -p 10.X.3.0 mask 255.255.255.0 10.X.1.254***
-    <kbd>![img](image/03/16.png)</kbd>
-    > 【補足1】
-    > route addコマンドは、WindowsコンピュータにStatic Routeを作成します。
-    > 以下の書式でパラメータを指定します。
-    > route add <ネットワークアドレス> mask <サブネットマスク> <ネクストホップ>
+    ＞ ***whoami***  
+    <kbd>![img](image/04/12.png)</kbd>
 
-    > 【補足2】
-    > このコマンドで作成したStatic RouteはOSの再起動により削除される一時的な設定です。
-    > "-p"オプションを付与することで永続的(Permanent)な設定として保存されます。
+1. 以下のコマンドを実行し、Linux1の現在のネットワーク設定を確認する  
+    ＞ ***ifconfig***  
+    <kbd>![img](image/04/13.png)</kbd>
+    > 【確認ポイント】
+    > ifconfigコマンドを実行すると複数のネットワークアダプターの情報が表示されます。eth0とeth1に注目してください。
+    > eth1が演習用のネットワーク(10.X.1.0/24)です。演習環境の他のサーバと通信するために使用します。
+    > eth0は管理接続作業用のネットワーク(10.X.0.0/24)です。演習の中では操作しません。
+<!-- 
+Azure環境においては、DHCPで配布されるデフォルトゲートウェイが有効であるため、以下の手順は不要です。
+
+1. コマンドラインに以下のコマンドを入力し、Linux1の現在のネットワーク設定を確認する  
+    ＞ ***ip route***  
+    <kbd>![img](image/04/13.png)</kbd>
+    > 【確認ポイント】
+    > ip routeコマンドは、ルーティングテーブルを表示するコマンドです。
+    > 10.X.2.0/24や10.X.3.0/24をルーティングできるエントリが、まだ存在しないことを確認してください。
+1. コマンドラインに以下のコマンドを入力し、Linux1が別ネットワークと通信できない状態であることを確認する  
+    ＞ ***ping 10.X.1.254***  
+    ＞ ***ping 10.X.2.254***  
+    ＞ ***ping 10.X.3.254***  
+    > 【確認ポイント】
+    > 別ネットワークに対するルーティング情報がルーティングテーブルに登録されていないため、eth1と同じネットワーク(10.X.1.0/24)のIPアドレスとは通信できますが、別のネットワークとは通信できない状態であることを確認してください。
+-->
+
+1. 以下のコマンドを実行し、Network2(10.X.2.0/24)とNetwork3(10.X.3.0/24)を宛先とするルーティングについて、Router1をNextHopとしたエントリを登録する  
+    ＞ ***sudo ip route add 10.X.2.0/24 via 10.X.1.254 dev eth1***   
+    ＞ ***sudo ip route add 10.X.3.0/24 via 10.X.1.254 dev eth1***  
+    <kbd>![img](image/04/15.png)</kbd>
+1. 以下のコマンドを実行し、Network2(10.X.2.0/24)とNetwork3(10.X.3.0/24)のルーティングエントリが登録されていることを確認する  
+    ＞ ***ip route***     
+    <kbd>![img](image/04/16.png)</kbd>
+1. 以下のコマンドを実行し、Router1(CSR1)を経由してNetwork2(10.X.2.0/24)とNetwork3(10.X.3.0/24)と通信できることを確認する
+    ＞ ***traceroute 10.X.2.254***  
+    ＞ ***traceroute 10.X.3.254***  
+    <kbd>![img](image/04/17.png)</kbd>    
 
 ---
+
+## 2. Linux1に永続的なStatic Routeを作成する
+
+1. 以下のコマンドを実行し、永続的なStatic Routeの設定ファイル(/etc/sysconfig/network-scripts/route-eth1)を作成する
+    ＞ ***touch /etc/sysconfig/network-scripts/route-eth1***  
+    <kbd>![img](image/04/21.png)</kbd> 
+1. 以下のコマンドを実行し、/etc/sysconfig/network-scripts/route-eth1)を編集する
+    ＞ ***touch /etc/sysconfig/network-scripts/route-eth1***  
+    <kbd>![img](image/04/21.png)</kbd> 
+
+
+
+
+---
+
+## 2. Linux2のStatic Routeを作成する
+
+1. Linux2の管理画面に接続する  
+    <kbd>![img](image/04/21.png)</kbd>
+1. コマンドラインで以下のコマンドを実行し、Linux2にadminで接続していることを確認する  
+    ＞ ***hostname***  
+    ＞ ***whoami***  
+    <kbd>![img](image/04/22.png)</kbd>
+
+1. 以下のコマンドを実行し、Linux2の現在のネットワーク設定を確認する  
+    ＞ ***ifconfig***  
+    <kbd>![img](image/04/23.png)</kbd>
+    > 【確認ポイント】
+    > ifconfigコマンドを実行すると複数のネットワークアダプターの情報が表示されます。eth0とeth1に注目してください。
+    > eth1が演習用のネットワーク(10.X.3.0/24)です。演習環境の他のサーバと通信するために使用します。
+    > eth0は管理接続作業用のネットワーク(10.X.0.0/24)です。演習の中では操作しません。
+
+1. 以下のコマンドを実行し、Network1(10.X.1.0/24)とNetwork2(10.X.2.0/24)を宛先とするルーティングについて、Router2をNextHopとしたエントリを登録する  
+    ＞ ***sudo ip route add 10.X.0.0/16 via 10.X.3.254 dev eth1***   
+    <kbd>![img](image/04/15.png)</kbd>
+
 
 ## 2. Windows Server1のStatic Routeを確認する
 
