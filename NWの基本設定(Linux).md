@@ -80,12 +80,12 @@ Azure環境においては、DHCPで配布されるデフォルトゲートウ�
 ---
 
 ## 2. Linux1に永続的なStatic Routeを作成する
-<!--
-前手順のip route addはルーティングテーブルにエントリを直接登録するコマンドです。  
-ルーティングテーブルのステータスとしては有効ですが、configとしては保存されない情報であるため、コンピュータを再起動するとエントリも失われます。  
-コンピュータ再起動後も有効なスタティックルートを登録するためには、スタティックルートを登録するconfigを作成する必要があります。  
-Linux(CentOS/7.9)におけるスタティックルートのconfigは "/etc/sysconfig/network-scripts/route-<IF名>" のファイルに記述できます。  
--->
+
+1. 作業説明
+    前手順のip route addはルーティングテーブルにエントリを直接登録するコマンドです。  
+    ルーティングテーブルのステータスとしては有効ですが、configとしては保存されない情報であるため、コンピュータを再起動するとエントリも失われます。  
+    コンピュータ再起動後も有効なスタティックルートを登録するためには、スタティックルートを登録するconfigを作成する必要があります。  
+    Linux(CentOS/7.9)におけるスタティックルートのconfigは "/etc/sysconfig/network-scripts/route-<IF名>" のファイルに記述できます。  
 
 1. 以下のコマンドを実行し、永続的なStatic Routeの設定ファイル(/etc/sysconfig/network-scripts/route-eth1)を作成し、バックアップを作成(copy)する
     ＞ ***sudo touch /etc/sysconfig/network-scripts/route-eth1***  
@@ -122,10 +122,9 @@ Linux(CentOS/7.9)におけるスタティックルートのconfigは "/etc/sysco
     ＞ ***traceroute 10.X.3.254***  
     <kbd>![img](image/04/17.png)</kbd>    
 
-
 ---
 
-## 2. Linux2のStatic Routeを作成する
+## 3. Linux2に集約されたStatic Routeを作成する
 
 1. Linux2の管理画面に接続する  
     <kbd>![img](image/04/21.png)</kbd>
