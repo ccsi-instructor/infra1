@@ -1,22 +1,16 @@
 
 
-# Windows Serverでファイルサーバーを構築する
+# Linux Serverでファイルサーバーを構築する
 ---
 
 ## シナリオ
-この演習では、Windows Serverでファイルサーバーを構築する手順を学習します。   
+この演習では、Linux Serverでファイルサーバーを構築する手順を学習します。   
 
-"C:\Share" フォルダを作成し、クライアントからアクセス可能な共有フォルダとしてネットワークに公開します。  
 
-公開するフォルダには、セキュリティ設定としてのアクセス許可が必要です。  
-Windowsの共有フォルダのアクセス許可には、「共有アクセス許可」と「NTFSアクセス許可」の両方を設定します。  
-今回の演習では、共有アクセス許可にはフルコントロールを設定し、NTFSアクセス許可で詳細を指定します。
+"/share" フォルダを作成し、クライアントからアクセス可能な共有フォルダとしてネットワークに公開します。  
+ファイルサービスを提供するソフトウェアとしては、Samba(samba.x86_64 0:4.10.16-24.el7_9)を使用します。  
 
-共有フォルダにアクセスするユーザーアカウントは、WindowsローカルユーザーとしてWindows Serverで作成します。
-"Tom"と"Jerry"の2つのユーザーアカウントを作成し、"File Server Users" グループに所属させます。
-
-File Server Users グループに所属するJerryは共有フォルダのファイルに読み書きができます。  
-Tomに対しては読みとり権限のみを与えて、書き込みを禁止します。  
+共有フォルダにアクセスするユーザーアカウントとして"Tom"と"Jerry"を作成し、Sambaユーザーデータベースに登録することで、WindowsクライアントからLinuxのファイルサーバーにアクセスできます。
 
 ファイルサーバーの動作確認として、Clientから共有フォルダにアクセスしてファイルの読み書きをテストします。  
 
@@ -25,10 +19,9 @@ Tomに対しては読みとり権限のみを与えて、書き込みを禁止�
     演習ガイドを参照して演習の意図をあらかじめ確認してください
 
 
-
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号
-- Windowsファイルサーバー役: WinSrv2(WSrv2-yyMMddX)
+- Linuxファイルサーバー役: Linux1  
 - クライアント デスクトップ環境: WinClient(WC1-yyMMddX)
 
 
@@ -36,6 +29,127 @@ Tomに対しては読みとり権限のみを与えて、書き込みを禁止�
 ## 注意
 - 手順例の画像は<B>pod255</B>に準拠したパラメータのものです
 - 手順内の<B>X</B>表記はご自身のpod番号に読み替えてください
+
+---
+
+## SELinuxを無効化する
+1. SELinuxの状態を確認する
+    ＞ ***sestatus***  
+    
+
+    > 【確認ポイント】
+    > 'Current Mode:'が'enforcing'であることを確認する  
+    > 'Mode from config file:'が'enforcing'であることを確認する  
+    > 
+
+
+1. SELinuxをOS起動時に無効にする  
+    ＞ ***sudo cp /etc/selinux/config /etc/selinux/config_bak***   
+    ＞ ***sudo vi /etc/selinux/config***  
+    ＞ ***diff /etc/selinux/config /etc/selinux/config_bak***   
+
+    ```
+    [admin@linux1 ~]$ diff /etc/selinux/config /etc/selinux/config_bak
+    7c7
+    < SELINUX=disabled
+    ---
+    > SELINUX=enforcing
+    [admin@linux1 ~]$   
+    ```
+
+1. SELinuxを一時的に無効にする   
+    ＞ ***sudo setenforce 0***   
+
+1. SELinuxの状態を確認する  
+    ＞ ***sestatus***  
+
+    > 【確認ポイント】
+    > 'Current Mode:'が'permissive'であることを確認する  
+    > 'Mode from config file:'が'disabled'であることを確認する  
+
+
+## Sambaをインストールする  
+
+1. Sambaをインストールする
+    ＞ ***sudo  yum  -y  install  samba.x86_64  0:4.10.16-24.el7_9***  
+
+1. インストールされたパッケージを確認する
+    ＞ ***yum list installed | grep samba***  
+
+    > 【確認ポイント】
+    > 'samba.x86_64' が '4.10.16-24.el7_9' であることを確認する
+
+1. Samba(smb)サービスのStatusを確認する
+    ＞ ***systemctl status smb***  
+
+    > 【確認ポイント】
+    > 'Active:' が 'inactive (dead)'であることを確認する
+    - [x] Samba(smb)が、サービスとして認識されていること
+    - [x] Samba(smb)サービスが、まだ起動していないこと
+
+## 共有フォルダ(/share)を作成する
+
+1. ルート直下にshareフォルダを作成する
+    ＞ ***sudo mkdir /share***  
+
+1. '/share'のパーミッションを変更する
+
+    1. 変更前の '/share' のパーミッションを確認する
+        ＞ ***ls -al /***  
+    > 【確認ポイント】
+    > '/share' のパーミッション 'drwxr-xr-x' であることを確認する   
+    - [x] 一般ユーザ(Others)が書き込み権限(w)を持っていないこと  
+
+
+    1. '/share' のパーミッションを変更し、Userに書き込み権限を与える
+        ＞ ***sudo chmod o+w /share***  
+
+    1. 変更後の '/share' のパーミッションを確認する
+        ＞ ***ls -al /***  
+    > 【確認ポイント】
+    > '/share' のパーミッション 'drwxr-xrwx' であることを確認する   
+    - [x] 一般ユーザ(Others)が書き込み権限(w)を有すること  
+
+
+## ユーザー(TomとJerry)を作成する
+
+1. 'Tom'を作成する
+    ＞ ***sudo useradd Tom***  
+    ＞ ***sudo passwd Tom***  
+    ＞ Changing password for user Tom.  
+    ＞ New password: ***＜パスワード 'Pa$$w0rd' を入力する＞***  
+    ＞ BAD PASSWORD: The password is shorter than 9 characters   
+    ＞ Retype new password: ***＜パスワード 'Pa$$w0rd' を入力する＞***  
+    ＞ passwd: all authentication tokens updated successfully.   
+
+    > 【補足】
+    > 'BAD PASSWORD'の警告は無視してください。
+
+1. 作成した'Tom'でログインできることを確認する
+    ＞ ***su - Tom***  
+    ＞ Password: ***＜パスワード 'Pa$$w0rd' を入力する＞*** 
+    ＞ ***whoami***  
+    ＞ exit
+
+    > 【補足】
+    > [admin@linux1 ~]$ su - Tom  
+    > Password:   
+    > Last login: Thu Aug 17 07:23:06 UTC 2023 on pts/0  
+    > [Tom@linux1 ~]$ whoami  
+    > Tom  
+    > [Tom@linux1 ~]$ exit  
+    > logout  
+    > [admin@linux1 ~]$   
+
+
+
+## Sambaをインストールする  
+
+sudo cp /etc/samba/smb.conf /etc/samba/smb_bak.conf
+sudo vim /etc/samba/smb.conf
+
+[admin@linux1 ~]$ diff /etc/samba/smb.conf /etc/samba/smb_bak.conf
+
 
 ---
 
