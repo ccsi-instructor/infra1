@@ -86,7 +86,7 @@
         > このフォルダには、IISのサービス提供に必要なファイルが保存されています。  
     1. "C:\\inetpub" フォルダ内の "wwwroot" フォルダにアクセスする  
         > 【補足】  
-        > "C:\\inetpub\\wwwroot" フォルダは、IISの "Default Web Site" のWeb コンテンツ フォルダです  
+        > "C:\\inetpub\\wwwroot" フォルダは、IISの "Default Web Site" のWeb コンテンツ フォルダです。   
     1. IISの初期Webページのファイルが作成されていることを確認する
         <kbd>![img](image/07/10.png)</kbd> 
 
@@ -151,31 +151,56 @@
         <kbd>![img](image/07/37.png)</kbd> 
 
 
-## 5. HTMLファイルを作成してWebコンテンツとして公開する
+## 5. HTMLファイルを作成してWebコンテンツとして公開する  
 
-1. Webコンテンツ作成のため、Webコンテンツフォルダにアクセスする  
+1. HTMLファイル作成のため、Webコンテンツフォルダにアクセスする  
     1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
     1. Windows Webサーバー(WinSrv2)の管理画面に接続する  
     1. "C:\\inetpub\\wwwroot\\web1" フォルダにアクセスする  
 
+1. テキストファイルの拡張子を変更して、HTMLファイルを作成する  
+    1. 右クリック コンテキストメニューの[新規作成]-[テキスト ドキュメント]をクリックする  
+    1. 作成された新しいテキストファイルの名前を "index.html" に変更する  
+
+        > 【補足】  
+        > ファイルの拡張子を ".txt" から ".html" に変更すると、警告のポップアップが表示されます。  
+        > ポップアップで[はい]をクリックします。  
+
+        <kbd>![img](image/07/41.png)</kbd> 
+
+1. HTMLファイルをメモ帳(notepad.exe)で編集する  
+    1. "index.html" ファイルをクリックして選択する
+    1. 右クリック コンテキストメニューの[プログラムから開く]-[別のプログラムを選択]をクリックする  
+        <kbd>![img](image/07/42.png)</kbd> 
+    1. [このファイルを開く方法を選んでください]ウィンドウが表示されたのを確認する  
+    1. メニュー内の[メモ帳]をクリックして選択し、[OK]をクリックする  
+        <kbd>![img](image/07/43.png)</kbd> 
+    1. メモ帳で "index.html" ファイルを開いたことを確認する
+        <kbd>![img](image/07/44.png)</kbd> 
 
 
+1. HTMLテキストを記述する  
+    1. "index.html" ファイルに以下のHTMLテキストを記述する  
 
+        ```
+        <html>
 
+        <font size="7">
+        Lets HTML document!
+        </font>
 
+        <img src="pic.png">
 
+        <a href="document.txt">
+        link!
+        </a>
 
+        </html>
+        ```
 
+        <kbd>![img](image/07/45.png)</kbd>
 
-
-
-
-
-
-
-
-
-
+    1. "index.html" ファイルを上書き保存する  
 
 
 
