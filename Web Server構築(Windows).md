@@ -146,7 +146,7 @@
     1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
     1. Windows Client(WinClient)の管理画面に "admin" で接続する   
     1. WinClientでWebブラウザ(Google Chrome)を起動する  
-    1. Webブラウザのアドレス欄に [http://10.X.1.105/web1/document.txt] と入力し、[Enter]キーを押下する  
+    1. Webブラウザのアドレス欄に [http://10.X.2.105/web1/document.txt] と入力し、[Enter]キーを押下する  
     1. Webコンテンツとして"document.txt"を参照できたことを確認する  
         <kbd>![img](image/07/37.png)</kbd> 
 
@@ -173,6 +173,7 @@
     1. 右クリック コンテキストメニューの[プログラムから開く]-[別のプログラムを選択]をクリックする  
         <kbd>![img](image/07/42.png)</kbd> 
     1. [このファイルを開く方法を選んでください]ウィンドウが表示されたのを確認する  
+    1. [その他のアプリ]をクリックする  
     1. メニュー内の[メモ帳]をクリックして選択し、[OK]をクリックする  
         <kbd>![img](image/07/43.png)</kbd> 
     1. メモ帳で "index.html" ファイルを開いたことを確認する
@@ -186,13 +187,13 @@
         <html>
 
         <font size="7">
-        Lets HTML document!
+        Let's HTML document!
         </font>
 
         <img src="pic.png">
 
         <a href="document.txt">
-        link!
+        link
         </a>
 
         </html>
@@ -201,6 +202,25 @@
         <kbd>![img](image/07/45.png)</kbd>
 
     1. "index.html" ファイルを上書き保存する  
+
+
+1. 画像ファイルを作成する  
+    1. [Windowsメニュー] - [Windowsアクセサリ] - [ペイント] をクリックし、ペイントツールを起動する
+        <kbd>![img](image/07/46.png)</kbd> 
+    1. Webコンテンツとして任意の絵を描画する    
+        <kbd>![img](image/07/47.png)</kbd>  
+    1. ペイントで作成した絵を、web1フォルダにpic.pngとして保存する  
+        <kbd>![img](image/07/48.png)</kbd>  
+
+
+1. ClientのWebブラウザからWebアクセスする  
+    1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
+    1. Windows Client(WinClient)の管理画面に "admin" で接続する   
+    1. WinClientでWebブラウザ(Google Chrome)を起動する  
+    1. Webブラウザのアドレス欄に [http://10.X.2.105/web1/index.html] と入力し、[Enter]キーを押下する  
+    1. Webコンテンツとして"index.html"を参照できたことを確認する  
+        <kbd>![img](image/07/49.png)</kbd> 
+
 
 
 
