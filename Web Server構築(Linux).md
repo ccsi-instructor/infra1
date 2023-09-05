@@ -1,6 +1,6 @@
 
 
-# Windows ServerでWebサーバーを構築する
+# Linux ServerでWebサーバーを構築する
 
 ---
 
@@ -9,7 +9,7 @@
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号
-- Windows Webサーバー役: WinSrv2(WSrv2-yyMMddX)
+- Linux Webサーバー役: Linux1
 - クライアント デスクトップ環境: WinClient(WC1-yyMMddX)
 
 ## 注意
@@ -18,18 +18,199 @@
 
 ---
 
-## 1. Windows Webサーバー構築の準備
-この演習では、Windows Server2(WinSrv2)をWindows Webサーバーとして構築します。  
+## 1. Linux Webサーバー構築の準備
+Linux Server1(Linux1)をLinux Webサーバーとして構築します。  
 
-1. Windows Webサーバー(WinSrv2)の管理画面に接続する  
-1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
-1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
-1. Windows PowerShellのウィンドウが表示されたことを確認する  
-1. 以下のコマンドを実行し、Windowsファイルサーバー役のコンピュータ(WinSrv2)に接続していることを確認する  
-    ＞ ***hostname***  
-    
-    > 【補足】  
-    > Windowsファイルサーバー役のコンピュータであるWinSrv2には、"WSrv2-yyMMddX(年月日とPod番号)"形式のホスト名が設定されています。  
+1. カレントディレクトリが管理者アカウントのホームディレクトリであることを確認する
+    ＞ ***hostname***
+    ＞ ***whoami***
+    ＞ ***pwd***
+
+    ```
+    [admin@linux1 ~]$ hostname
+    linux1
+    [admin@linux1 ~]$ whoami
+    admin
+    [admin@linux1 ~]$ pwd
+    /home/admin
+    [admin@linux1 ~]$ 
+    ```
+
+1. NGINXのRPMパッケージをダウンロードする
+
+    ＞ ***wget http://nginx.org/packages/centos/7/x86_64/RPMS/nginx-1.22.1-1.el7.ngx.x86_64.rpm***  
+
+    > 【補足】
+    > 演習環境のクリップボードを直接編集することで、上のコマンドをコピーして演習環境に貼り付けることができます。 
+    [Ctrl]+[Shift]+[Alt]を入力して画面左表示される操作メニューで、
+    > 手順① [Ctrl]+[Shift]+[Alt]キーを入力する  
+    > 手順② 画面左の操作メニューのクリップボードの入力欄に、上のコマンドをコピーして貼り付ける  
+    > 手順③ [Ctrl]+[Shift]+[Alt]キーを入力し、操作メニューを終了する  
+    > 手順④ Linuxのプロンプト画面上で右クリックする  
+    > 手順⑤ プロンプトにコマンドが入力されたことを確認する  
+
+    ```
+    [admin@linux1 ~]$ wget http://nginx.org/packages/centos/7/x86_64/RPMS/nginx-1.22.1-1.el7.ngx.x86_64.rpm
+    --2023-09-05 04:56:01--  http://nginx.org/packages/centos/7/x86_64/RPMS/nginx-1.22.1-1.el7.ngx.x86_64.rpm
+    Resolving nginx.org (nginx.org)... 3.125.197.172, 52.58.199.22, 2a05:d014:edb:5702::6, ...
+    Connecting to nginx.org (nginx.org)|3.125.197.172|:80... connected.
+    HTTP request sent, awaiting response... 200 OK
+    Length: 816272 (797K) [application/x-redhat-package-manager]
+    Saving to: ‘nginx-1.22.1-1.el7.ngx.x86_64.rpm’
+
+    100%[==============================================================================================================================================>] 816,272      669KB/s   in 1.2s   
+
+    2023-09-05 04:56:03 (669 KB/s) - ‘nginx-1.22.1-1.el7.ngx.x86_64.rpm’ saved [816272/816272]
+
+    [admin@linux1 ~]$ 
+    ```
+
+1. ダウンロードしたパッケージファイルを確認する
+
+    ＞ ***ls -l***  
+
+    ```
+    [admin@linux1 ~]$ ls -l
+    total 800
+    -rw-rw-r-- 1 admin admin 816272 Oct 19  2022 nginx-1.22.1-1.el7.ngx.x86_64.rpm
+    [admin@linux1 ~]$ 
+    ```
+
+
+
+1. NGINXをRPMファイルからローカルインストールする
+
+    ＞ ***sudo yum localinstall nginx-1.22.1-1.el7.ngx.x86_64.rpm***  
+
+    ＞ <略>
+
+    ＞ Is this ok [y/d/N]: ***y***
+
+    ```
+    [admin@linux1 ~]$ sudo yum localinstall nginx-1.22.1-1.el7.ngx.x86_64.rp
+    Loaded plugins: langpacks
+    Skipping: nginx-1.22.1-1.el7.ngx.x86_64.rp, filename does not end in .rpm.
+    Nothing to do
+    [admin@linux1 ~]$ sudo yum localinstall nginx-1.22.1-1.el7.ngx.x86_64.rpm
+    Loaded plugins: langpacks
+    Examining nginx-1.22.1-1.el7.ngx.x86_64.rpm: 1:nginx-1.22.1-1.el7.ngx.x86_64
+    Marking nginx-1.22.1-1.el7.ngx.x86_64.rpm to be installed
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package nginx.x86_64 1:1.22.1-1.el7.ngx will be installed
+    --> Processing Dependency: libpcre2-8.so.0()(64bit) for package: 1:nginx-1.22.1-1.el7.ngx.x86_64
+    --> Running transaction check
+    ---> Package pcre2.x86_64 0:10.23-2.el7 will be installed
+    --> Finished Dependency Resolution
+
+    Dependencies Resolved
+
+    ========================================================================================================================================================================================
+    Package                           Arch                               Version                                          Repository                                                  Size
+    ========================================================================================================================================================================================
+    Installing:
+    nginx                             x86_64                             1:1.22.1-1.el7.ngx                               /nginx-1.22.1-1.el7.ngx.x86_64                             2.8 M
+    Installing for dependencies:
+    pcre2                             x86_64                             10.23-2.el7                                      base-openlogic                                             201 k
+
+    Transaction Summary
+    ========================================================================================================================================================================================
+    Install  1 Package (+1 Dependent package)
+
+    Total size: 3.0 M
+    Total download size: 201 k
+    Installed size: 3.3 M
+    Is this ok [y/d/N]: y
+    Downloading packages:
+    pcre2-10.23-2.el7.x86_64.rpm                                                                                                                                     | 201 kB  00:00:00     
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+    Installing : pcre2-10.23-2.el7.x86_64                                                                                                                                             1/2 
+    Installing : 1:nginx-1.22.1-1.el7.ngx.x86_64                                                                                                                                      2/2 
+    ----------------------------------------------------------------------
+
+    Thanks for using nginx!
+
+    Please find the official documentation for nginx here:
+    * https://nginx.org/en/docs/
+
+    Please subscribe to nginx-announce mailing list to get
+    the most important news about nginx:
+    * https://nginx.org/en/support.html
+
+    Commercial subscriptions for nginx are available on:
+    * https://nginx.com/products/
+
+    ----------------------------------------------------------------------
+    Verifying  : pcre2-10.23-2.el7.x86_64                                                                                                                                             1/2 
+    Verifying  : 1:nginx-1.22.1-1.el7.ngx.x86_64                                                                                                                                      2/2 
+
+    Installed:
+    nginx.x86_64 1:1.22.1-1.el7.ngx                                                                                                                                                       
+
+    Dependency Installed:
+    pcre2.x86_64 0:10.23-2.el7                                                                                                                                                            
+
+    Complete!
+    [admin@linux1 ~]$ 
+    ```
+
+
+1. NGINX(nginx)サービスのStatusを確認する  
+    ＞ ***systemctl status nginx***  
+ 
+    > 【確認ポイント】  
+    > 'Active:' が 'inactive (dead)'であることを確認する  
+    - [x] NGINX(nginx)が、サービスとして認識されていること  
+    - [x] NGINX(nginx)サービスが、まだ起動していないこと  
+
+    ```
+    [admin@linux1 ~]$ systemctl status nginx
+    ● nginx.service - nginx - high performance web server
+    Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+    Active: inactive (dead)
+        Docs: http://nginx.org/en/docs/
+    [admin@linux1 ~]$ 
+    ```
+
+1. NGINX(nginx)サービスを自動起動に設定する  
+    ＞ ***sudo systemctl enable nginx***  
+ 
+1. NGINX(nginx)サービスを起動する  
+    ＞ ***sudo systemctl start nginx***  
+
+1. NGINX(nginx)サービスのStatusを確認する  
+    ＞ ***systemctl status nginx***  
+ 
+    > 【確認ポイント】  
+    > 'Active:' が 'active(running)'であることを確認する  
+    - [x] NGINX(nginx)サービスが起動していること   
+
+    ```
+    [admin@linux1 ~]$ sudo systemctl enable nginx
+    Created symlink from /etc/systemd/system/multi-user.target.wants/nginx.service to /usr/lib/systemd/system/nginx.service.
+    [admin@linux1 ~]$ sudo systemctl start nginx
+    [admin@linux1 ~]$ 
+    [admin@linux1 ~]$ systemctl status nginx
+    ● nginx.service - nginx - high performance web server
+    Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+    Active: active (running) since Tue 2023-09-05 06:07:32 UTC; 4s ago
+        Docs: http://nginx.org/en/docs/
+    Process: 3418 ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf (code=exited, status=0/SUCCESS)
+    Main PID: 3419 (nginx)
+        Tasks: 2
+    Memory: 3.3M
+    CGroup: /system.slice/nginx.service
+            ├─3419 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
+            └─3420 nginx: worker process
+
+    Sep 05 06:07:32 linux1 systemd[1]: Starting nginx - high performance web server...
+    Sep 05 06:07:32 linux1 systemd[1]: Can't open PID file /var/run/nginx.pid (yet?) after start: No such file or directory
+    Sep 05 06:07:32 linux1 systemd[1]: Started nginx - high performance web server.
+    [admin@linux1 ~]$ 
+    ```
 
 ---
 
@@ -532,7 +713,7 @@
     1. WinClientでWebブラウザ(Google Chrome)を起動する  
     1. Webブラウザのアドレス欄に [http://10.X.2.105/oldpage] と入力し、[Enter]キーを押下する  
         <kbd>![img](image/07/88.png)</kbd> 
-    1. HTTPリダイレクト処理により、別のWebサイト (http://10.X.2.105:1080/) に接続したことを確認する  
+    1. HTTPリダイレクト処理により、別のWebサイト("http://10.X.2.105:1080/")に接続したことを確認する  
         <kbd>![img](image/07/89.png)</kbd> 
 
 ---
