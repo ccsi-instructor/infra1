@@ -319,6 +319,10 @@ Linux Server1(Linux1)をLinux Webサーバーとして構築します。
 1. Webブラウザのアドレス欄に [http://10.X.1.102/index.html] と入力し、[Enter]キーを押下する  
     <kbd>![img](image/08/21.png)</kbd> 
 
+    > 【動作テストの観点】  
+    > NGINXで基本的なWebサーバーを構築できたことを確認する     
+
+    - [x] WebブラウザでHTMLファイルを表示できること    
 
 ---
 
