@@ -17,6 +17,138 @@
 
 ---
 
+## 1. (オプション)ドメインコントローラーの状態を確認する  
+この項目の手順は省略できます。  
+興味のある方のみ行ってください。  
+
+1. Active Directory ドメイン コントローラー(WinSrv1)の管理画面に接続する 
+
+1. PowerShellを起動する  
+    1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
+    1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
+    1. Windows PowerShellのウィンドウが表示されたことを確認する  
+
+1. 以下のコマンドを実行し、EXAMPLEドメインの管理者アカウント(admin)でログインしていることを確認する  
+    ＞ ***whoami***  
+
+    ```
+    PS C:\Windows\system32> whoami
+    example\admin
+    PS C:\Windows\system32>
+    ```
+
+1. 以下のコマンドを実行し、Windows Server1(WinSrv1)がActive Directory ドメイン コントローラーとして認識されていることを確認する  
+    ＞ ***netdom query dc***  
+
+    ```
+    PS C:\Windows\system32> netdom query dc
+    ドメインにアカウントがあるドメイン コントローラーの一覧:
+
+    WSrv1-230802255
+    コマンドは正しく完了しました。
+
+    PS C:\Windows\system32>
+    ```
+1. 以下のコマンドを実行し、ドメイン コントローラーの状態を診断する    
+    ＞ ***dcdiag***  
+
+    > 【補足】  
+    > dcdiagは、ドメインコントローラーの各機能についてステータスを検査するツールです。  
+    > ドメインコントローラーが起動した直後には"失敗"が多数記録される場合がありますが、時間の経過により問題は自然解消します。  
+    > なお、今回の演習環境においては"DFSREvent"機能の"失敗"は無視できます。   
+
+    ```
+    PS C:\Windows\system32> dcdiag
+
+    ディレクトリ サーバー診断
+
+    初期セットアップを実行しています:
+    ホーム サーバーの検索を試みています...
+    ホーム サーバー = WSrv1-230802255
+    * AD フォレストが識別されました。
+    初期情報の収集が完了しました。
+
+    必須の初期テストを実行しています
+
+    サーバーをテストしています: Default-First-Site-Name\WSrv1-230802255
+        テストを開始しています: Connectivity
+            ......................... WSrv1-230802255 はテスト Connectivity に合格しました
+
+    プライマリ テストを実行しています
+
+    サーバーをテストしています: Default-First-Site-Name\WSrv1-230802255
+        テストを開始しています: Advertising
+            ......................... WSrv1-230802255 はテスト Advertising に合格しました
+        テストを開始しています: FrsEvent
+            ......................... WSrv1-230802255 はテスト FrsEvent に合格しました
+        テストを開始しています: DFSREvent
+            SYSVOL の共有後、この 24 時間以内に発生した警告またはエラー イベントがあります。 SYSVOL レプリケーション失敗の 問題があると、グループ ポリシーの問題が発生する場合 があります。
+            ......................... WSrv1-230802255 はテスト DFSREvent に失敗しました
+        テストを開始しています: SysVolCheck
+            ......................... WSrv1-230802255 はテスト SysVolCheck に合格しました
+        テストを開始しています: KccEvent
+            ......................... WSrv1-230802255 はテスト KccEvent に合格しました
+        テストを開始しています: KnowsOfRoleHolders
+            ......................... WSrv1-230802255 はテスト KnowsOfRoleHolders に合格しました
+        テストを開始しています: MachineAccount
+            ......................... WSrv1-230802255 はテスト MachineAccount に合格しました
+        テストを開始しています: NCSecDesc
+            ......................... WSrv1-230802255 はテスト NCSecDesc に合格しました
+        テストを開始しています: NetLogons
+            ......................... WSrv1-230802255 はテスト NetLogons に合格しました
+        テストを開始しています: ObjectsReplicated
+            ......................... WSrv1-230802255 はテスト ObjectsReplicated に合格しました
+        テストを開始しています: Replications
+            ......................... WSrv1-230802255 はテスト Replications に合格しました
+        テストを開始しています: RidManager
+            ......................... WSrv1-230802255 はテスト RidManager に合格しました
+        テストを開始しています: Services
+            ......................... WSrv1-230802255 はテスト Services に合格しました
+        テストを開始しています: SystemLog
+            ......................... WSrv1-230802255 はテスト SystemLog に合格しました
+        テストを開始しています: VerifyReferences
+            ......................... WSrv1-230802255 はテスト VerifyReferences に合格しました
+
+
+    パーティション テストを実行しています: ForestDnsZones
+        テストを開始しています: CheckSDRefDom
+            ......................... ForestDnsZones はテスト CheckSDRefDom に合格しました
+        テストを開始しています: CrossRefValidation
+            ......................... ForestDnsZones はテスト CrossRefValidation に合格しました
+
+    パーティション テストを実行しています: DomainDnsZones
+        テストを開始しています: CheckSDRefDom
+            ......................... DomainDnsZones はテスト CheckSDRefDom に合格しました
+        テストを開始しています: CrossRefValidation
+            ......................... DomainDnsZones はテスト CrossRefValidation に合格しました
+
+    パーティション テストを実行しています: Schema
+        テストを開始しています: CheckSDRefDom
+            ......................... Schema はテスト CheckSDRefDom に合格しました
+        テストを開始しています: CrossRefValidation
+            ......................... Schema はテスト CrossRefValidation に合格しました
+
+    パーティション テストを実行しています: Configuration
+        テストを開始しています: CheckSDRefDom
+            ......................... Configuration はテスト CheckSDRefDom に合格しました
+        テストを開始しています: CrossRefValidation
+            ......................... Configuration はテスト CrossRefValidation に合格しました
+
+    パーティション テストを実行しています: example
+        テストを開始しています: CheckSDRefDom
+            ......................... example はテスト CheckSDRefDom に合格しました
+        テストを開始しています: CrossRefValidation
+            ......................... example はテスト CrossRefValidation に合格しました
+
+    エンタープライズ テストを実行しています: example.local
+        テストを開始しています: LocatorCheck
+            ......................... example.local はテスト LocatorCheck に合格しました
+        テストを開始しています: Intersite
+            ......................... example.local はテスト Intersite に合格しました
+    PS C:\Windows\system32>
+    ```
+
+
 
 ## 1. Windows ClientのActive Directoryドメイン参加の準備
 この手順では、Windows ClientをActive Directoryドメインに参加させる準備をします。
