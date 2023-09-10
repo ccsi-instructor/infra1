@@ -1,5 +1,5 @@
 
-# Active Directory 環境を構成する
+# Active Directory 環境を活用する
 
 ---
 

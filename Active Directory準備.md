@@ -8,7 +8,7 @@
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号
-- Windows Webサーバー役: WinSrv1(WSrv1-yyMMddX)
+- Active Directory ドメインコントローラー役: WinSrv1(WSrv1-yyMMddX)
 - クライアント デスクトップ環境: WinClient(WC1-yyMMddX)
 
 ## 注意
