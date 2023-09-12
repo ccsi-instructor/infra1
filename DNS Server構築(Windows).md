@@ -29,16 +29,24 @@
 Active Directoryドメインコントローラー構築時に自動的にDNSサーバーの役割も追加されています。  
 "example.local" Active Directoryドメインのサービスを提供するために、DNSサーバーには "example.local" DNSゾーンが構成されていることを確認します。  
 
-1. DNSサーバー管理コンソールを起動する
-
     <!--
         Active DirectoryのセクションでDNSの学習を深堀しすぎるのを防止するために、Active Directory学習後にDNSを学習します。  
     -->
 
+1. DNSサーバー管理コンソールを起動する
+    1. [スタートメニュー]をクリックする  
+    1. スタートメニュー内の[サーバー マネージャー]をクリックし、サーバーマネージャを起動する  
+    1. サーバーマネージャーウィンドウ右上の[ツール]をクリックする  
+    1. メニュー内の[DNS]をクリックし、DNSサーバー管理コンソール(DNSマネージャー)を起動する  
+
+        <kbd>![img](image/11/12.png)</kbd> 
+        <kbd>![img](image/11/13.png)</kbd> 
+
+
 1. "example.local" ゾーンが作成されていることを確認する  
 1. "example.local" ゾーンに登録されているDNSレコードを確認する  
 
-
+---  
 
 ## Windows Server 2にDNSサーバー役割をインストールする  
 1. 役割と機能の追加ウィザードを開始する  
@@ -79,6 +87,7 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
 
     1. [結果]画面で、インストールが正常に完了したことを確認し、[閉じる]をクリックする  
 
+---  
 
 ## Windows Server 1の "example.local"ゾーンにDNSレコードを登録する    
 
@@ -181,72 +190,10 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
         <kbd>![img](image/11/56.png)</kbd>  
 
 
-
-1. "example.local"ゾーンにAレコードを作成する
-    1. [DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]を右クリックし、コンテキストメニュー内の[新しいホスト(AまたはAAAA)]をクリックする  
-    1. [新しいホスト]ウィンドウが表示されたことを確認する  
-    1. [新しいホスト]ウィンドウで、以下のパラメータを入力する  
-
-        | 名前 | 完全修飾ドメイン名 | IPアドレス |   
-        | :----- | :----- | :----- |  
-        | Linux1 | Linux1.example.local | 10.X.1.102 | 
-
-        - [ ] 関連付けられたポインター(PTR)レコードを作成する    
-        - [ ] 同じ所有者名のDNSレコードの更新を認証されたユーザーに許可する
-
-        <kbd>![img](image/11/41.png)</kbd> 
-
-    1. [新しいホスト]ウィンドウで、[完了]をクリックする  
-    1. レコード作成完了を通知する確認ポップアップのウィンドウで、[OK]をクリックする  
-        <kbd>![img](image/11/42.png)</kbd> 
-
-    パラメータを上の"新規Aレコード 一覧"に従って入力する  
-    1. 
-    1. 以下の表のAレコードをすべて作成する  
-
-    ※ 表中の "X" や "yyMMddX" 表記はご自身の環境に合わせて読み替えてください
-
-    新規Aレコード 一覧:
-    | 名前 | 完全修飾ドメイン名 | IPアドレス |   
-    | :----- | :----- | :----- |  
-    | Linux1 | Linux1.example.local | 10.X.1.102 |  
-    | Linux2 | Linux2.example.local | 10.X.3.106 |   
-    | CSR1 | CSR1.example.local | 10.X.2.253 |
-    | CSR2 | CSR2.example.local | 10.X.2.254 |     
-
-    > 【補足】  
-    > すべてのレコードで、以下のパラメータはチェックなしで構成します    
-    > □(なし)  関連付けられたポインター(PTR)レコードを作成する    
-    > □(なし)  同じ所有者名のDNSレコードの更新を認証されたユーザーに許可する   
-
-
-
-
-    CNAMEレコード:
-    | エイリアス名 | 完全修飾ドメイン名 | ターゲット ホスト用の完全修飾ドメイン名  |
-    | :----- | :----- | :----- |
-    | AD | AD.example.local | WSrv1-yyMMddX(年月日とPod番号).example.local |
-    | Web1 | Web1.example.local | WSrv2-yyMMddX(年月日とPod番号).example.local |
-    | Web2 | Web2.example.local | Linux1.example.local |
-    | File1 | File1.example.local | WSrv2-yyMMddX(年月日とPod番号).example.local |
-    | File2 | File2.example.local | Linux1.example.local |
-    | DNS1 | DNS1.example.local | WSrv1-yyMMddX(年月日とPod番号).example.local |
-    | DNS2 | DNS2.example.local | Linux1.example.local |    
-    | DNS3 | DNS3.example.local | Linux2.example.local |    
-
-    > 【補足】  
-    > すべてのレコードで、以下のパラメータはチェックなしで構成します    
-    > □(なし)  同じ名前のDNSレコードすべての更新を認証されたユーザに許可する  
-
-
-1. Windows Server 1で、セカンダリDNSサーバー(Windows Server 2)へのゾーン転送を許可する  
-    1. Windows Server 1(WinSrv1)の管理画面に接続する  
-    1. [DNSマネージャー]を起動する  
-    1. 左側コンソールツリーの[DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]をクリックして選択する  
-    1. [DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]を右クリックし、コンテキストメニュー内の[]をクリックする  
-
+---  
 
 ## Windows Server 2でセカンダリDNSサーバーを構成する
+
 1. Windows Server 1で、セカンダリDNSサーバー(Windows Server 2)へのゾーン転送を許可する  
     1. Windows Server 1(WinSrv1)の管理画面に接続する  
     1. [DNSマネージャー]を起動する  
@@ -326,6 +273,7 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
         > [example.local]を右クリックして表示されるコンテキストメニュー内に、レコードを作成する操作項目が表示されません。
         > セカンダリDNSサーバーは読み取り専用のゾーンデータベースを保有しているためです。  
 
+---  
 
 ## 名前解決の動作を確認する  
 
