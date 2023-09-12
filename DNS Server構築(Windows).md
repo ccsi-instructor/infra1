@@ -287,16 +287,23 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
 
 ---  
 
+
+
+
+## Windows Server 1からWindows Server 2に"sub.example.local"ゾーンを委譲する  
+
+1. Windows Server 1で委譲する
+1. Windows Server 1で、セカンダリDNSサーバー(Windows Server 2)へのゾーン転送を許可する  
+
+1. Windows Server 2でゾーンをつくる （できるか？）
+
+
 ## 名前解決の動作を確認する  
 
 1. nslookupで名前解決を問い合わせる  
 1. セカンダリにも問い合わせる  
  
 
-
-# 委譲を構成する
-1. Windows Server 1で委譲する
-1. Windows Server 2でゾーンをつくる （できるか？）
 
 
 # レコード変更とキャッシュ削除
