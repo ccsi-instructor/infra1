@@ -43,8 +43,20 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
         <kbd>![img](image/11/13.png)</kbd> 
 
 
+1. 左側コンソールツリーの[DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]をクリックして選択する  
+
 1. "example.local" ゾーンが作成されていることを確認する  
+
+    > 【補足】  
+    > "example.local"ゾーンと"_msdcs.example.local"ゾーンの、2つのゾーンがDNSサーバーに作成されています。    
+    > DNSサーバーの演習で操作するのは、"example.local"ゾーンのみです。    
+    > "_msdcs.example.local"ゾーンは、Active Directoryのために作成される特殊なDNSゾーンであり、演習では操作しません。  
+
 1. "example.local" ゾーンに登録されているDNSレコードを確認する  
+
+    > 【補足】  
+    > "example.local"ゾーンは、Active Directoryドメインサービスのために使用されています。  
+    > Active Directoryドメインに参加するコンピュータ(Active Directoryドメインコントローラーやメンバー)の情報が、自動的に登録されています。  
 
 ---  
 
