@@ -194,12 +194,12 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
         | File1 | File1.example.local | WSrv2-yyMMddX(年月日とPod番号).example.local |
         | File2 | File2.example.local | Linux1.example.local |
         | DNS1 | DNS1.example.local | WSrv1-yyMMddX(年月日とPod番号).example.local |
-        | DNS2 | DNS2.example.local | Linux1.example.local |    
+        | DNS2 | DNS2.example.local | WSrv2-yyMMddX(年月日とPod番号).example.local |    
         | DNS3 | DNS3.example.local | Linux2.example.local |    
 
     1. "新規CNAMEレコード 一覧"表 のすべてのCNAMEレコードが作成されたことを確認する  
 
-        <kbd>![img](image/11/56.png)</kbd>  
+        <kbd>![img](image/11/56_2.png)</kbd>  
 
 
 ---  
@@ -290,13 +290,129 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
 
 
 
-## Windows Server 1からWindows Server 2に"sub.example.local"ゾーンを委譲する  
+## Windows Server 1からWindows Server 2に"sub.example.local"ゾーンを委任する  
 
+
+1. Windows Server 2に、"sub.example.local"ゾーンを構成する  
+    1. Windows Server 2(WinSrv2)の管理画面に接続する  
+    1. [DNSマネージャー]を起動する  
+    1. 左側コンソールツリーの[DNS]-[<サーバー名>]-[前方参照ゾーン]をクリックして選択する    
+    1. [DNS]-[<サーバー名>]-[前方参照ゾーン]を右クリックし、コンテキストメニュー内の[新しいゾーン]をクリックする  
+        <kbd>![img](image/11/91.png)</kbd>
+    1. [新しいゾーン ウィザード]ウィンドウが表示されたことを確認する  
+    1. [新しいゾーン ウィザードの開始]画面で、[次へ]をクリックする  
+    1. [ゾーンの種類]画面で、以下のパラメータを選択する  
+        
+        作成するゾーンの種類を選択してください:  
+            - [x] プライマリ ゾーン  
+            - [ ] セカンダリ ゾーン  
+            - [ ] スタブ ゾーン  
+            - [ ] Active Directoryにゾーンを格納する  
+
+        <kbd>![img](image/11/92.png)</kbd> 
+
+    1. [ゾーンの種類]画面で、[次へ]をクリックする  
+
+    1. [ゾーン名]画面で、以下のパラメータを入力する  
+        
+        | 項目 | パラメータ |
+        | :----- | :----- |
+        | ゾーン名 | sub.example.local |
+
+        <kbd>![img](image/11/93.png)</kbd> 
+
+    1. [ゾーン名]画面で、[次へ]をクリックする  
+
+    1. [ゾーン ファイル]画面で、[次へ]をクリックする  
+        <kbd>![img](image/11/94.png)</kbd>
+
+    1. [動的更新]画面で、[次へ]をクリックする  
+        <kbd>![img](image/11/95.png)</kbd>
+
+    1. [新しいゾーン ウィザードの完了]画面で、[完了]をクリックする  
+        <kbd>![img](image/11/96.png)</kbd> 
+
+
+1. "sub.example.local"ゾーンにDNSレコードを登録する  
+    1. Windows Server 2(WinSrv2)の管理画面に接続する  
+    1. [DNSマネージャー]を起動する  
+    1. [DNS]-[<サーバー名>]-[前方参照ゾーン]-[sub.example.local]を右クリックし、コンテキストメニュー内の[その他の新しいレコード]をクリックする  
+    1. [リソース レコードの種類]ウィンドウが表示されたことを確認する  
+    1. "リソースレコードの種類:"として、[Alias(CNAME)]をクリックして選択する  
+    1. [リソース レコードの種類]ウィンドウで、[レコードの作成]をクリックする  
+    1. [新しいリソース レコード]ウィンドウが表示され、[Alias(CNAME)]タブが表示されていることを確認する  
+    1. [新しいリソース レコード]ウィンドウで、以下のパラメータを入力する  
+
+        新規CNAMEレコード 一覧:
+        | エイリアス名 | 完全修飾ドメイン名 | ターゲット ホスト用の完全修飾ドメイン名  |
+        | :----- | :----- | :----- |
+        | Proxy | Proxy.sub.example.local | Linux1.example.local |
+
+        - [ ] 同じ名前のDNSレコードすべての更新を認証されたユーザーに許可する
+
+    1. [新しいリソース レコード]ウィンドウで、[OK]をクリックする  
+
+    1. [sub.example.local]ゾーンにCNAMEレコードが作成されていることを確認する  
+        <kbd>![img](image/11/97.png)</kbd>
+
+
+
+
+1. Windows Server 1で、サブドメインの委任を作成する    
+    1. Windows Server 1(WinSrv1)の管理画面に接続する  
+    1. [DNSマネージャー]を起動する  
+    1. 左側コンソールツリーの[DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]をクリックして選択する  
+    1. [DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]を右クリックし、コンテキストメニュー内の[新しい委任]をクリックする  
+        <kbd>![img](image/11/81.png)</kbd>  
+    1. [新しい委任]ウィンドウが表示されたことを確認する  
+        <kbd>![img](image/11/82.png)</kbd>  
+    1. [新しい委任ウィザードの開始]画面で、[次へ]をクリックする  
+    1. [委任されたドメイン名]画面で、以下のパラメータを入力する  
+
+        | 項目 | パラメータ |
+        | :----- | :----- |
+        | 委任されたドメイン | sub |
+        | 完全修飾ドメイン名(FQDN)| sub.example.local |
+
+        <kbd>![img](image/11/83.png)</kbd>  
+
+    1. [委任されたドメイン名]画面で、[次へ]をクリックする  
+    1. [ネームサーバー]画面で、[追加]をクリックする  
+        <kbd>![img](image/11/84.png)</kbd>  
+
+    1. [新規ネーム サーバー レコード]ウィンドウが表示されたことを確認する  
+        <kbd>![img](image/11/85.png)</kbd>  
+
+    1. [新規ネーム サーバー レコード]ウィンドウの "サーバーの完全修飾ドメイン名(FQDN)" の項目で、"DNS2.example.local (Windows Server 2)"と入力する  
+
+        | 項目 | パラメータ |
+        | :----- | :----- |
+        | サーバーの完全修飾ドメイン名(FQDN) | DNS2.example.local |
+
+        <kbd>![img](image/11/87_1.png)</kbd>  
+
+    1. [解決]をクリックし、DNSサーバーの検証が "OK" になることを確認する  
+        <kbd>![img](image/11/88_2.png)</kbd>  
+
+    1. [新規ネーム サーバー レコード]ウィンドウで、[OK]をクリックする  
+
+    1. [ネームサーバー]画面で、[次へ]をクリックする  
+        <kbd>![img](image/11/89_2.png)</kbd>  
+
+    1. [新しい委任ウィザードの完了]画面で、[完了]をクリックする  
+        <kbd>![img](image/11/89_1.png)</kbd>  
+
+
+
+
+1. 
 1. Windows Server 1で委譲する
 1. Windows Server 1で、セカンダリDNSサーバー(Windows Server 2)へのゾーン転送を許可する  
 
 1. Windows Server 2でゾーンをつくる （できるか？）
 
+
+--- 
 
 ## 名前解決の動作を確認する  
 
