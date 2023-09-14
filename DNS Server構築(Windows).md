@@ -402,28 +402,234 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
     1. [新しい委任ウィザードの完了]画面で、[完了]をクリックする  
         <kbd>![img](image/11/89_1.png)</kbd>  
 
+    1. DNS管理コンソールの左側コンソールツリーの[DNS]-[<サーバー名>]-[前方参照ゾーン]-[example.local]-[sub]をクリックして選択する  
+    1. "sub.example.local" ゾーンのネームサーバー(NSレコード)として、"DNS2.example.local (Windows Server 2)"が登録されていることを確認する  
+        <kbd>![img](image/11/89_5.png)</kbd>  
 
-
-
-1. 
-1. Windows Server 1で委譲する
-1. Windows Server 1で、セカンダリDNSサーバー(Windows Server 2)へのゾーン転送を許可する  
-
-1. Windows Server 2でゾーンをつくる （できるか？）
 
 
 --- 
 
 ## 名前解決の動作を確認する  
 
+
+1. Windows Clientに"admin"で接続する  
+    1. Windows Client(WinClient)の管理画面に "admin" で接続する     
+    1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
+    1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
+    1. Windows PowerShellのウィンドウが表示されたことを確認する  
+
+1. nslookupツールを起動する  
+    1. PowerShellで以下のコマンドを実行し、nslookupツールを起動する  
+        ＞ ***nslookup***  
+    
+        ```
+        PS C:\Windows\system32> nslookup
+        既定のサーバー:  UnKnown
+        Address:  10.255.1.104
+
+        >
+        >
+        ```
+
+        <kbd>![img](image/11/101.png)</kbd>  
+
+1. PowerShellで実行中のnslookupツールで以下のコマンドを実行し、DNS名前解決要求送信時に自動的に付加するDNSサフィックスを明示的に指定する   
+    ＞ ***set domain=example.local***  
+
+    > 【補足1】
+    > DNSサフィックスをset domainオプションで指定すると、nslookupツールに入力したコマンドの末尾に自動的にドメイン名が付加されます。  
+    > 例えば、以下の操作をした場合は、"Host.example.local"の名前解決をDNSサーバーに要求します。  
+    > 例:
+    > ＞ set domain=example.local
+    > ＞ Host
+    > ＞ (DNSサーバーに"Host.example.local"のDNSレコードを問い合わせた結果が表示される)
+
+    > 【補足2】
+    > Active Direcotryドメイン環境では、Active Direcotryドメイン名と同じDNSドメイン名をDNSサフィックスとし付加します。  
+    > そのため、このオプションを指定するコマンドを省略しても、nslookupの動作は変わりません。  
+    > この手順では、DNSサーバーの動作確認の手続きを学習するために、このコマンドでDNSサフィックスを明示的に指定しています。  
+
+
+1. PowerShellで実行中のnslookupツールで以下のコマンドを実行し、DNS名前解決要求を送信する宛先DNSサーバーを明示的に指定する    
+    ＞ ***set server=10.X.1.104***  
+
+    > 【補足】
+    > set serverオプションにより、nslookupツールのDNS名前解決要求の送信先DNSサーバーを指定できます。  
+    > Windows Server 1を優先DNSサーバーとして使用するようにOSで設定されていますが、DNSサーバーの動作確認の手続きを学習するために、このコマンドで問い合わせ先のDNSサーバーを明示的に指定しています。 
+
+    <kbd>![img](image/11/102.png)</kbd>  
+
+
+1. PowerShellで実行中のnslookupツールで以下のホスト名を入力し、DNSサーバーの名前解決の動作を確認する        
+
+    - Linux1 
+    - Linux2  
+    - CSR1  
+    - CSR2 
+    - AD  
+    - Web1   
+    - Web2  
+    - File1  
+    - File2  
+    - DNS1  
+    - DNS2  
+    - DNS3  
+
+
+    <kbd>![img](image/11/103.png)</kbd>  
+
+
+    ```
+    >
+    > Linux1
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    Linux1.example.local
+    Address:  10.255.1.102
+
+    > Linux2
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    Linux2.example.local
+    Address:  10.255.3.106
+
+    > CSR1
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    CSR1.example.local
+    Address:  10.255.2.253
+
+    > CSR2
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    CSR2.example.local
+    Address:  10.255.2.254
+
+    > AD
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    wsrv1-230802255.example.local
+    Addresses:  10.255.1.104
+            10.255.0.104
+    Aliases:  AD.example.local
+
+    > Web1
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    WSrv2-230802255.example.local
+    Address:  10.255.2.105
+    Aliases:  Web1.example.local
+
+    > Web2
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    Linux1.example.local
+    Address:  10.255.1.102
+    Aliases:  Web2.example.local
+
+    > File1
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    WSrv2-230802255.example.local
+    Address:  10.255.2.105
+    Aliases:  File1.example.local
+
+    > File2
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    Linux1.example.local
+    Address:  10.255.1.102
+    Aliases:  File2.example.local
+
+    > DNS1
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    wsrv1-230802255.example.local
+    Addresses:  10.255.1.104
+            10.255.0.104
+    Aliases:  DNS1.example.local
+
+    > DNS2
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    WSrv2-230802255.example.local
+    Address:  10.255.2.105
+    Aliases:  DNS2.example.local
+
+    > DNS3
+    サーバー:  [10.255.1.104]
+    Address:  10.255.1.104
+
+    名前:    Linux2.example.local
+    Address:  10.255.3.106
+    Aliases:  DNS3.example.local
+
+    >
+    ``` 
+
+
+    Proxy.sub.example.local.
+
+
+
+    ```
+    PS C:\Windows\system32> nslookup
+    既定のサーバー:  UnKnown
+    Address:  10.255.1.104
+
+    >
+    >
+    ```
+
+    > 【補足】
+    > nslookupツールの既定の動作としては、OSのネットワーク設定を参照して問い合わせ先のDNSサーバーを自動的に決定します。  
+    > サーバーの動作確認をする際は、問い合わせ先
+
+
+1. DNSサーバーの動作を確認する  
+
+
 1. nslookupで名前解決を問い合わせる  
 1. セカンダリにも問い合わせる  
  
 
+1. (チャレンジ) 逆引きを構成する 人間向けのインターフェイスが改善されることもある
 
 
-# レコード変更とキャッシュ削除
-CSRのレコード変更でいいかな
+    ```
+    PS C:\Windows\system32> nslookup
+    既定のサーバー:  UnKnown
+    Address:  10.255.1.104
+
+    >
+    >
+    ```
+
+    ```
+    PS C:\Windows\system32> nslookup
+    既定のサーバー:  UnKnown
+    Address:  10.255.1.104
+
+    >
+    >
+    ```
+
+
+1. (チャレンジ)
+set d2
+
 
 
 
@@ -433,5 +639,6 @@ CSRのレコード変更でいいかな
 ## 演習完了  
 ここまでの手順で、以下の項目を学習できました。  
 - [x] Windows DNSサーバーにDNSレコードを登録する  
-- [x] セカンダリDNSサーバーを構成する  
+- [x] セカンダリDNSサーバーを構成して、ゾーンを転送する
+- [x] サブドメインを作成し、委任を構成する    
 

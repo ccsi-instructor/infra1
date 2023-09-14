@@ -389,7 +389,6 @@ TomとJerryをこのグループに所属させます。
     1. Windows Client(WinClient)の管理画面に "Jerry" で接続する('Local Jerry'と'AD Jerry'がある場合は'Local Jerry'を使用する)  
         <kbd>![img](image/05/81.png)</kbd>   
     1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell]をクリックする('管理者'ではなく通常のPowerShellを起動する)  
-    1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
     1. Windows PowerShellのウィンドウが表示されたことを確認する  
     1. 以下のコマンドを実行し、クライアント デスクトップ環境役のコンピュータ(WC1)に "Jerry" で接続していることを確認する  
         ＞ ***hostname***  
@@ -417,7 +416,6 @@ TomとJerryをこのグループに所属させます。
     1. Windows Client(WinClient)の管理画面に "Tom" で接続する('Local Tom'と'AD Tom'がある場合は'Local Tom'を使用する)  
         <kbd>![img](image/05/88.png)</kbd> 
     1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell]をクリックする('管理者'ではなく通常のPowerShellを起動する)  
-    1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
     1. Windows PowerShellのウィンドウが表示されたことを確認する  
     1. 以下のコマンドを実行し、クライアント デスクトップ環境役のコンピュータ(WC1)に "Tom" で接続していることを確認する  
         ＞ ***hostname***  
