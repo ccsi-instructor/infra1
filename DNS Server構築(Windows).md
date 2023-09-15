@@ -240,6 +240,7 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
             - [x] セカンダリ ゾーン  
             - [ ] スタブ ゾーン  
             - [ ] Active Directoryにゾーンを格納する  
+            
         <kbd>![img](image/11/64.png)</kbd> 
 
     1. [ゾーンの種類]画面で、[次へ]をクリックする  
