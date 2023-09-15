@@ -201,7 +201,7 @@
     [admin@linux1 ~]$ sudo diff /etc/named/example.com.db /etc/named/example.com.db.bak
     1,14d0
     < @TTL  300
-    < @     IN  SOA     ns.example.com. (
+    < @     IN  SOA     ns.example.com.  root(
 <   <                   1; Serial
     <                   600; Refresh
     <                   600; Retry
@@ -220,16 +220,15 @@
     /etc/named/example.com.db の情報(サンプルconfig)
     ```
     $TTL    300
-    @       IN      SOA     ns.example.com. (
-                            1       ; Serial
-                            600     ; Refresh
-                            600     ; Retry
-                            600     ; Expire
-                            300 )   ; Negative Cache TTL
-    ;
-    @       IN      NS      ns.example.com.
-    ns      IN      A       10.X.1.102
-    www     IN      A       10.X.2.105
+    @IN      SOA     ns.example.com. root (
+    1; Serial
+    600     ; Refresh
+    600     ; Retry
+    600     ; Exprie
+    300 )   ; Negative Cache TTL
+    @IN      NS      ns.example.com.
+    ns      IN      A10.255.1.102
+    www     IN      A10.255.2.105
     ```
 
     > 【補足1】  
@@ -252,9 +251,16 @@
     ＞ ***sudo cp /etc/named.conf /etc/named.conf.bak***  
 
 1. BIND(named)のconfigファイルを編集し、"example.com"ゾーンファイルをインポートさせる     
-    ＞ ***sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak***  
-    ＞ ***sudo vi /etc/samba/smb.conf***  
-    ＞ ***diff /etc/samba/smb.conf /etc/samba/smb.conf.bak***  
+    ＞ ***sudo vi /etc/named.conf ***  
+    ＞ ***diff /etc/named.conf /etc/named.conf.bak***  
+
+
+
+
+
+
+
+
 
 
 ## ゾーンファイルを作成する  
