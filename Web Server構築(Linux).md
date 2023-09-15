@@ -21,6 +21,9 @@
 ## 1. Linux Webサーバー構築の準備
 Linux Server1(Linux1)をLinux Webサーバーとして構築します。  
 
+1. Linux1の管理画面に接続する  
+    <kbd>![img](image/04/11.png)</kbd>
+    
 1. カレントディレクトリが管理者アカウントのホームディレクトリであることを確認する
     ＞ ***hostname***
     ＞ ***whoami***
