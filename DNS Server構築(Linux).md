@@ -358,15 +358,15 @@ Cleaning up completed transaction file
 ---  
 
 
-## "example.com"ゾーン ファイルを構成する   
+## "`example.com`"ゾーン ファイルを構成する   
 
-1. "example.com"ゾーン ファイルを作成する  
+1. "`example.com`"ゾーン ファイルを作成する  
     ＞ ***sudo touch /etc/named/example.com.zone***  
 
-1. "example.com"ゾーン ファイル("/etc/named/example.com.zone")のバックアップを作成する  
+1. "`example.com`"ゾーン ファイル("/etc/named/example.com.zone")のバックアップを作成する  
     ＞ ***sudo cp /etc/named/example.com.zone /etc/named/example.com.zone.bak***  
 
-1. "example.com"ゾーン ファイル("/etc/named/example.com.zone")に、DNSゾーン情報を記述する    
+1. "`example.com`"ゾーン ファイル("/etc/named/example.com.zone")に、DNSゾーン情報を記述する    
     ＞ ***sudo vi /etc/named/example.com.zone***  
     ＞ ***sudo diff /etc/named/example.com.zone /etc/named/example.com.zone.bak***
 
@@ -437,7 +437,7 @@ Cleaning up completed transaction file
 1. BINDの構成ファイル("/etc/named.conf")のバックアップを作成する  
     ＞ ***sudo cp /etc/named.conf /etc/named.conf.bak***  
 
-1. BIND(named)のconfigファイルを編集し、"example.com"ゾーンファイルをインポートさせる     
+1. BIND(named)のconfigファイルを編集する       
     ＞ ***sudo vi /etc/named.conf ***  
     ＞ ***diff /etc/named.conf /etc/named.conf.bak***  
 
@@ -464,8 +464,19 @@ Cleaning up completed transaction file
     ```
     
 
-
-
+    > 【パラメータ解説】
+    > - listen-on:  
+    >   - DNS問い合わせを待ち受けするIPアドレスを指定します。  
+    >   - 初期値の"127.0.0.1"はループバックIPアドレスであり、Linux1自身のみが利用できるアドレスです。  
+    >   - これをanyに変更することで、Linux1のすべてのIPアドレスでDNS問い合わせを待ち受けます。  
+    > - allow-query:  
+    >   - このサーバーにDNS問い合わせができるクライアントを制限するAccess Control Listです。  
+    >   - 初期値の"localhost"はLinux1自身を示すconfigであり、他のコンピュータ(クライアント)からの問い合わせをdenyします。  
+    >   - これをanyに変更することで、すべてのIPアドレス(すべてのクライアント)からのDNS問い合わせに応答できるようになります。  
+    > - zone:  
+    >   - このDNSサーバーで提供するDNSゾーン情報を指定します。  
+    >   - "type master"は、このサーバーが権威サーバーであることを示します。  
+    >   - 作成済みのDNSゾーンファイル(example.com.zone)をインポートします。  
 
     <details>
     <summary>[参考]named.conf全文 (クリックで表示):</summary>  
@@ -571,19 +582,133 @@ Cleaning up completed transaction file
 
 
 
-## ゾーンファイルを作成する  
 
-## サービスの起動を確認する  
+## DNS条件付きフォワーダーを構成する  
+1. Windows Server 1に条件付きフォワーダーを構成し、"`example.com`"ドメインについてのDNS問い合わせをLinux1に転送する    
+    1. Windows Server 1(WinSrv1)の管理画面に接続する  
+    1. [DNSマネージャー]を起動する  
+    1. 左側コンソールツリーの[DNS]-[<サーバー名>]-[条件付きフォワーダー]をクリックして選択する    
+    1. [DNS]-[<サーバー名>]-[条件付きフォワーダー]を右クリックし、コンテキストメニュー内の[新規条件付きフォワーダー]をクリックする
+        <kbd>![img](image/12/11.png)</kbd> 
+    1. [新規条件付きフォワーダー]ウィンドウが表示されたことを確認する
+    1. [新規条件付きフォワーダー]ウィンドウで、以下のパラメータを入力する  
+
+        DNSドメイン:
+        | `example.com` | 
+        | :----- |
+ 
+        マスターサーバーのIPアドレスを構成する:
+        | 10.X.1.102 | 
+        | :----- |
+
+        - [ ] このActive Directoryに条件付きフォワーダーを保存し、次の方法でレプリケートする  
+
+        クエリ転送のタイムアウト(秒):
+        | 5 | 
+        | :----- |
+ 
+        <kbd>![img](image/12/12.png)</kbd> 
+
+        > 【補足】  
+        > マスターサーバーのIPアドレスの検証に失敗するエラーが表示されます。  
+        > これはマスターサーバー(Linux1)の逆引き参照が構成されていないために発生するエラーです。  
+        > 今回の演習環境では、このエラーを無視できます。  
+
+    1. [新規条件付きフォワーダー]ウィンドウで、[OK]をクリックする    
+
+1. 構成された条件付きフォワーダーを確認する  
+    1. 左側コンソールツリーの[DNS]-[<サーバー名>]-[条件付きフォワーダー]-[`example.com`]をクリックして選択する    
+    1. Linux1(10.X.1.102)のIPアドレスが指定されていることを確認する  
+        <kbd>![img](image/12/13.png)</kbd> 
+
+---  
+
+## 動作確認  
+
+1. Windows Clientに"admin"で接続する  
+    1. Windows Client(WinClient)の管理画面に "admin" で接続する     
+    1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
+    1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
+    1. Windows PowerShellのウィンドウが表示されたことを確認する  
+
+1. PowerShellで以下のコマンドを実行し、nslookupツールを起動する  
+    ＞ ***nslookup***  
+
+1. PowerShellで実行中のnslookupツールで以下のFQDNを入力し、DNSサーバーの名前解決の動作を確認する        
+
+    - `www.example.com.`
+
+    | FQDN | 期待する結果(名前解決されたIPアドレス)  |
+    | :----- |:----- |
+    | `www.example.com.` | 10.X.1.102 |  
+
+    ```
+    PS C:\Windows\system32> nslookup
+    既定のサーバー:  WindowsDNS.example.local
+    Address:  10.255.1.104
+
+    >
+    > www.example.com.
+    サーバー:  WindowsDNS.example.local
+    Address:  10.255.1.104
+
+    権限のない回答:
+    名前:    www.example.com
+    Address:  10.255.2.105
+
+    >
+    > quit
+    PS C:\Windows\system32>
+    PS C:\Windows\system32>
+    ```
+
+    <kbd>![img](image/12/21.png)</kbd> 
+
+1. ClientからWebサーバーにアクセスする
+    1. Webブラウザ(Google Chrome)を起動する  
+    1. Webブラウザのアドレス欄に [`http://www.example.com/web1`] と入力し、[Enter]キーを押下する  
+
+        <kbd>![img](image/12/31.png)</kbd> 
+
+    1. 認証情報を入力するポップアップが表示されたことを確認する  
+    1. 以下のパラメータを入力する  
+        | 項目 | パラメータ |  
+        | :----- | :----- |  
+        | ユーザー名 | Tom |   
+        | パスワード | Pa$$w0rd |   
+    1. 上のパラメータを入力し、[ログイン]をクリックする  
+    1. 基本認証を経て、Webコンテンツを利用できることを確認する
+
+        > 【動作テストの観点】  
+        > DNSサーバーで名前解決できることを確認する     
+
+        - [x] Webブラウザのアドレス欄にFQDNを指定してWebコンテンツを表示できること    
+
+        <kbd>![img](image/12/32.png)</kbd> 
+--- 
+
+## (オプション)逆引き参照ゾーンを構成する    
+この項の手順は省略しても後続の演習に支障ありません。  
+興味のある方だけ実施してください。  
 
 
-## DNSフォワーディングを構成する  
-1.1 
+(オプション)
+    フォワーディング が構成ずみ
+    インターネットの名前解決ができる、変更しない
 
-## ACLを構成する
+
+
+## (オプション)ACLを構成する
 NW1からは受け付けるが、NW2からは受け付けない
 
 
 
+
+
+
+## (オプション)レコード変更とキャッシュ削除
+CSRのレコード変更でいいかな
+フォワーディングしてからのほうがいいかな
 
 
 
@@ -592,10 +717,6 @@ NW1からは受け付けるが、NW2からは受け付けない
 
 挙動が違うよ
 
-
-# レコード変更とキャッシュ削除
-CSRのレコード変更でいいかな
-フォワーディングしてからのほうがいいかな
 
 
 
