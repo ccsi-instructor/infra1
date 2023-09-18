@@ -138,178 +138,178 @@
     </details>
 
 
-<!--
-yumのインストール処理が途中で停止することがあります。(killed)  
-その場合は sudo yum-complete-transaction を実行します。
+    <!--
+    yumのインストール処理が途中で停止することがあります。(killed)  
+    その場合は sudo yum-complete-transaction を実行します。
 
-[admin@linux2 ~]$ sudo yum install bind bind-utils
-Loaded plugins: langpacks
-Resolving Dependencies
+    [admin@linux2 ~]$ sudo yum install bind bind-utils
+    Loaded plugins: langpacks
+    Resolving Dependencies
 
---＞ Running transaction check
----＞ Package bind.x86_64 32:9.11.4-26.P2.el7_9.14 will be installed
---＞ Processing Dependency: bind-libs-lite(x86-64) = 32:9.11.4-26.P2.el7_9.14 for package: 32:bind-9.11.4-26.P2.el7_9.14.x86_64
---＞ Processing Dependency: bind-libs(x86-64) = 32:9.11.4-26.P2.el7_9.14 for package: 32:bind-9.11.4-26.P2.el7_9.14.x86_64
---＞ Processing Dependency: python-ply for package: 32:bind-9.11.4-26.P2.el7_9.14.x86_64
----＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
----＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
---＞ Running transaction check
----＞ Package bind-libs.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
----＞ Package bind-libs.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
---＞ Processing Dependency: bind-license = 32:9.11.4-26.P2.el7_9.14 for package: 32:bind-libs-9.11.4-26.P2.el7_9.14.x86_64
----＞ Package bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
----＞ Package bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
----＞ Package python-ply.noarch 0:3.4-11.el7 will be installed
---＞ Running transaction check
----＞ Package bind-license.noarch 32:9.11.4-26.P2.el7_9.13 will be updated
----＞ Package bind-license.noarch 32:9.11.4-26.P2.el7_9.14 will be an update
---＞ Finished Dependency Resolution
+    --＞ Running transaction check
+    ---＞ Package bind.x86_64 32:9.11.4-26.P2.el7_9.14 will be installed
+    --＞ Processing Dependency: bind-libs-lite(x86-64) = 32:9.11.4-26.P2.el7_9.14 for package: 32:bind-9.11.4-26.P2.el7_9.14.x86_64
+    --＞ Processing Dependency: bind-libs(x86-64) = 32:9.11.4-26.P2.el7_9.14 for package: 32:bind-9.11.4-26.P2.el7_9.14.x86_64
+    --＞ Processing Dependency: python-ply for package: 32:bind-9.11.4-26.P2.el7_9.14.x86_64
+    ---＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
+    ---＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
+    --＞ Running transaction check
+    ---＞ Package bind-libs.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
+    ---＞ Package bind-libs.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
+    --＞ Processing Dependency: bind-license = 32:9.11.4-26.P2.el7_9.14 for package: 32:bind-libs-9.11.4-26.P2.el7_9.14.x86_64
+    ---＞ Package bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
+    ---＞ Package bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
+    ---＞ Package python-ply.noarch 0:3.4-11.el7 will be installed
+    --＞ Running transaction check
+    ---＞ Package bind-license.noarch 32:9.11.4-26.P2.el7_9.13 will be updated
+    ---＞ Package bind-license.noarch 32:9.11.4-26.P2.el7_9.14 will be an update
+    --＞ Finished Dependency Resolution
 
-Dependencies Resolved
+    Dependencies Resolved
 
-========================================================================================================================================================================================
- Package                                    Arch                               Version                                              Repository                                     Size
-========================================================================================================================================================================================
-Installing:
- bind                                       x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             2.3 M
-Updating:
- bind-utils                                 x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             262 k
-Installing for dependencies:
- python-ply                                 noarch                             3.4-11.el7                                           base-openlogic                                123 k
-Updating for dependencies:
- bind-libs                                  x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             158 k
- bind-libs-lite                             x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             1.1 M
- bind-license                               noarch                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                              92 k
+    ========================================================================================================================================================================================
+    Package                                    Arch                               Version                                              Repository                                     Size
+    ========================================================================================================================================================================================
+    Installing:
+    bind                                       x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             2.3 M
+    Updating:
+    bind-utils                                 x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             262 k
+    Installing for dependencies:
+    python-ply                                 noarch                             3.4-11.el7                                           base-openlogic                                123 k
+    Updating for dependencies:
+    bind-libs                                  x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             158 k
+    bind-libs-lite                             x86_64                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                             1.1 M
+    bind-license                               noarch                             32:9.11.4-26.P2.el7_9.14                             updates-openlogic                              92 k
 
-Transaction Summary
-========================================================================================================================================================================================
-Install  1 Package (+1 Dependent package)
-Upgrade  1 Package (+3 Dependent packages)
+    Transaction Summary
+    ========================================================================================================================================================================================
+    Install  1 Package (+1 Dependent package)
+    Upgrade  1 Package (+3 Dependent packages)
 
-Total download size: 4.1 M
-Is this ok [y/d/N]: y
-Downloading packages:
-Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
-(1/6): bind-libs-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                                | 158 kB  00:00:00     
-(2/6): bind-libs-lite-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                           | 1.1 MB  00:00:00     
-(3/6): bind-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                                     | 2.3 MB  00:00:00     
-(4/6): bind-license-9.11.4-26.P2.el7_9.14.noarch.rpm                                                                                                             |  92 kB  00:00:00     
-(5/6): bind-utils-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                               | 262 kB  00:00:00     
-(6/6): python-ply-3.4-11.el7.noarch.rpm                                                                                                                          | 123 kB  00:00:00     
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Total                                                                                                                                                   8.6 MB/s | 4.1 MB  00:00:00     
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  Updating   : 32:bind-license-9.11.4-26.P2.el7_9.14.noarch                                                                                                                        1/10 
-  Updating   : 32:bind-libs-lite-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                      2/10 
-  Updating   : 32:bind-libs-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                           3/10 
-  Installing : python-ply-3.4-11.el7.noarch                                                                                                                                        4/10 
-  Installing : 32:bind-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                                5/10 
-Killed
-[admin@linux2 ~]$ 
+    Total download size: 4.1 M
+    Is this ok [y/d/N]: y
+    Downloading packages:
+    Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+    (1/6): bind-libs-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                                | 158 kB  00:00:00     
+    (2/6): bind-libs-lite-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                           | 1.1 MB  00:00:00     
+    (3/6): bind-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                                     | 2.3 MB  00:00:00     
+    (4/6): bind-license-9.11.4-26.P2.el7_9.14.noarch.rpm                                                                                                             |  92 kB  00:00:00     
+    (5/6): bind-utils-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                               | 262 kB  00:00:00     
+    (6/6): python-ply-3.4-11.el7.noarch.rpm                                                                                                                          | 123 kB  00:00:00     
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Total                                                                                                                                                   8.6 MB/s | 4.1 MB  00:00:00     
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+    Updating   : 32:bind-license-9.11.4-26.P2.el7_9.14.noarch                                                                                                                        1/10 
+    Updating   : 32:bind-libs-lite-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                      2/10 
+    Updating   : 32:bind-libs-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                           3/10 
+    Installing : python-ply-3.4-11.el7.noarch                                                                                                                                        4/10 
+    Installing : 32:bind-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                                5/10 
+    Killed
+    [admin@linux2 ~]$ 
 
 
-[admin@linux2 ~]$ sudo yum install bind bind-utils
-BDB2053 Freeing read locks for locker 0x24: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x26: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x35: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x37: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x38: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x39: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x3a: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x3b: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x3c: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x3d: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x3e: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x3f: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x40: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x41: 2526/140218772551488
-BDB2053 Freeing read locks for locker 0x42: 2526/140218772551488
-Loaded plugins: langpacks
-Package 32:bind-9.11.4-26.P2.el7_9.14.x86_64 already installed and latest version
-Resolving Dependencies
-There are unfinished transactions remaining. You might consider running yum-complete-transaction, or "yum-complete-transaction --cleanup-only" and "yum history redo last", first to fin
-ish them. If those don't work you'll have to try removing/installing packages by hand (maybe package-cleanup can help).
---＞ Running transaction check
----＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
----＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
---＞ Finished Dependency Resolution
+    [admin@linux2 ~]$ sudo yum install bind bind-utils
+    BDB2053 Freeing read locks for locker 0x24: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x26: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x35: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x37: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x38: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x39: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x3a: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x3b: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x3c: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x3d: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x3e: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x3f: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x40: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x41: 2526/140218772551488
+    BDB2053 Freeing read locks for locker 0x42: 2526/140218772551488
+    Loaded plugins: langpacks
+    Package 32:bind-9.11.4-26.P2.el7_9.14.x86_64 already installed and latest version
+    Resolving Dependencies
+    There are unfinished transactions remaining. You might consider running yum-complete-transaction, or "yum-complete-transaction --cleanup-only" and "yum history redo last", first to fin
+    ish them. If those don't work you'll have to try removing/installing packages by hand (maybe package-cleanup can help).
+    --＞ Running transaction check
+    ---＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 will be updated
+    ---＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 will be an update
+    --＞ Finished Dependency Resolution
 
-Dependencies Resolved
+    Dependencies Resolved
 
-========================================================================================================================================================================================
- Package                                 Arch                                Version                                               Repository                                      Size
-========================================================================================================================================================================================
-Updating:
- bind-utils                              x86_64                              32:9.11.4-26.P2.el7_9.14                              updates-openlogic                              262 k
+    ========================================================================================================================================================================================
+    Package                                 Arch                                Version                                               Repository                                      Size
+    ========================================================================================================================================================================================
+    Updating:
+    bind-utils                              x86_64                              32:9.11.4-26.P2.el7_9.14                              updates-openlogic                              262 k
 
-Transaction Summary
-========================================================================================================================================================================================
-Upgrade  1 Package
+    Transaction Summary
+    ========================================================================================================================================================================================
+    Upgrade  1 Package
 
-Total size: 262 k
-Is this ok [y/d/N]: 
+    Total size: 262 k
+    Is this ok [y/d/N]: 
 
-[admin@linux2 ~]$ sudo yum-complete-transaction
-Loaded plugins: langpacks
-There are 1 outstanding transactions to complete. Finishing the most recent one
-The remaining transaction had 6 elements left to run
-Package 32:bind-9.11.4-26.P2.el7_9.14.x86_64 already installed and latest version
-Removing bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 - ud from the transaction
-Removing bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 - u from the transaction
---＞ Running transaction check
----＞ Package bind-libs.x86_64 32:9.11.4-26.P2.el7_9.13 will be erased
----＞ Package bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.13 will be erased
----＞ Package bind-license.noarch 32:9.11.4-26.P2.el7_9.13 will be erased
----＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 will be erased
---＞ Finished Dependency Resolution
+    [admin@linux2 ~]$ sudo yum-complete-transaction
+    Loaded plugins: langpacks
+    There are 1 outstanding transactions to complete. Finishing the most recent one
+    The remaining transaction had 6 elements left to run
+    Package 32:bind-9.11.4-26.P2.el7_9.14.x86_64 already installed and latest version
+    Removing bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 - ud from the transaction
+    Removing bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 - u from the transaction
+    --＞ Running transaction check
+    ---＞ Package bind-libs.x86_64 32:9.11.4-26.P2.el7_9.13 will be erased
+    ---＞ Package bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.13 will be erased
+    ---＞ Package bind-license.noarch 32:9.11.4-26.P2.el7_9.13 will be erased
+    ---＞ Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 will be erased
+    --＞ Finished Dependency Resolution
 
-Dependencies Resolved
+    Dependencies Resolved
 
-========================================================================================================================================================================================
- Package                                      Arch                                 Version                                                 Repository                              Size
-========================================================================================================================================================================================
-Removing:
- bind-libs                                    x86_64                               32:9.11.4-26.P2.el7_9.13                                @updates                               185 k
- bind-libs-lite                               x86_64                               32:9.11.4-26.P2.el7_9.13                                @updates                               3.0 M
- bind-license                                 noarch                               32:9.11.4-26.P2.el7_9.13                                @updates                                29 k
- bind-utils                                   x86_64                               32:9.11.4-26.P2.el7_9.13                                @updates                               584 k
+    ========================================================================================================================================================================================
+    Package                                      Arch                                 Version                                                 Repository                              Size
+    ========================================================================================================================================================================================
+    Removing:
+    bind-libs                                    x86_64                               32:9.11.4-26.P2.el7_9.13                                @updates                               185 k
+    bind-libs-lite                               x86_64                               32:9.11.4-26.P2.el7_9.13                                @updates                               3.0 M
+    bind-license                                 noarch                               32:9.11.4-26.P2.el7_9.13                                @updates                                29 k
+    bind-utils                                   x86_64                               32:9.11.4-26.P2.el7_9.13                                @updates                               584 k
 
-Transaction Summary
-========================================================================================================================================================================================
-Remove  4 Packages
+    Transaction Summary
+    ========================================================================================================================================================================================
+    Remove  4 Packages
 
-Installed size: 3.7 M
-Is this ok [y/N]: y
-Downloading packages:
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-Warning: RPMDB altered outside of yum.
-** Found 3 pre-existing rpmdb problem(s), 'yum check' output follows:
-diffutils-3.3-6.el7_9.x86_64 is a duplicate with diffutils-3.3-5.el7.x86_64
-samba-client-libs-4.10.16-24.el7_9.x86_64 has missing requires of samba-common = ('0', '4.10.16', '24.el7_9')
-samba-common-libs-4.10.16-24.el7_9.x86_64 has missing requires of samba-common = ('0', '4.10.16', '24.el7_9')
-  Erasing    : 32:bind-utils-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                           1/4 
-  Erasing    : 32:bind-libs-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                            2/4 
-  Erasing    : 32:bind-libs-lite-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                       3/4 
-  Erasing    : 32:bind-license-9.11.4-26.P2.el7_9.13.noarch                                                                                                                         4/4 
-  Verifying  : 32:bind-libs-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                            1/4 
-  Verifying  : 32:bind-license-9.11.4-26.P2.el7_9.13.noarch                                                                                                                         2/4 
-  Verifying  : 32:bind-utils-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                           3/4 
-  Verifying  : 32:bind-libs-lite-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                       4/4 
+    Installed size: 3.7 M
+    Is this ok [y/N]: y
+    Downloading packages:
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+    Warning: RPMDB altered outside of yum.
+    ** Found 3 pre-existing rpmdb problem(s), 'yum check' output follows:
+    diffutils-3.3-6.el7_9.x86_64 is a duplicate with diffutils-3.3-5.el7.x86_64
+    samba-client-libs-4.10.16-24.el7_9.x86_64 has missing requires of samba-common = ('0', '4.10.16', '24.el7_9')
+    samba-common-libs-4.10.16-24.el7_9.x86_64 has missing requires of samba-common = ('0', '4.10.16', '24.el7_9')
+    Erasing    : 32:bind-utils-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                           1/4 
+    Erasing    : 32:bind-libs-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                            2/4 
+    Erasing    : 32:bind-libs-lite-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                       3/4 
+    Erasing    : 32:bind-license-9.11.4-26.P2.el7_9.13.noarch                                                                                                                         4/4 
+    Verifying  : 32:bind-libs-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                            1/4 
+    Verifying  : 32:bind-license-9.11.4-26.P2.el7_9.13.noarch                                                                                                                         2/4 
+    Verifying  : 32:bind-utils-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                           3/4 
+    Verifying  : 32:bind-libs-lite-9.11.4-26.P2.el7_9.13.x86_64                                                                                                                       4/4 
 
-Removed:
-  bind-libs.x86_64 32:9.11.4-26.P2.el7_9.13  bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.13  bind-license.noarch 32:9.11.4-26.P2.el7_9.13  bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 
+    Removed:
+    bind-libs.x86_64 32:9.11.4-26.P2.el7_9.13  bind-libs-lite.x86_64 32:9.11.4-26.P2.el7_9.13  bind-license.noarch 32:9.11.4-26.P2.el7_9.13  bind-utils.x86_64 32:9.11.4-26.P2.el7_9.13 
 
-Complete!
-Cleaning up completed transaction file
-[admin@linux2 ~]$ 
+    Complete!
+    Cleaning up completed transaction file
+    [admin@linux2 ~]$ 
 
--->
+    -->
 
 
 1. インストールされたパッケージを確認する  
@@ -417,17 +417,17 @@ Cleaning up completed transaction file
     > Tabキーもしくは複数個の半角スペースを使用してください。
 
 
-<!--
-> Tabキーでインデントを作成するのは、トラブルの原因になる場合があります。。  
-> Tabは環境によって解釈が異なる場合があるため、コピー&貼り付け操作が正常に動作しないことがあるためです。    
--->
+    <!--
+    > Tabキーでインデントを作成するのは、トラブルの原因になる場合があります。。  
+    > Tabは環境によって解釈が異なる場合があるため、コピー&貼り付け操作が正常に動作しないことがあるためです。    
+    -->
 
 
-<!--
-> SOAレコードの解説です。  
-> ns.example.com. はDNSサーバーです。  
-> admin.example.com. は admin@example.comのメールアドレスがこのDNSゾーンの管理者であることを示します。  
--->
+    <!--
+    > SOAレコードの解説です。  
+    > ns.example.com. はDNSサーバーです。  
+    > admin.example.com. は admin@example.comのメールアドレスがこのDNSゾーンの管理者であることを示します。  
+    -->
 ---  
 
 
@@ -478,11 +478,19 @@ Cleaning up completed transaction file
     >   - "type master"は、このサーバーが権威サーバーであることを示します。  
     >   - 作成済みのDNSゾーンファイル(example.com.zone)をインポートします。  
 
+
+
+
+
+
+
+
+
+
+
     <details>
     <summary>[参考]named.conf全文 (クリックで表示):</summary>  
 
-
-    
     ```     
     [admin@linux1 ~]$ sudo  cat  /etc/named.conf
     //
@@ -554,6 +562,11 @@ Cleaning up completed transaction file
     ```
     </details>
 
+    <!--
+    detailsタグを使用する際は、3連バッククォートとの間にスペースなしの完全な空行を挿入する必要がある  
+    -->
+
+
 
 1. BIND(named)サービスを自動起動に設定する  
     ＞ ***sudo systemctl enable named***  
@@ -566,12 +579,12 @@ Cleaning up completed transaction file
     > サービスの起動に失敗した場合は、"journalctl -xe | grep named" コマンドでログを確認し、エラーの原因を調査します。
     > configを修正してから "sudo systemctl restart named" でサービスを再起動します。
 
-<!--
-"sudo systemctl status named.service"でサービス起動時のログを参照できます。  
-/usr/sbin/named-checkzone でゾーンファイルの検証ができます。
-使用例:
-    /usr/sbin/named-checkzone example.com /etc/named/example.com.zone
--->
+    <!--
+    "sudo systemctl status named.service"でサービス起動時のログを参照できます。  
+    /usr/sbin/named-checkzone でゾーンファイルの検証ができます。
+    使用例:
+        /usr/sbin/named-checkzone example.com /etc/named/example.com.zone
+    -->
 
 1. BIND(named)サービスのStatusを確認する  
     ＞ ***systemctl status named***  
@@ -685,31 +698,226 @@ Cleaning up completed transaction file
         - [x] Webブラウザのアドレス欄にFQDNを指定してWebコンテンツを表示できること    
 
         <kbd>![img](image/12/32.png)</kbd> 
+
+
 --- 
 
-## (オプション)逆引き参照ゾーンを構成する    
+## (オプション)BINDのACLを構成する      
 この項の手順は省略しても後続の演習に支障ありません。  
 興味のある方だけ実施してください。  
 
+1. BINDの構成ファイル("/etc/named.conf")の2つめのバックアップを作成する  
+    ＞ ***sudo cp /etc/named.conf /etc/named.conf.bak2***  
 
-(オプション)
-    フォワーディング が構成ずみ
-    インターネットの名前解決ができる、変更しない
-
-
-
-## (オプション)ACLを構成する
-NW1からは受け付けるが、NW2からは受け付けない
+1. BIND(named)のconfigファイルを編集する       
+    ＞ ***sudo vi /etc/named.conf ***  
+    ＞ ***diff /etc/named.conf /etc/named.conf.bak2***  
 
 
+    ```
+    [admin@linux1 ~]$ sudo diff /etc/named.conf /etc/named.conf.bak2
+    21c21
+    < allow-query     { dnsclientnw; };
+    ---
+    > allow-query     { any; };
+    67,69d66
+    < acl dnsclientnw{
+    <     10.255.1.0/24;
+    < };
+    [admin@linux1 ~]$ 
+    ```
+
+
+    <details>
+    <summary>[参考]named.conf全文 (クリックで表示):</summary>  
+
+    ```     
+    [admin@linux1 ~]$ sudo cat /etc/named.conf
+    //
+    // named.conf
+    //
+    // Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+    // server as a caching only nameserver (as a localhost DNS resolver only).
+    //
+    // See /usr/share/doc/bind*/sample/ for example named configuration files.
+    //
+    // See the BIND Administrator's Reference Manual (ARM) for details about the
+    // configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
+
+    options {
+    listen-on port 53 { any; };
+    listen-on-v6 port 53 { ::1; };
+    directory "/var/named";
+    dump-file "/var/named/data/cache_dump.db";
+    statistics-file "/var/named/data/named_stats.txt";
+    memstatistics-file "/var/named/data/named_mem_stats.txt";
+    recursing-file  "/var/named/data/named.recursing";
+    secroots-file   "/var/named/data/named.secroots";
+    allow-query     { dnsclientnw; };
+
+    /* 
+    - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+    - If you are building a RECURSIVE (caching) DNS server, you need to enable 
+    recursion. 
+    - If your recursive DNS server has a public IP address, you MUST enable access 
+    control to limit queries to your legitimate users. Failing to do so will
+    cause your server to become part of large scale DNS amplification 
+    attacks. Implementing BCP38 within your network would greatly
+    reduce such attack surface 
+    */
+    recursion yes;
+
+    dnssec-enable yes;
+    dnssec-validation yes;
+
+    /* Path to ISC DLV key */
+    bindkeys-file "/etc/named.root.key";
+
+    managed-keys-directory "/var/named/dynamic";
+
+    pid-file "/run/named/named.pid";
+    session-keyfile "/run/named/session.key";
+    };
+
+    logging {
+            channel default_debug {
+                    file "data/named.run";
+                    severity dynamic;
+            };
+    };
+
+    zone "." IN {
+    type hint;
+    file "named.ca";
+    };
+
+    include "/etc/named.rfc1912.zones";
+    include "/etc/named.root.key";
+
+    zone "example.com" IN {
+    type master;
+    file "/etc/named/example.com.zone";
+    };
+
+    acl dnsclientnw{
+        10.255.1.0/24;
+    };
+
+    [admin@linux1 ~]$ 
+    ```
+
+    </details>
+
+    <!--
+    detailsタグを使用する際は、3連バッククォートとの間にスペースなしの完全な空行を挿入する必要がある
+    -->
+
+
+1. 10.X.1.0/24(Windows Client)からのDNS問い合わせはLinux1で許可されていることを確認する
+    1. Windows Clientに"admin"で接続する  
+        1. Windows Client(WinClient)の管理画面に "admin" で接続する     
+        1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
+        1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
+        1. Windows PowerShellのウィンドウが表示されたことを確認する  
+
+    1. PowerShellで以下のコマンドを実行し、nslookupツールを起動する  
+        ＞ ***nslookup***  
+
+    1. PowerShellで実行中のnslookupツールで以下のコマンドを実行し、DNS名前解決要求を送信する宛先DNSサーバーをLinux1(10.X.1.102)に指定する    
+        ＞ ***server 10.X.1.102***  
+
+    1. PowerShellで実行中のnslookupツールで以下のFQDNを入力し、DNSサーバーの名前解決の動作を確認する        
+        - `www.example.com.`
+
+        > 【動作テストの観点】  
+        > BINDのACLでdnsclientnw(10.X.1.0/24)としてallowされたWindows Client(10.X.1.103)は、名前解決ができることを確認する       
+        - [x] Linux1からDNS応答が返されること    
+
+        ```
+        PS C:\Windows\system32> nslookup
+        既定のサーバー:  WindowsDNS.example.local
+        Address:  10.255.1.104
+
+        >
+        > server 10.255.1.102
+        既定のサーバー:  [10.255.1.102]
+        Address:  10.255.1.102
+
+        >
+        > www.example.com.
+        サーバー:  [10.255.1.102]
+        Address:  10.255.1.102
+
+        名前:    www.example.com
+        Address:  10.255.2.105
+
+        >
+        > quit
+        PS C:\Windows\system32>
+        ```
+        <kbd>![img](image/12/41.png)</kbd> 
 
 
 
+
+1. 10.X.2.0/24(Windows Server 2)からのDNS問い合わせは、Linux1で拒否(Query refused)されることを確認する
+    1. Windows Server 2に"admin"で接続する  
+        1. Windows Server 2(WinSrv2)の管理画面に "admin" で接続する     
+        1. [スタートメニュー]を右クリックし、コンテキストメニュー内の[Windows PowerShell(管理者)]をクリックする  
+        1. [ユーザー アカウント制御]のポップアップで[はい]をクリックする  
+        1. Windows PowerShellのウィンドウが表示されたことを確認する  
+
+    1. PowerShellで以下のコマンドを実行し、nslookupツールを起動する  
+        ＞ ***nslookup***  
+
+    1. PowerShellで実行中のnslookupツールで以下のコマンドを実行し、DNS名前解決要求を送信する宛先DNSサーバーをLinux1(10.X.1.102)に指定する    
+        ＞ ***server 10.X.1.102***  
+
+    1. PowerShellで実行中のnslookupツールで以下のFQDNを入力し、DNSサーバーの名前解決の動作を確認する        
+        - `www.example.com.`
+
+        > 【動作テストの観点】  
+        > BINDのACLでdnsclientnw(10.X.1.0/24)としてallowされていないWindows Server 2(10.X.2.105)は、名前解決ができないことを確認する       
+        - [x] Linux1からDNS応答が返されないこと    
+
+        ```
+        PS C:\Windows\system32> nslookup
+        既定のサーバー:  WindowsDNS.example.local
+        Address:  10.255.1.104
+
+        > server 10.255.1.102
+        既定のサーバー:  [10.255.1.102]
+        Address:  10.255.1.102
+
+        >
+        > www.example.com.
+        サーバー:  [10.255.1.102]
+        Address:  10.255.1.102
+
+        *** [10.255.1.102] が www.example.com. を見つけられません: Query refused
+        >
+        > quit
+        PS C:\Windows\system32>
+        ```
+        <kbd>![img](image/12/42.png)</kbd> 
+
+
+
+---  
+
+## (オプション) フォワーダーの動作を確認する        
+この項の手順は省略しても後続の演習に支障ありません。  
+興味のある方だけ実施してください。  
+
+再帰もoffにしちゃおう
+
+
+
+--- 
 
 ## (オプション)レコード変更とキャッシュ削除
 CSRのレコード変更でいいかな
 フォワーディングしてからのほうがいいかな
-
 
 
 ## WindowsのnslookupでOSと異なるプレフィックスを調べる際は、

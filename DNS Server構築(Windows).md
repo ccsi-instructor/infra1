@@ -454,10 +454,10 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
 
 
 1. PowerShellで実行中のnslookupツールで以下のコマンドを実行し、DNS名前解決要求を送信する宛先DNSサーバーを明示的に指定する    
-    ＞ ***set server=10.X.1.104***  
+    ＞ ***server 10.X.1.104***  
 
     > 【補足】
-    > set serverオプションにより、nslookupツールのDNS名前解決要求の送信先DNSサーバーを指定できます。  
+    > serverオプションにより、nslookupツールのDNS名前解決要求の送信先DNSサーバーを指定できます。  
     > Windows Server 1を優先DNSサーバーとして使用するようにOSで設定されていますが、DNSサーバーの動作確認の手続きを学習するために、このコマンドで問い合わせ先のDNSサーバーを明示的に指定しています。 
 
     <kbd>![img](image/11/102.png)</kbd>  
