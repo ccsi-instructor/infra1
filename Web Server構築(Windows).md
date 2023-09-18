@@ -596,3 +596,8 @@
 - [x] 基本認証を構成する
 
 
+
+## 参考資料
+- Apple storeの「まもなくです」は、実は「503」エラーである
+    - https://claypier.com/apple-store-coming_soon-503/
+

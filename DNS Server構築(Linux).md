@@ -187,27 +187,26 @@
 ## "example.com"ゾーン ファイルを構成する   
 
 1. "example.com"ゾーン ファイルを作成する  
-    ＞ ***sudo touch /etc/named/example.com.db***  
+    ＞ ***sudo touch /etc/named/example.com.zone***  
 
-1. "example.com"ゾーン ファイル("/etc/named/example.com.db")のバックアップを作成する  
-    ＞ ***sudo cp /etc/named/example.com.db /etc/named/example.com.db.bak***  
+1. "example.com"ゾーン ファイル("/etc/named/example.com.zone")のバックアップを作成する  
+    ＞ ***sudo cp /etc/named/example.com.zone /etc/named/example.com.zone.bak***  
 
-1. "example.com"ゾーン ファイル("/etc/named/example.com.db")に、DNSゾーン情報を記述する    
-    ＞ ***sudo vi /etc/named/example.com.dbf***  
-    ＞ ***sudo diff /etc/named/example.com.db /etc/named/example.com.db.bak***
+1. "example.com"ゾーン ファイル("/etc/named/example.com.zone")に、DNSゾーン情報を記述する    
+    ＞ ***sudo vi /etc/named/example.com.zone***  
+    ＞ ***sudo diff /etc/named/example.com.zone /etc/named/example.com.zone.bak***
 
     ```
-    [admin@linux1 ~]$ sudo vi /etc/named/example.com.db
-    [admin@linux1 ~]$ sudo diff /etc/named/example.com.db /etc/named/example.com.db.bak
+    [admin@linux1 ~]$ sudo vi /etc/named/example.com.zone
+    [admin@linux1 ~]$ sudo diff /etc/named/example.com.zone /etc/named/example.com.zone.bak
     1,14d0
-    < @TTL  300
-    < @     IN  SOA     ns.example.com.  root(
-<   <                   1; Serial
+    < $TTL  300
+    < @     IN  SOA     ns.example.com.  admin.example.com.(
+    <                   1; Serial
     <                   600; Refresh
     <                   600; Retry
-    <                   600; Exprie
+    <                   600; Expire
     <                   300 ); Negativa Cache TTL
-    < ;
     < @     IN  NS      ns.example.com.
     < ns    IN  A       10.255.1.102
     < www   IN  A       10.255.2.105
@@ -217,18 +216,18 @@
     [admin@linux1 ~]$ 
     ```
 
-    /etc/named/example.com.db の情報(サンプルconfig)
+    /etc/named/example.com.zone の情報(サンプルconfig)
     ```
     $TTL    300
-    @IN      SOA     ns.example.com. root (
-    1; Serial
-    600     ; Refresh
-    600     ; Retry
-    600     ; Exprie
-    300 )   ; Negative Cache TTL
-    @IN      NS      ns.example.com.
-    ns      IN      A10.255.1.102
-    www     IN      A10.255.2.105
+    @       IN      SOA     ns.example.com. admin.example.com. (
+                            1; Serial
+                            600     ; Refresh
+                            600     ; Retry
+                            600     ; Expire
+                            300 )   ; Negative Cache TTL
+    @       IN      NS      ns.example.com.
+    ns      IN      A       10.255.1.102
+    www     IN      A       10.255.2.105
     ```
 
     > 【補足1】  
@@ -243,9 +242,23 @@
     > ゾーンファイル内のスペースやインデント(行頭の空白による字下げ)は必須ではありませんが、可読性を保つために一定間隔の空白を挿入するのが一般的です。
     > Tabキーもしくは複数個の半角スペースを使用してください。
 
+
+<!--
+> Tabキーでインデントを作成するのは、トラブルの原因になる場合があります。。  
+> Tabは環境によって解釈が異なる場合があるため、コピー&貼り付け操作が正常に動作しないことがあるためです。    
+-->
+
+
+<!--
+> SOAレコードの解説です。  
+> ns.example.com. はDNSサーバーです。  
+> admin.example.com. は admin@example.comのメールアドレスがこのDNSゾーンの管理者であることを示します。  
+-->
 ---  
 
-## BINDを構成する  
+
+
+## BINDの構成ファイルを編集する  
 
 1. BINDの構成ファイル("/etc/named.conf")のバックアップを作成する  
     ＞ ***sudo cp /etc/named.conf /etc/named.conf.bak***  
@@ -255,11 +268,118 @@
     ＞ ***diff /etc/named.conf /etc/named.conf.bak***  
 
 
+    ```
+    [admin@linux1 ~]$ sudo vi  /etc/named.conf  
+    [admin@linux1 ~]$ sudo diff  /etc/named.conf  /etc/named.conf.bak
+    62,67d61
+    < zone "example.com" IN {
+    < type master;
+    < file "/etc/named/example.com.zone";
+    < };
+    < 
+    < 
+    [admin@linux1 ~]$ 
+    ```
+    
 
 
 
 
+    <details>
+    <summary>[参考]named.conf全文 (クリックで表示):</summary>  
 
+
+    
+    ```     
+    [admin@linux1 ~]$ sudo  cat  /etc/named.conf
+    //
+    // named.conf
+    //
+    // Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+    // server as a caching only nameserver (as a localhost DNS resolver only).
+    //
+    // See /usr/share/doc/bind*/sample/ for example named configuration files.
+    //
+    // See the BIND Administrator's Reference Manual (ARM) for details about the
+    // configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
+   
+    options {
+    listen-on port 53 { 127.0.0.1; };
+    listen-on-v6 port 53 { ::1; };
+    directory "/var/named";
+    dump-file "/var/named/data/cache_dump.db";
+    statistics-file "/var/named/data/named_stats.txt";
+    memstatistics-file "/var/named/data/named_mem_stats.txt";
+    recursing-file  "/var/named/data/named.recursing";
+    secroots-file   "/var/named/data/named.secroots";
+    allow-query     { localhost; };
+
+    /* 
+    - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+    - If you are building a RECURSIVE (caching) DNS server, you need to enable 
+    recursion. 
+    - If your recursive DNS server has a public IP address, you MUST enable access 
+    control to limit queries to your legitimate users. Failing to do so will
+    cause your server to become part of large scale DNS amplification 
+    attacks. Implementing BCP38 within your network would greatly
+    reduce such attack surface 
+    */
+    recursion yes;
+
+    dnssec-enable yes;
+    dnssec-validation yes;
+
+    /* Path to ISC DLV key */
+    bindkeys-file "/etc/named.root.key";
+
+    managed-keys-directory "/var/named/dynamic";
+
+    pid-file "/run/named/named.pid";
+    session-keyfile "/run/named/session.key";
+    };
+
+    logging {
+            channel default_debug {
+                    file "data/named.run";
+                    severity dynamic;
+            };
+    };
+
+    zone "." IN {
+    type hint;
+    file "named.ca";
+    };
+
+    include "/etc/named.rfc1912.zones";
+    include "/etc/named.root.key";
+
+    zone "example.com" IN {
+    type master;
+    file "/etc/named/example.com.zone";
+    };
+
+    ```
+    </details>
+
+
+1. BIND(named)サービスを自動起動に設定する  
+    ＞ ***sudo systemctl enable named***  
+ 
+1. BIND(named)サービスを起動する  
+    ＞ ***sudo systemctl restart named***  
+
+
+    > 【確認ポイント】  
+    > サービスの起動に失敗した場合は、"journalctl -xe | grep named" コマンドでログを確認し、エラーの原因を調査します。
+    > configを修正してから "sudo systemctl restart named" でサービスを再起動します。
+
+
+1. BIND(named)サービスのStatusを確認する  
+    ＞ ***systemctl status named***  
+ 
+    > 【確認ポイント】  
+    > 'Active:' が 'active(running)'であることを確認する  
+    - [x] BIND(named)サービスが起動していること   
 
 
 
@@ -277,6 +397,12 @@ NW1からは受け付けるが、NW2からは受け付けない
 
 
 
+
+
+## WindowsのnslookupでOSと異なるプレフィックスを調べる際は、
+末尾に.をつける
+
+挙動が違うよ
 
 
 # レコード変更とキャッシュ削除
