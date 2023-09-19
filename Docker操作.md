@@ -60,6 +60,44 @@ print(sys.version)
 python3用のweb appを実行する
 pipenvで
 
+# 新イメージ作成
+wget https://raw.githubusercontent.com/ccsi-instructor/infra1/main/code/Dockerfile
+wget https://raw.githubusercontent.com/ccsi-instructor/infra1/main/code/Pipfile  
+wget https://raw.githubusercontent.com/ccsi-instructor/infra1/main/code/webapp.py  
+
+ls
+
+docker build -t my-image:1.0 .
+
+```
+[admin@linux2 python]$ docker build -t my-image:1.0 .
+[+] Building 36.4s (11/11) FINISHED                                                  docker:default
+ => [internal] load build definition from Dockerfile                                           0.1s
+ => => transferring dockerfile: 284B                                                           0.0s
+ => [internal] load .dockerignore                                                              0.1s
+ => => transferring context: 2B                                                                0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-alpine3.18                      0.0s
+ => [1/6] FROM docker.io/library/python:3.11-alpine3.18                                        0.4s
+ => [internal] load build context                                                              0.4s
+ => => transferring context: 598B                                                              0.0s
+ => [2/6] COPY ./webapp.py /app/                                                               0.1s
+ => [3/6] COPY ./Pipfile /app/                                                                 0.1s
+ => [4/6] WORKDIR /app/                                                                        0.1s
+ => [5/6] RUN pip install pipenv                                                              13.5s
+ => [6/6] RUN pipenv install                                                                  17.6s 
+ => exporting to image                                                                         2.6s 
+ => => exporting layers                                                                        2.6s 
+ => => writing image sha256:88bcffd825084ef5ff3fd1398a15ccd2c55104ad46ecfae8abb51aa8e90f7ce4   0.0s 
+ => => naming to docker.io/library/my-image:1.0                                                0.0s 
+[admin@linux2 python]$ 
+```
+
+
+docker image ls  
+
+ docker run -d -p 8080:80 my-image:1.0
+
+
 
 FROM python:alpine3.11
 
