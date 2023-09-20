@@ -17,13 +17,39 @@
 
 ---
 
-## グループポリシー
+## グループポリシーを構成する  
 
+1. Active Directoryユーザー 管理コンソールを起動する 
+    1. Active Directory ドメイン コントローラー(WinSrv1)の管理画面に接続する  
+    1. サーバーマネージャーウィンドウ右上の[ツール]をクリックする  
+    1. メニュー内の[Active Directoryユーザーとコンピューター]をクリックし、[Active Directoryユーザーとコンピューター]を起動する  
 
 1. "Employees" OUの下に "WallHole" OUを作成する  
-1. "WallHole" OU に "Jerry" を移動させる  
+    1. 左側コンソールツリーの[Active Directory ユーザーとコンピューター]-[example.local]-[Employee]をクリックして選択する    
+    1. [Employee]を右クリックし、コンテキストメニュー内の[新規作成]-[組織単位(OU)]をクリックする 
+    1. [新しいオブジェクト - 組織単位 (OU)]ウィンドウが起動したことを確認する  
+    1. [新しいオブジェクト - 組織単位 (OU)]ウィンドウで、以下のパラメータを入力する
 
+        | 項目 | パラメータ |
+        | :----- | :----- |
+        | 名前 | WallHole |
+
+        - [x] 間違って削除されないようにコンテナーを保護する  
+
+    1. [新しいオブジェクト - 組織単位 (OU)]ウィンドウで、[OK]をクリックする    
+    1. 左側コンソールツリーを参照し、[Active Directory ユーザーとコンピューター]-[example.local]-[Employees]-[WallHole]が作成されたことを確認する  
+
+1. "WallHole" OU に "Jerry" を移動させる  
+    1. 左側コンソールツリーの[Active Directory ユーザーとコンピューター]-[example.local]-[Employee]をクリックして選択する    
+    1. 右側ペインの[Jerry]を選択してクリックする  
+    1. [Jerry]を右クリックし、コンテキストメニュー内の[移動]をクリックする  
+    1. [移動]ウィンドウで、[example.local]-[Employees]-[WallHole]を選択し、[OK]をクリックする  
+    1. [Active Directory ユーザーとコンピューター]-[example.local]-[Employees]-[WallHole]にJerryが移動していることを確認する  
+    
 1. [グループポリシーの管理]を起動する  
+    1. サーバーマネージャーウィンドウ右上の[ツール]をクリックする  
+    1. メニュー内の[Active Directoryユーザーとコンピューター]をクリックし、[グループポリシーの管理]を起動する  
+
 
 1. "Employees" OUにリンクされた新しいグループポリシーオブジェクト "HideClock" を作成する  
     1. [Employees]をクリックして選択する
