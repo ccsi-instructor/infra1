@@ -1,5 +1,4 @@
-
-FROM python:3.11-alpine3.18
+FROM python:3.11-alpine
 
 COPY ./webapp.py /app/
 
@@ -11,7 +10,7 @@ RUN pip install pipenv
 
 RUN pipenv install 
 
-EXPOSE 8080
+EXPOSE 80
 
-CMD pipenv run python3.11 webapp.py
+CMD pipenv run python webapp.py
 
