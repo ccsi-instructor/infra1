@@ -435,7 +435,7 @@
 1. WinClientでWebブラウザ(Google Chrome)を起動する  
 
 1. Webブラウザのアドレス欄に [http://Linux1.example.local:8080/webapp] と入力し、[Enter]キーを押下する  
-    <kbd>![img](image/13/31.png)</kbd> 
+    <kbd>![img](image/14/31.png)</kbd> 
 
     > 【動作テストの観点】  
     > DockerでPython Webアプリケーションを提供できたことを確認する     
