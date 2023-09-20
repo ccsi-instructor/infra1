@@ -257,14 +257,14 @@
 
 --- 
 
-## Dockerイメージを作成する  
+## Python Webアプリケーションを組み込んだDockerイメージを作成する  
 
 1. Dockerfileを記述する  
-    ＞ ***touch Dockerfile***
-    ＞ ***cp Dockerfile Dockerfile.bak***
-    ＞ ***ls -l***
-    ＞ ***vi Dockerfile***
-    ＞ ***diff Dockerfile Dockfile.bak***
+    ＞ ***touch Dockerfile***  
+    ＞ ***cp Dockerfile Dockerfile.bak***  
+    ＞ ***ls -l***  
+    ＞ ***vi Dockerfile***  
+    ＞ ***diff Dockerfile Dockfile.bak***  
 
 
     ```
@@ -318,9 +318,6 @@
     CMD pipenv run python webapp.py
     ```
 
-
-
-
 1. Dockerイメージを作成(build)する  
     ＞ ***docker build -t my-image:1.0 .***  
 
@@ -351,101 +348,108 @@
     > コマンド末尾の . を見落とさないように注意してください。  
     > カレントディレクトリ(./)のDockerfileを使用する旨のパラメータ指定です。  
 
-1. 
+1. 作成したイメージが、ローカルのDockerイメージのリストに登録されていることを確認する  
+    ＞ ***docker image ls***  
 
+    ```
+    [admin@linux1 ~]$ docker image ls                                                                                                                                                       
+    REPOSITORY   TAG           IMAGE ID       CREATED         SIZE                                                                                                                          
+    my-image     1.0           8acaacd08c0e   6 minutes ago   136MB
+    python       3.11-alpine   b9b301ab01c2   3 weeks ago     52.1MB
+    [admin@linux1 ~]$ 
+    ```
 
-alpine
+1. 作成したイメージからコンテナを起動し、Python Webアプリケーションを実行させる    
+    ＞ ***docker run -d -p 8080:80 my-image:1.0***  
 
+    ```
+    [admin@linux1 ~]$ docker run -d -p 8080:80 my-image:1.0
+    83148b39972815eea38e284478b19068fc20ab5af6d245cd6cacfb5d05d8f793
+    [admin@linux1 ~]$ 
+    ```
 
-## Dockerイメージを作成する   
+1. 実行中のコンテナのステータスを確認する  
+    ＞ ***docker ps***   
 
+    ```
+    [admin@linux1 ~]$ docker ps 
+    CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                                   NAMES
+    83148b399728   my-image:1.0   "/bin/sh -c 'pipenv …"   5 minutes ago   Up 5 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   clever_fermat
+    [admin@linux1 ~]$ 
+    ```
 
+1. Linux1でListenしているポート番号を確認する    
+    ＞ ***netstat -tuln***  
 
+    > 【確認の観点】  
+    > Linux1が8080ポートをListenして通信を待ち受けしていることを確認する      
 
+    - [x] tcp 0.0.0.0:8080のエントリのStateがLISTENであること    
 
+    ```
+    [admin@linux1 ~]$ netstat -tuln
+    Active Internet connections (only servers)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+    tcp        0      0 0.0.0.0:139             0.0.0.0:*               LISTEN     
+    tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN     
+    tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN     
+    tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     
+    tcp        0      0 172.17.0.1:53           0.0.0.0:*               LISTEN     
+    tcp        0      0 10.255.1.102:53         0.0.0.0:*               LISTEN     
+    tcp        0      0 10.255.0.102:53         0.0.0.0:*               LISTEN     
+    tcp        0      0 127.0.0.1:53            0.0.0.0:*               LISTEN     
+    tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     
+    tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN     
+    tcp        0      0 127.0.0.1:953           0.0.0.0:*               LISTEN     
+    tcp        0      0 0.0.0.0:445             0.0.0.0:*               LISTEN     
+    tcp6       0      0 :::139                  :::*                    LISTEN     
+    tcp6       0      0 :::111                  :::*                    LISTEN     
+    tcp6       0      0 :::8080                 :::*                    LISTEN     
+    tcp6       0      0 ::1:53                  :::*                    LISTEN     
+    tcp6       0      0 :::22                   :::*                    LISTEN     
+    tcp6       0      0 ::1:25                  :::*                    LISTEN     
+    tcp6       0      0 ::1:953                 :::*                    LISTEN     
+    tcp6       0      0 :::445                  :::*                    LISTEN     
+    udp        0      0 0.0.0.0:111             0.0.0.0:*                          
+    udp        0      0 0.0.0.0:788             0.0.0.0:*                          
+    udp        0      0 127.0.0.1:323           0.0.0.0:*                          
+    udp        0      0 172.17.0.1:53           0.0.0.0:*                          
+    udp        0      0 10.255.1.102:53         0.0.0.0:*                          
+    udp        0      0 10.255.0.102:53         0.0.0.0:*                          
+    udp        0      0 127.0.0.1:53            0.0.0.0:*                          
+    udp        0      0 0.0.0.0:68              0.0.0.0:*                          
+    udp        0      0 0.0.0.0:68              0.0.0.0:*                          
+    udp6       0      0 :::111                  :::*                               
+    udp6       0      0 :::788                  :::*                               
+    udp6       0      0 ::1:323                 :::*                               
+    udp6       0      0 ::1:53                  :::*                               
+    [admin@linux1 ~]$ 
+    ```
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+## Python Webアプリケーションの動作を確認する  
 
+1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
 
-# Linux1はPython2環境であることを確認する
-python
-import sys
-print(sys.version)
+1. Windows Client(WinClient)の管理画面に "admin" で接続する  
 
-# pullする
-docker pull python:3.11-alpine3.18
+1. WinClientでWebブラウザ(Google Chrome)を起動する  
 
+1. Webブラウザのアドレス欄に [http://Linux1.example.local:8080/webapp] と入力し、[Enter]キーを押下する  
+    <kbd>![img](image/13/31.png)</kbd> 
 
-# alpineにログインする
-docker run -it python:3.11-alpine3.18 /bin/ash
+    > 【動作テストの観点】  
+    > DockerでPython Webアプリケーションを提供できたことを確認する     
 
-# alpineを起動してPythonを実行する
-docker run -it python:3.11-alpine3.18
-
-import sys
-print(sys.version)
-
-
-python3用のweb appを実行する
-pipenvで
-
-# 新イメージ作成
-wget https://raw.githubusercontent.com/ccsi-instructor/infra1/main/code/Dockerfile
-wget https://raw.githubusercontent.com/ccsi-instructor/infra1/main/code/Pipfile  
-wget https://raw.githubusercontent.com/ccsi-instructor/infra1/main/code/webapp.py  
-
-ls
-
-cat  
-
-docker build -t my-image:1.0 .
-
-```
-[admin@linux2 python]$ docker build -t my-image:1.0 .
-[+] Building 36.4s (11/11) FINISHED                                                  docker:default
- => [internal] load build definition from Dockerfile                                           0.1s
- => => transferring dockerfile: 284B                                                           0.0s
- => [internal] load .dockerignore                                                              0.1s
- => => transferring context: 2B                                                                0.0s
- => [internal] load metadata for docker.io/library/python:3.11-alpine3.18                      0.0s
- => [1/6] FROM docker.io/library/python:3.11-alpine3.18                                        0.4s
- => [internal] load build context                                                              0.4s
- => => transferring context: 598B                                                              0.0s
- => [2/6] COPY ./webapp.py /app/                                                               0.1s
- => [3/6] COPY ./Pipfile /app/                                                                 0.1s
- => [4/6] WORKDIR /app/                                                                        0.1s
- => [5/6] RUN pip install pipenv                                                              13.5s
- => [6/6] RUN pipenv install                                                                  17.6s 
- => exporting to image                                                                         2.6s 
- => => exporting layers                                                                        2.6s 
- => => writing image sha256:88bcffd825084ef5ff3fd1398a15ccd2c55104ad46ecfae8abb51aa8e90f7ce4   0.0s 
- => => naming to docker.io/library/my-image:1.0                                                0.0s 
-[admin@linux2 python]$ 
-```
-
-
-docker image ls  
-
- docker run -d -p 8080:80 my-image:1.0
-
-
-
-FROM python:alpine3.11
-
+    - [x] Webブラウザでアクセスし、webapp.pyからの応答を表示できること    
 
 
 ---  
 
 ## 演習完了  
 ここまでの手順で、以下の項目を学習できました。  
-- [x]   
+- [x] Docker Hubからイメージをpullする  
+- [x] 起動したコンテナで対話的操作をする  
+- [x] Dockerfileを記述し、新しいイメージを作成する    
 
 ## 参考資料
 - Docker Engine インストール (CentOS 向け)
