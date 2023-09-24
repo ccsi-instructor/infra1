@@ -200,10 +200,10 @@
     ```  
 
 1. python:3.11-alpine コンテナの管理操作環境を確認する    
-    ＞ ***hostname***
-    ＞ ***whoami***
-    ＞ ***pwd***
-    ＞ ***ls***
+    ＞ ***hostname***  
+    ＞ ***whoami***  
+    ＞ ***pwd***  
+    ＞ ***ls***  
 
     ```
     / # hostname
