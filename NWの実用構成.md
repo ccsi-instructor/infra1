@@ -102,7 +102,7 @@ wget http://10.X.1.102/index.html
     Length: 105 [text/html]
     Saving to: ‘index.html’
 
-    100%[==============================================================================================================================================>] 105         --.-K/s   in 0s      
+    100%[======================================================>] 105         --.-K/s   in 0s      
 
     2023-09-25 04:45:01 (7.76 MB/s) - ‘index.html’ saved [105/105]
 
@@ -134,6 +134,10 @@ wget http://10.X.1.102/index.html
 1. DNS nslookupツールをインストールする 
     ＞ sudo yum -y install bind-utils
     ＞ yum list installed | grep bind-utils
+
+
+<details>
+<summary>[参考]yum実行時のログ出力例 (クリックで表示):</summary>
 
     ```
     [admin@linux2 ~]$ sudo yum -y install bind-utils
@@ -174,6 +178,9 @@ wget http://10.X.1.102/index.html
     bind-utils.x86_64              32:9.11.4-26.P2.el7_9.14       @updates-openlogic
     [admin@linux2 ~]$ 
     ```
+
+</details>
+
 
 1. Windows Server 1 と Windows Server 2のDNSに問い合わせできることを確認する  
     ＞ nslookup  
@@ -282,6 +289,10 @@ CSR2(config-ext-nacl)#
 CSR2(config)# ip access-list extended ACL_PACKETFILTER  
 CSR2(config-ext-nacl)# 30 permit tcp any host 10.255.2.105 eq 80 443 1080 
 
+
+<!--
+宛先ポート番号の指定を複数個記述することもできます。  
+-->
 CSR2(config-ext-nacl)# 99 deny ip any any log 
 CSR2(config-ext-nacl)# exit
 CSR2(config)# do 
@@ -299,6 +310,92 @@ CSR2(config-if)# ip access-group ACL_PACKETFILTER in
 CSR2(config-if)# exit
 CSR2(config)# end
 CSR2# 
+CSR2#show ip interface GigabitEthernet 2 
+GigabitEthernet2 is up, line protocol is up
+  Internet address is 10.255.3.254/24
+  Broadcast address is 255.255.255.255
+  Address determined by DHCP
+  MTU is 1500 bytes
+  Helper address is not set
+  Directed broadcast forwarding is disabled
+  Outgoing Common access list is not set 
+  Outgoing access list is not set
+  Inbound Common access list is not set 
+  Inbound  access list is ACL_PACKETFILTER                      ← "ACL_PACKETFILTER"がインターフェイスに適用されていることを確認する  
+  Proxy ARP is enabled
+  Local Proxy ARP is disabled
+CSR2# 
+
+
+## 動作確認  
+
+
+1. Web
+    ＞ `wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`
+    ＞ ls  
+    ＞ cat web1
+
+    ```
+    [admin@linux2 ~]$ wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd
+    --2023-09-25 08:29:18--  http://10.255.2.105/web1
+    Connecting to 10.255.2.105:80... connected.
+    HTTP request sent, awaiting response... 401 Unauthorized
+    Reusing existing connection to 10.255.2.105:80.
+    HTTP request sent, awaiting response... 301 Moved Permanently
+    Location: http://10.255.2.105/web1/ [following]
+    --2023-09-25 08:29:18--  http://10.255.2.105/web1/
+    Reusing existing connection to 10.255.2.105:80.
+    HTTP request sent, awaiting response... 200 OK
+    Length: 133 [text/html]
+    Saving to: ‘web1.1’
+
+    100%[=======================================>] 133         --.-K/s   in 0s      
+
+    2023-09-25 08:29:18 (19.5 MB/s) - ‘web1.1’ saved [133/133]
+
+    [admin@linux2 ~]$ 
+    [admin@linux2 ~]$ ls -l
+    total 16
+    -rw-rw-r--. 1 admin admin 105 Sep  5 15:13 index.html
+    -rw-rw-r--. 1 admin admin 133 Aug 23 02:52 web1
+    -rw-rw-r--. 1 admin admin 133 Aug 23 02:52 web1.1
+    [admin@linux2 ~]$ 
+    [admin@linux2 ~]$ cat web1.1
+    <html>
+
+    <font size="7">
+    Let's HTML document!
+    </font>
+
+    <img src="pic.png">
+
+    <a href="document.txt">
+    link
+    </a>
+
+    </html>
+
+    [admin@linux2 ~]$ 
+    ```
+
+Linux1 
+    ＞ wget http://10.X.1.102/index.html
+
+    ```
+    [admin@linux2 ~]$ wget http://10.255.1.102/index.html
+    --2023-09-25 08:19:23--  http://10.255.1.102/index.html
+    Connecting to 10.255.1.102:80... failed: No route to host.
+    [admin@linux2 ~]$ 
+    ```
+
+
+CSR2# show ip access-lists ACL_PACKETFILTER
+Extended IP access list ACL_PACKETFILTER
+    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain (2 matches)
+    20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active) (4 matches)
+    30 permit tcp any host 10.255.2.105 eq www 443 1080 (32 matches)
+    99 deny ip any any log (17 matches)
+CSR2#
 
 
 
