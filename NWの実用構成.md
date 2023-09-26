@@ -14,7 +14,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 - Linux1のWebサーバー(NGINX)が構成済みであること
 - Linux1のDNSサーバー(BIND)が構成済みであること
 - Windows Server 2の Webサーバー(IIS)が構成済みであること
-
+- Windows Server 2の DNSサーバーが構成済みであること
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号
@@ -327,6 +327,10 @@ GigabitEthernet2 is up, line protocol is up
 CSR2# 
 
 
+
+保存
+    CSR2# write
+
 ## 動作確認  
 
 
@@ -399,108 +403,451 @@ CSR2#
 
 
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+## NAPTを構成する  
+
+CSR1(config)# ip access-list Standard ACL_NAPT  
+CSR1(config-std-nacl)# permit 10.255.1.0 0.0.0.255  
+CSR1(config-std-nacl)# exit  
+CSR1(config)# ip nat inside source list ACL_NAPT interface GigabitEthernet 2 overload   
+
+CSR1(config)# interface gigabitEthernet 1
+CSR1(config-if)# ip nat inside 
+CSR1(config-if)# exit 
+CSR1(config)# interface gigabitEthernet 2
+CSR1(config-if)# ip nat outside 
+CSR1(config-if)# exit  
+CSR1(config)# exit  
+
+CSR1(config)# end  
+CSR1# write   
 
 
-1. Router1の管理画面に接続する  
-    <kbd>![img](image/02/11.png)</kbd>
-1. 管理画面のプロンプト表記を確認し、Router1に接続していることを確認する  
-    <kbd>![img](image/02/12.png)</kbd>
+
+
+CSR1(config)# end 
+
+
+
+
+CSR1#show ip nat translations 
+Pro  Inside global         Inside local          Outside local         Outside global
+udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:57013    10.255.2.105:57013
+tcp  10.255.2.253:5063     10.255.1.103:60735    10.255.2.105:80       10.255.2.105:80
+udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:59623    10.255.2.105:59623
+udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:64805    10.255.2.105:64805
+tcp  10.255.2.253:5065     10.255.1.103:60739    10.255.2.105:1080     10.255.2.105:1080
+udp  10.255.2.253:512      10.255.1.104:389      10.255.2.105:57013    10.255.2.105:57013
+tcp  10.255.2.253:5062     10.255.1.103:60734    10.255.2.105:80       10.255.2.105:80
+udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:61280    10.255.2.105:61280
+udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:50277    10.255.2.105:50277
+tcp  10.255.2.253:5064     10.255.1.103:60736    10.255.2.105:80       10.255.2.105:80
+udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:59624    10.255.2.105:59624
+udp  10.255.2.253:512      10.255.1.104:389      10.255.2.105:59731    10.255.2.105:59731
+Total number of translations: 12
+
+CSR1#
+
+
+
+Webサーバーのログをみる
+
+
+
+## 静的ルーティングを削除する  
+
+1. Router1(CSR1)のStatic Routeを削除する  
+    1. Router1(CSR1)の管理画面に接続する 
+
+    1. 以下のコマンドを実行し、10.0.0.0/8ネットワークについて現在のルーティングエントリを確認する    
+        ＞ ***show ip route 10.0.0.0***  
+
+        ```
+        CSR1#show ip route 10.0.0.0
+        Routing entry for 10.0.0.0/8, 5 known subnets
+        Attached (4 connections)
+        Variably subnetted with 2 masks
+        C        10.255.1.0/24 is directly connected, GigabitEthernet1
+        L        10.255.1.254/32 is directly connected, GigabitEthernet1
+        C        10.255.2.0/24 is directly connected, GigabitEthernet2
+        L        10.255.2.253/32 is directly connected, GigabitEthernet2
+        S        10.255.3.0/24 [1/0] via 10.255.2.254
+        CSR1#
+        ```
+
+        > 【確認ポイント】
+        > 10.X.3.0/24ネットワーク宛のルーティング情報として、Router2(CSR2)をNextHopとするStatic Routeが認識されていることを確認する  
+
+
+    1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
+        ＞ ***conf t***  
+
+        ```
+        CSR1#conf t
+        Enter configuration commands, one per line.  End with CNTL/Z.
+        CSR1(config)#
+        CSR1(config)#
+        ```
+
+    1. 以下のコマンドを実行し、Router1(CSR1)に作成されているStatic Routeを削除する    
+        ＞ ***no ip route 10.X.3.0 255.255.255.0 10.X.2.254***  
+        ＞ ***end***  
+        ＞ ***show ip route 10.0.0.0***  
+
+        ```
+        CSR1(config)#no ip route 10.255.3.0 255.255.255.0 10.255.2.254
+        CSR1(config)#end
+        CSR1#show ip route 10.0.0.0
+        Routing entry for 10.0.0.0/8, 4 known subnets
+        Attached (4 connections)
+        Variably subnetted with 2 masks
+        C        10.255.1.0/24 is directly connected, GigabitEthernet1
+        L        10.255.1.254/32 is directly connected, GigabitEthernet1
+        C        10.255.2.0/24 is directly connected, GigabitEthernet2
+        L        10.255.2.253/32 is directly connected, GigabitEthernet2
+        CSR1#
+        ```
+
+1. Router2(CSR2)のStatic Routeを削除する  
+    1. Router2(CSR2)の管理画面に接続する 
+
+    1. 以下のコマンドを実行し、10.0.0.0/8ネットワークについて現在のルーティングエントリを確認する    
+        ＞ ***show ip route 10.0.0.0***  
+
+        ```
+        CSR2#show ip route 10.0.0.0
+        Routing entry for 10.0.0.0/8, 5 known subnets
+        Attached (4 connections)
+        Variably subnetted with 2 masks
+        S        10.255.1.0/24 [1/0] via 10.255.2.253
+        C        10.255.2.0/24 is directly connected, GigabitEthernet1
+        L        10.255.2.254/32 is directly connected, GigabitEthernet1
+        C        10.255.3.0/24 is directly connected, GigabitEthernet2
+        L        10.255.3.254/32 is directly connected, GigabitEthernet2
+        CSR2#
+        ```
+
+        > 【確認ポイント】
+        > 10.X.1.0/24ネットワーク宛のルーティング情報として、Router1(CSR1)をNextHopとするStatic Routeが認識されていることを確認する  
+
+
+    1. 以下のコマンドを実行し、Router2(CSR2)に作成されているStatic Routeを削除する    
+        ＞ ***conf t***  
+        ＞ ***no ip route 10.X.1.0 255.255.255.0 10.X.2.253***  
+        ＞ ***end***  
+        ＞ ***show ip route 10.0.0.0***  
+
+        ```
+        CSR2#show ip route 10.0.0.0
+        CSR2#conf t
+        Enter configuration commands, one per line.  End with CNTL/Z.
+        CSR2(config)#   
+        CSR2(config)#no ip route 10.255.1.0 255.255.255.0 10.255.2.253
+        CSR2(config)#end
+        CSR2#show ip route 10.0.0.0
+        Routing entry for 10.0.0.0/8, 4 known subnets
+        Attached (4 connections)
+        Variably subnetted with 2 masks
+        C        10.255.2.0/24 is directly connected, GigabitEthernet1
+        L        10.255.2.254/32 is directly connected, GigabitEthernet1
+        C        10.255.3.0/24 is directly connected, GigabitEthernet2
+        L        10.255.3.254/32 is directly connected, GigabitEthernet2
+        CSR2#
+        ```
+
+1. リモートネットワーク間(10.X.1.0/24と10.X.3.0//24間)の通信ができなくなったことを確認する
+    1. Router2(CSR2)の管理画面に接続する 
+
+    1. 以下のコマンドを実行し、10.0.0.0/8ネットワークについて現在のルーティングエントリを確認する    
+        ＞ ***ping 10.X.1.254 source 10.X.3.254***  
+
+        ```
+        CSR2#ping 10.255.1.254 source 10.255.3.254
+        Type escape sequence to abort.
+        Sending 5, 100-byte ICMP Echos to 10.255.1.254, timeout is 2 seconds:
+        Packet sent with a source address of 10.255.3.254 
+        .....
+        Success rate is 0 percent (0/5)
+        CSR2#
+        ```
+
+
+
+## Router1(CSR1)で、BGPピアリングを構成する  
+
+1. Router1(CSR1)の管理画面に接続する 
+
+1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
+    ＞ ***conf t***  
+
+    ```
+    CSR1#conf t
+    Enter configuration commands, one per line.  End with CNTL/Z.
+    CSR1(config)#
+    ```
+
+
+1. 以下のコマンドを実行し、AS番号 65001 としてBGPプロセスをRouter-ID 10.X.100.1で開始する  
+    ＞ ***router bgp 65001***
+    ＞ ***bgp router-id 10.X.100.1***
+
+    ```
+    CSR1(config)#router bgp 65001
+    CSR1(config-router)#bgp router-id 10.255.100.1
+    ```
+
+
+1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
+    ＞ ***do show ip protocols***
+
+    ```
+    CSR1(config-router)#do show ip protocols
+    *** IP Routing is NSF aware ***
+
+    Routing Protocol is "application"
+    Sending updates every 0 seconds
+    Invalid after 0 seconds, hold down 0, flushed after 0
+    Outgoing update filter list for all interfaces is not set
+    Incoming update filter list for all interfaces is not set
+    Maximum path: 32
+    Routing for Networks:
+    Routing Information Sources:
+        Gateway         Distance      Last Update
+    Distance: (default is 4)
+
+    Routing Protocol is "bgp 65001"
+    Outgoing update filter list for all interfaces is not set
+    Incoming update filter list for all interfaces is not set
+    IGP synchronization is disabled
+    Automatic route summarization is disabled
+    Maximum path: 1
+    Routing Information Sources:
+        Gateway         Distance      Last Update
+    Distance: external 20 internal 200 local 200
+
+    CSR1(config-router)#
+    ```
+
+    > 【確認ポイント】
+    > Routing Protocol is "bgp 65001" のセクションが表示されていることを確認する  
+
+1. 以下のコマンドを実行し、AS番号 65001 としてBGPプロセスをRouter-ID 10.X.100.1で開始する  
+    ＞ ***router bgp 65001***
+    ＞ ***bgp router-id 10.X.100.1***
+
+    ```
+    CSR1(config)#router bgp 65001
+    CSR1(config-router)#bgp router-id 10.255.100.1
+    ```
+
+
+
+
+    CSR1(config-router)#neighbor 10.255.2.254 remote-as 65002
+
+    CSR1(config-router)#do show ip bgp summary
+    BGP router identifier 10.255.100.1, local AS number 65001
+    BGP table version is 1, main routing table version 1
+
+    Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+    10.255.2.254    4        65002       0       0        1    0    0 00:00:03 Idle
+
+    CSR1(config-router)#
+
+
+    StateがIdleであることを確認する
+
+
+## Router2(CSR2)で、BGPピアリングを構成する  
+
+
+1. Router2(CSR2)の管理画面に接続する 
+
+1. 以下のコマンドを実行し、AS番号 65002 としてBGPプロセスをRouter-ID 10.X.100.2で開始する  
+    CSR2(config)#router bgp  65002
+    CSR2(config-router)#bgp router-id 10.255.100.2
+    CSR2(config-router)#do show ip protocols
+    *** IP Routing is NSF aware ***
+
+    Routing Protocol is "application"
+    Sending updates every 0 seconds
+    Invalid after 0 seconds, hold down 0, flushed after 0
+    Outgoing update filter list for all interfaces is not set
+    Incoming update filter list for all interfaces is not set
+    Maximum path: 32
+    Routing for Networks:
+    Routing Information Sources:
+        Gateway         Distance      Last Update
+    Distance: (default is 4)
+
+    Routing Protocol is "bgp 65002"
+    Outgoing update filter list for all interfaces is not set
+    Incoming update filter list for all interfaces is not set
+    IGP synchronization is disabled
+    Automatic route summarization is disabled
+    Maximum path: 1
+    Routing Information Sources:
+        Gateway         Distance      Last Update
+    Distance: external 20 internal 200 local 200
+
+    CSR2(config-router)#
+
+
+1. 以下のコマンドを実行し、Router1(CSR1)をAS番号65001のBGPネイバーとして構成する   
+    ＞ ***neighbor 10.255.2.253 remote-as 65001***
+
+    ```
+    CSR2(config-router)#neighbor 10.255.2.253 remote-as 65001
+    ```
+
+
+1. 以下のコマンドを実行し、Router1(CSR1)とRouter2(CSR2)がBGPのピアリング関係を構築していることを確認する  
+    ＞ ***do show ip bgp summary***
+
+    ```
+    CSR2(config-router)#do show ip bgp summary
+    BGP router identifier 10.255.100.2, local AS number 65002
+    BGP table version is 1, main routing table version 1
+
+    Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+    10.255.2.253    4        65001       4       4        1    0    0 00:00:02        0
+    ```
+
+    
+    > 【確認ポイント】
+    > 10.X.2.253(Router1/CSR1)のエントリの "State/PfxRcd" が 0 であること (Idleでないこと) を確認する。  
+
+
+
+1. Router2(CSR2)が、まだ経路情報をRouter1(CSR1)から受信していないことを確認する  
+    ＞ ***do show ip route***
+
+    ```
+    CSR2(config-router)#do show ip route
+    Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+        E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+        n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+        i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+        ia - IS-IS inter area, * - candidate default, U - per-user static route
+        H - NHRP, G - NHRP registered, g - NHRP registration summary
+        o - ODR, P - periodic downloaded static route, l - LISP
+        a - application route
+        + - replicated route, % - next hop override, p - overrides from PfR
+        & - replicated local route overrides by connected
+
+    Gateway of last resort is 10.255.2.1 to network 0.0.0.0
+
+    S*    0.0.0.0/0 [1/0] via 10.255.2.1
+        10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+    C        10.255.2.0/24 is directly connected, GigabitEthernet1
+    L        10.255.2.254/32 is directly connected, GigabitEthernet1
+    C        10.255.3.0/24 is directly connected, GigabitEthernet2
+    L        10.255.3.254/32 is directly connected, GigabitEthernet2
+        168.63.0.0/32 is subnetted, 1 subnets
+    S        168.63.129.16 [254/0] via 10.255.2.1
+        169.254.0.0/32 is subnetted, 1 subnets
+    S        169.254.169.254 [254/0] via 10.255.2.1
+    CSR2(config-router)#
+    ```
+
+    > 【確認ポイント】
+    > ルーティングエントリ左端のCodeが "B" (BGP)である経路は、まだRouter1(CSR1)のルーティングテーブルには存在しないことを確認する。  
+
+
+
+
+1. 以下のコマンドを実行し、Router1(CSR1)とRouter2(CSR2)がBGPのピアリング関係を構築していることを確認する  
+    ＞ ***do show ip bgp summary***
+
+    ```
+    CSR1(config-router)#do show ip bgp summary
+    BGP router identifier 10.255.100.1, local AS number 65001
+    BGP table version is 1, main routing table version 1
+
+    Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+    10.255.2.254    4        65002       4       4        1    0    0 00:00:20        0
+    ```
+
+    > 【確認ポイント】
+    > 10.X.2.254(Router2/CSR2)のエントリの "State/PfxRcd" が 0 であること (Idleでないこと) を確認する。  
+
+
+1. Router1(CSR1)が、まだ経路情報をRouter2(CSR2)から受信していないことを確認する  
+    ＞ ***do show ip route***
+
+    ```
+    CSR1(config-router)#do show ip route
+    Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+        E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+        n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+        i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+        ia - IS-IS inter area, * - candidate default, U - per-user static route
+        H - NHRP, G - NHRP registered, g - NHRP registration summary
+        o - ODR, P - periodic downloaded static route, l - LISP
+        a - application route
+        + - replicated route, % - next hop override, p - overrides from PfR
+        & - replicated local route overrides by connected
+
+    Gateway of last resort is 10.255.1.1 to network 0.0.0.0
+
+    S*    0.0.0.0/0 [1/0] via 10.255.1.1
+        10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+    C        10.255.1.0/24 is directly connected, GigabitEthernet1
+    L        10.255.1.254/32 is directly connected, GigabitEthernet1
+    C        10.255.2.0/24 is directly connected, GigabitEthernet2
+    L        10.255.2.253/32 is directly connected, GigabitEthernet2
+        168.63.0.0/32 is subnetted, 1 subnets
+    S        168.63.129.16 [254/0] via 10.255.1.1
+        169.254.0.0/32 is subnetted, 1 subnets
+    S        169.254.169.254 [254/0] via 10.255.1.1
+    CSR1(config-router)#
+    ```
+
+    > 【確認ポイント】
+    > ルーティングエントリ左端のCodeが "B" (BGP)である経路は、まだRouter1(CSR1)のルーティングテーブルには存在しないことを確認する。  
+
+
+
+
+
+
+
+
+Static Routeを削除する
+
+
+## 
+
+
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
     Router1# ***configure terminal***  
-    <kbd>![img](image/02/13.png)</kbd>
-1. Router1からNetwork3(10.X.3.0/24)宛のStatic Routeを作成するコマンドを実行する  
-    Router1(config)# ***ip route 10.X.3.0 mask 255.255.255.0 10.X.2.254***
-    <kbd>![img](image/02/14.png)</kbd>
 
----
+アドレスファミリでかく  
+BGP peer をくむ  
+物理NWをアドバタイズさせる  
 
-## 2. Router1のStatic Routeを確認する
-1. 以下のコマンドを実行し、グローバルコンフィギュレーションモードから特権モードに遷移する  
-    Router1(config)# ***end***  
-    <kbd>![img](image/02/21.png)</kbd>
-1. 以下のコマンドを実行し、Router1のルーティングテーブルを表示する  
-    Router1# ***show ip route***  
-1. ルーティングテーブルに、Router2をNext Hop(10.X.2.254)とするNetwork3(10.X.3.0/24)宛の経路情報が登録されていることを確認する  
-    <kbd>![img](image/02/22.png)</kbd>
-    > 【補足】  
-    > ルーティング エントリ行の左端のアルファベットは、経路の学習方法を示します。
-    > "S" は "Static" の意味です。
-1. 以下のコマンドを実行し、Router1のNetwork2のインターフェイスからRouter2への疎通を確認する  
-    Router1# ***ping 10.X.2.254 source 10.X.2.253***  
-    Router1# ***ping 10.X.3.254 source 10.X.2.253***    
-    <kbd>![img](image/02/23.png)</kbd>  
-    
-    > 【補足】  
-    > Cisco IOSにおけるpingの実行結果の解釈は、以下のとおりです  
+(option)
+loopback
+再配送
 
-    |表記|意味|
-    |:-----|:-----|
-    |!|応答あり(通信成功)|
-    |.|応答なし(失敗)|
-    |U|到達不能(失敗)|   
-1. 以下のコマンドを実行し、Router1のNetwork1のインターフェイスからRouter2への疎通がまだ確立できないことを確認する  
-    Router1# ***ping 10.X.2.254 source 10.X.1.254***  
-    Router1# ***ping 10.X.3.254 source 10.X.1.254***  
-    <kbd>![img](image/02/24.png)</kbd>
+filterring
+
+コミュニティでdropさせる
 
 
 
 
----
 
-## 3. Router2のStatic Routeを構成する
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-1. Router2の管理画面に接続する  
-    <kbd>![img](image/02/31.png)</kbd>
-1. 管理画面のプロンプト表記を確認し、Router2に接続していることを確認する  
-    <kbd>![img](image/02/32.png)</kbd>
-1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
-    Router2# ***conf t***  
-    <kbd>![img](image/02/33.png)</kbd>
-    > 【補足】  
-    > Cisco IOSのコマンドは省略して入力できます。  
-    > conf tはconfigure terminalの省略形です。  
-1. Router2からNetwork1(10.X.1.0/24)宛のStatic Routeを作成するコマンドを実行する  
-    Router2(config)# ***ip route 10.X.1.0 mask 255.255.255.0 10.X.2.253***
-    <kbd>![img](image/02/34.png)</kbd>
-
----
-
-## 4. Router2のStatic Routeを確認する
-1. 以下のコマンドを実行し、グローバルコンフィギュレーションモードから特権モードに遷移する  
-    Router2(config)# ***end***  
-1. 以下のコマンドを実行し、Router2のルーティングテーブルを表示する  
-    Router2# ***show ip route***  
-1. ルーティングテーブルに、Router1をNext Hop(10.X.2.253)とするNetwork1(10.X.1.0/24)宛の経路情報が登録されていることを確認する  
-    <kbd>![img](image/02/41.png)</kbd>
-1. 以下のコマンドを実行し、Router2のNetwork3のインターフェイスからRouter1への疎通を確認する  
-    Router2# ***ping 10.X.2.253 source 10.X.3.254***  
-    Router2# ***ping 10.X.1.254 source 10.X.3.254***  
-    <kbd>![img](image/02/42.png)</kbd>
-    > 【補足】  
-    > Network1とNetwork3の疎通を確立するためには、以下の2つの経路情報が必要です。
-    > ① Router1からNetwork3宛の経路情報
-    > ② Router2からNetwork1宛の経路情報
-    > ここまでの手順で、これらの経路情報をStatic Routeで2台のルータに構成しました。
-
-
----
-
-## 5. ルータのconfigを保存する
-1. Router1で以下のコマンドを実行し、configを保存する  
-    Router1# ***write***  
-    <kbd>![img](image/02/51.png)</kbd>
-1. Router2で以下のコマンドを実行し、configを保存する  
-    Router2# ***wr***  
-    <kbd>![img](image/02/52.png)</kbd>
-> 【補足】  
-> Cisco IOSのコマンドは省略して入力できます。  
-> wrはwriteの省略形です。 
 
 
 ---
