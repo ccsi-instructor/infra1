@@ -33,107 +33,113 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 ## フィルタ前の動作確認
 
-1. Web
-    ＞ `wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`
-    ＞ ls  
-    ＞ cat web1
+1. Linux2からWindows Server 2のWebサービスに接続できることを確認する  
 
+    1. Linux2の管理画面に接続する  
+
+    1. コマンドラインで以下のコマンドを実行し、Windows Server 2のWebサービスに接続できることを確認する  
+        ＞ ***`wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***
+        ＞ ls  
+        ＞ cat web1
+
+
+        > 【補足】
+        > \$記号はBashにおいて特別な効果がある記号文字です。  
+        > そのため、パスワード文字列としてそのまま入力することはできません。  
+        > \$記号をただの文字として使用するためには、バックスラッシュ(\もしくは￥)記号を付与してエスケープします。   
+
+
+        ```
+        [admin@linux2 ~]$ wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd
+        --2023-09-25 04:36:58--  http://10.255.2.105/web1
+        Connecting to 10.255.2.105:80... connected.
+        HTTP request sent, awaiting response... 401 Unauthorized
+        Reusing existing connection to 10.255.2.105:80.
+        HTTP request sent, awaiting response... 301 Moved Permanently
+        Location: http://10.255.2.105/web1/ [following]
+        --2023-09-25 04:36:58--  http://10.255.2.105/web1/
+        Reusing existing connection to 10.255.2.105:80.
+        HTTP request sent, awaiting response... 200 OK
+        Length: 133 [text/html]
+        Saving to: ‘web1’
+
+        100%[==============================================>] 133         --.-K/s   in 0s      
+
+        2023-09-25 04:36:58 (17.6 MB/s) - ‘web1’ saved [133/133]
+
+        [admin@linux2 ~]$ 
+        [admin@linux2 ~]$ ls -l
+        total 12
+        -rw-rw-r--. 1 admin admin  133 Aug 23 02:52 web1
+        [admin@linux2 ~]$ 
+        [admin@linux2 ~]$ cat web1
+        <html>
+
+        <font size="7">
+        Let's HTML document!
+        </font>
+
+        <img src="pic.png">
+
+        <a href="document.txt">
+        link
+        </a>
+
+        </html>
+
+        [admin@linux2 ~]$ 
+        ```
+
+
+         <kbd>![img](image/16/11.png)</kbd>  
+
+1. Linux2からLinux1のWebサービスに接続できることを確認する  
+
+    1. Linux2の管理画面に接続する  
+
+    1. コマンドラインで以下のコマンドを実行し、Linux1のWebサービスに接続できることを確認する  
+        ＞ ***`wget http://10.X.1.102/index.html`***
+        ＞ ls  
+        ＞ cat index.html
+
+        ```
+        [admin@linux2 ~]$ wget http://10.255.1.102/index.html
+        --2023-09-25 04:45:01--  http://10.255.1.102/index.html
+        Connecting to 10.255.1.102:80... connected.
+        HTTP request sent, awaiting response... 200 OK
+        Length: 105 [text/html]
+        Saving to: ‘index.html’
+
+        100%[======================================================>] 105         --.-K/s   in 0s      
+
+        2023-09-25 04:45:01 (7.76 MB/s) - ‘index.html’ saved [105/105]
+
+        [admin@linux2 ~]$ 
+        [admin@linux2 ~]$ ls -l
+        total 8
+        -rw-rw-r--. 1 admin admin 105 Sep  5 15:13 index.html
+        -rw-rw-r--. 1 admin admin 133 Aug 23 02:52 web1
+        [admin@linux2 ~]$ 
+        [admin@linux2 ~]$ cat index.html 
+        <html>
+
+        Why was nginx so goot at yoga? <br>
+        It mastered the art of staying flexible under load.
+
+        </html>
+        [admin@linux2 ~]$ 
+        ```
+
+        <kbd>![img](image/16/12.png)</kbd>  
+
+1. DNS動作確認の準備をする  
+    1. nslookupを実行する
+    ＞ nslookup
 
     > 【補足】
-    > \$記号はBashにおいて特別な効果がある記号文字です。  
-    > そのため、パスワード文字列としてそのまま入力することはできません。  
-    > \$記号をただの文字として使用するためには、バックスラッシュ(\もしくは￥)記号を付与してエスケープします。   
-
-
-    ```
-    [admin@linux2 ~]$ wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd
-    --2023-09-25 04:36:58--  http://10.255.2.105/web1
-    Connecting to 10.255.2.105:80... connected.
-    HTTP request sent, awaiting response... 401 Unauthorized
-    Reusing existing connection to 10.255.2.105:80.
-    HTTP request sent, awaiting response... 301 Moved Permanently
-    Location: http://10.255.2.105/web1/ [following]
-    --2023-09-25 04:36:58--  http://10.255.2.105/web1/
-    Reusing existing connection to 10.255.2.105:80.
-    HTTP request sent, awaiting response... 200 OK
-    Length: 133 [text/html]
-    Saving to: ‘web1’
-
-    100%[==============================================>] 133         --.-K/s   in 0s      
-
-    2023-09-25 04:36:58 (17.6 MB/s) - ‘web1’ saved [133/133]
-
-    [admin@linux2 ~]$ 
-    [admin@linux2 ~]$ ls -l
-    total 12
-    -rw-rw-r--. 1 admin admin  133 Aug 23 02:52 web1
-    [admin@linux2 ~]$ 
-    [admin@linux2 ~]$ cat web1
-    <html>
-
-    <font size="7">
-    Let's HTML document!
-    </font>
-
-    <img src="pic.png">
-
-    <a href="document.txt">
-    link
-    </a>
-
-    </html>
-
-    [admin@linux2 ~]$ 
-    ```
-
-
-    <kbd>![img](image/16/11.png)</kbd>  
-
-
-wget http://10.X.1.102/index.html
-
-
-
-    ```
-    [admin@linux2 ~]$ wget http://10.255.1.102/index.html
-    --2023-09-25 04:45:01--  http://10.255.1.102/index.html
-    Connecting to 10.255.1.102:80... connected.
-    HTTP request sent, awaiting response... 200 OK
-    Length: 105 [text/html]
-    Saving to: ‘index.html’
-
-    100%[======================================================>] 105         --.-K/s   in 0s      
-
-    2023-09-25 04:45:01 (7.76 MB/s) - ‘index.html’ saved [105/105]
-
-    [admin@linux2 ~]$ 
-    [admin@linux2 ~]$ ls -l
-    total 8
-    -rw-rw-r--. 1 admin admin 105 Sep  5 15:13 index.html
-    -rw-rw-r--. 1 admin admin 133 Aug 23 02:52 web1
-    [admin@linux2 ~]$ 
-    [admin@linux2 ~]$ cat index.html 
-    <html>
-
-    Why was nginx so goot at yoga? <br>
-    It mastered the art of staying flexible under load.
-
-    </html>
-    [admin@linux2 ~]$ 
-    ```
-
-
-    <kbd>![img](image/16/12.png)</kbd>  
-
-
-
-
-
-
-
-1. DNS nslookupツールをインストールする 
-    ＞ sudo yum -y install bind-utils
-    ＞ yum list installed | grep bind-utils
+    > nslookupが実行できない場合は以下の手順を実行し、DNS nslookupツールをインストールする 
+    > ＞ sudo yum -y install bind-utils
+    > ＞ yum list installed | grep bind-utils
 
 
 <details>
@@ -404,6 +410,9 @@ CSR2#
 
 
 
+
+---  
+
 ## NAPTを構成する  
 
 1. Router1(CSR1)の管理画面に接続する  
@@ -455,11 +464,6 @@ CSR2#
     CSR1(config-if)# end  
     CSR1#   
     ```
-
-
-
-
-
 
 
 
