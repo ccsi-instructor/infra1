@@ -667,10 +667,10 @@ Webサーバーのログをみる
 1. 以下のコマンドを実行し、AS番号 65002 としてBGPプロセスをRouter-ID 10.X.100.2で開始する  
 
     CSR2(config)# ***router bgp  65002***  
-    CSR2(config-router)# ***bgp router-id 10.255.100.2***  
+    CSR2(config-router)# ***bgp router-id 10.255.100.2***   
 
 1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
-    CSR2(config-router)#do show ip protocols
+    CSR2(config-router)#do show ip protocols  
 
 
     ```
@@ -708,15 +708,19 @@ Webサーバーのログをみる
 
 
 1. 以下のコマンドを実行し、Router1(CSR1)をAS番号65001のBGPネイバーとして構成する   
-    CSR2(config-router)# ***neighbor 10.255.2.253 remote-as 65001***
+    CSR2(config-router)# ***neighbor 10.255.2.253 remote-as 65001***  
 
     ```
     CSR2(config-router)#neighbor 10.255.2.253 remote-as 65001
     ```
 
 
-1. 以下のコマンドを実行し、Router1(CSR1)とRouter2(CSR2)がBGPのピアリング関係を構築していることを確認する  
-    CSR2(config-router)# ***do show ip bgp summary***
+## BGPピアリングの構成を確認する  
+
+1. Router2(CSR2)の管理画面に接続する 
+
+1. Router2(CSR2)で以下のコマンドを実行し、Router1(CSR1)とRouter2(CSR2)がBGPのピアリング関係を構築していることを確認する  
+    CSR2(config-router)# ***do show ip bgp summary***  
 
     ```
     CSR2(config-router)#do show ip bgp summary
@@ -730,13 +734,13 @@ Webサーバーのログをみる
     ```
 
     
-    > 【確認ポイント】
+    > 【確認ポイント】  
     > 10.X.2.253(Router1/CSR1)のエントリの "State/PfxRcd" が 0 であること (Idleでないこと) を確認する。  
 
 
 
-1. Router2(CSR2)で以下のコマンドを実行し、Router2(CSR2)がまだ経路情報をRouter1(CSR1)から受信していないことを確認する  
-    CSR2(config-router)# ***do show ip route***
+1. Router2(CSR2)で以下のコマンドを実行し、Router2(CSR2)がまだ経路情報をRouter1(CSR1)から受信していないことを確認する   
+    CSR2(config-router)# ***do show ip route***  
 
     ```
     CSR2(config-router)#do show ip route
@@ -772,9 +776,10 @@ Webサーバーのログをみる
     > ルーティングエントリ左端のCodeが "B" (BGP)である経路は、まだRouter1(CSR1)のルーティングテーブルには存在しないことを確認する。  
 
 
+1. Router1(CSR1)の管理画面に接続する 
 
 1. Router1(CSR1)で以下のコマンドを実行し、Router1(CSR1)がまだ経路情報をRouter2(CSR2)から受信していないことを確認する  
-    CSR1(config-router)#  ***do show ip route***
+    CSR1(config-router)#  ***do show ip route***  
 
     ```
     CSR1(config-router)#do show ip route
@@ -812,16 +817,274 @@ Webサーバーのログをみる
 
 
 
+## BGPでネットワーク情報をアドバタイズする  
+
+1. Router1(CSR1)の管理画面に接続する  
+
+1. Router1(CSR1)で以下のコマンドを実行し、アドバタイズ対象のNW情報を確認する    
+    CSR1(config-router)# ***do show ip route connected***   
+
+    ```
+    CSR1(config-router)#do show ip route connected 
+    Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+        E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+        n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+        i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+        ia - IS-IS inter area, * - candidate default, U - per-user static route
+        H - NHRP, G - NHRP registered, g - NHRP registration summary
+        o - ODR, P - periodic downloaded static route, l - LISP
+        a - application route
+        + - replicated route, % - next hop override, p - overrides from PfR
+        & - replicated local route overrides by connected
+
+    Gateway of last resort is 10.255.1.1 to network 0.0.0.0
+
+        10.0.0.0/8 is variably subnetted, 5 subnets, 2 masks
+    C        10.255.1.0/24 is directly connected, GigabitEthernet1
+    L        10.255.1.254/32 is directly connected, GigabitEthernet1
+    C        10.255.2.0/24 is directly connected, GigabitEthernet2
+    L        10.255.2.253/32 is directly connected, GigabitEthernet2
+    CSR1(config-router)#
+    ```
+
+    > 【確認ポイント】  
+    > アドバタイズ対象のNWの情報を確認する   
+    > - [x] 10.X.1.0/24の経路情報がルーティングテーブルにインストールされていること  
 
 
-## Router1(CSR1)で、BGPプロセスを構成する  
+1. Router1(CSR1)で以下のコマンドを実行し、ネットワーク情報(10.X.1.0/24)をBGPでアドバタイズする    
+    CSR1(config-router)# ***network 10.X.1.0 mask 255.255.255.0***  
+
+    ```
+    CSR1(config-router)#network 10.255.1.0 mask 255.255.255.0 
+    ```
+
+1. Router1(CSR1)で以下のコマンドを実行し、ネイバー(CSR2)にアドバタイズしている経路を確認する      
+    CSR1(config-router)# ***do show ip bgp neighbors 10.255.2.254 advertised-routes***  
+
+    ```
+    CSR1(config-router)#do show ip bgp neighbors 10.255.2.254 advertised-routes
+    BGP table version is 2, local router ID is 10.255.100.1
+    Status codes: s suppressed, d damped, h history, * valid, > best, i - internal, 
+                r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, 
+                x best-external, a additional-path, c RIB-compressed, 
+                t secondary path, L long-lived-stale,
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+    RPKI validation codes: V valid, I invalid, N Not found
+
+        Network          Next Hop            Metric LocPrf Weight Path
+    *>   10.255.1.0/24    0.0.0.0                  0         32768 i
+
+    Total number of prefixes 1 
+    CSR1(config-router)#
+    ```
+
+
+    > 【確認ポイント】  
+    > 10.X.1.0/24のNWの情報がRouter2(CSR2)にアドバタイズされていることを確認する   
+    > - [x] 10.X.1.0/24の経路情報が表示されていること  
+
+
+1. Router2(CSR2)の管理画面に接続する  
+
+1. Router2(CSR2)で以下のコマンドを実行してルーティングテーブルを表示し、Router1(CSR1)からBGPでアドバタイズされた経路を学習していることを確認する      
+    CSR2(config-router)# ***do show ip route***   
+
+    ```
+    CSR2(config-router)#do show ip route                                 
+    Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+        E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+        n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+        i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+        ia - IS-IS inter area, * - candidate default, U - per-user static route
+        H - NHRP, G - NHRP registered, g - NHRP registration summary
+        o - ODR, P - periodic downloaded static route, l - LISP
+        a - application route
+        + - replicated route, % - next hop override, p - overrides from PfR
+        & - replicated local route overrides by connected
+
+    Gateway of last resort is 10.255.2.1 to network 0.0.0.0
+
+    S*    0.0.0.0/0 [1/0] via 10.255.2.1
+        10.0.0.0/8 is variably subnetted, 5 subnets, 2 masks
+    B        10.255.1.0/24 [20/0] via 10.255.2.253, 00:00:12
+    C        10.255.2.0/24 is directly connected, GigabitEthernet1
+    L        10.255.2.254/32 is directly connected, GigabitEthernet1
+    C        10.255.3.0/24 is directly connected, GigabitEthernet2
+    L        10.255.3.254/32 is directly connected, GigabitEthernet2
+        168.63.0.0/32 is subnetted, 1 subnets
+    S        168.63.129.16 [254/0] via 10.255.2.1
+        169.254.0.0/32 is subnetted, 1 subnets
+    S        169.254.169.254 [254/0] via 10.255.2.1
+    CSR2(config-router)#
+    ```
+
+    > 【確認ポイント】  
+    > 10.X.1.0/24のNWの情報がRouter2(CSR2)にBGPでアドバタイズされていることを確認する   
+    > - [x] 10.X.1.0/24の経路情報が、ルーティングテーブルにインストールされていること  
+    > - [x] 10.X.1.0/24の経路情報をBGPで学習していること(左端にBと表記されていること)   
+    > - [x] 10.X.1.0/24のNextHopがRouter2(10.X.2.253)であること  
+
+
+1. Router2(CSR2)で以下のコマンドを実行し、アドバタイズ対象のNW情報を確認する    
+    CSR2(config-router)# ***do show ip route connected***   
+
+    ```
+    CSR2(config-router)#do show ip route connected
+    Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+        E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+        n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+        i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+        ia - IS-IS inter area, * - candidate default, U - per-user static route
+        H - NHRP, G - NHRP registered, g - NHRP registration summary
+        o - ODR, P - periodic downloaded static route, l - LISP
+        a - application route
+        + - replicated route, % - next hop override, p - overrides from PfR
+        & - replicated local route overrides by connected
+
+    Gateway of last resort is 10.255.2.1 to network 0.0.0.0
+
+        10.0.0.0/8 is variably subnetted, 5 subnets, 2 masks
+    C        10.255.2.0/24 is directly connected, GigabitEthernet1
+    L        10.255.2.254/32 is directly connected, GigabitEthernet1
+    C        10.255.3.0/24 is directly connected, GigabitEthernet2
+    L        10.255.3.254/32 is directly connected, GigabitEthernet2
+    CSR2(config-router)#
+    ```
+
+    > 【確認ポイント】  
+    > アドバタイズ対象のNWの情報を確認する   
+    > - [x] 10.X.3.0/24の経路情報がルーティングテーブルにインストールされていること  
+
+
+
+1. Router2(CSR2)で以下のコマンドを実行し、ネットワーク情報(10.X.3.0/24)をBGPでアドバタイズする    
+    CSR2(config-router)# ***network 10.X.3.0 mask 255.255.255.0***
+
+
+1. Router2(CSR2)で以下のコマンドを実行し、ネイバー(CSR1)にアドバタイズしている経路を確認する      
+    CSR2(config-router)# ***do show ip bgp neighbors 10.X.2.253 advertised-routes***  
+
+    ```
+    CSR2(config-router)#do show ip bgp neighbors 10.255.2.253 advertised-routes
+    BGP table version is 3, local router ID is 10.255.100.2
+    Status codes: s suppressed, d damped, h history, * valid, > best, i - internal, 
+                r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, 
+                x best-external, a additional-path, c RIB-compressed, 
+                t secondary path, L long-lived-stale,
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+    RPKI validation codes: V valid, I invalid, N Not found
+
+        Network          Next Hop            Metric LocPrf Weight Path
+    *>   10.255.3.0/24    0.0.0.0                  0         32768 i
+
+    Total number of prefixes 1 
+    CSR2(config-router)#
+    ```
+
+    > 【確認ポイント】  
+    > 10.X.3.0/24のNWの情報がRouter1(CSR1)にアドバタイズされていることを確認する   
+    > - [x] 10.X.3.0/24の経路情報が表示されていること  
+
+
+
+1. Router1(CSR1)の管理画面に接続する  
+
+1. Router1(CSR1)で以下のコマンドを実行してルーティングテーブルを表示し、Router2(CSR2)からBGPでアドバタイズされた経路を学習していることを確認する      
+    CSR1(config-router)# ***do show ip route***   
+
+
+    ```
+    CSR1(config-router)#do show ip route                                 
+    Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+        D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+        N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+        E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+        n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+        i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+        ia - IS-IS inter area, * - candidate default, U - per-user static route
+        H - NHRP, G - NHRP registered, g - NHRP registration summary
+        o - ODR, P - periodic downloaded static route, l - LISP
+        a - application route
+        + - replicated route, % - next hop override, p - overrides from PfR
+        & - replicated local route overrides by connected
+
+    Gateway of last resort is 10.255.1.1 to network 0.0.0.0
+
+    S*    0.0.0.0/0 [1/0] via 10.255.1.1
+        10.0.0.0/8 is variably subnetted, 5 subnets, 2 masks
+    C        10.255.1.0/24 is directly connected, GigabitEthernet1
+    L        10.255.1.254/32 is directly connected, GigabitEthernet1
+    C        10.255.2.0/24 is directly connected, GigabitEthernet2
+    L        10.255.2.253/32 is directly connected, GigabitEthernet2
+    B        10.255.3.0/24 [20/0] via 10.255.2.254, 00:00:06
+        168.63.0.0/32 is subnetted, 1 subnets
+    S        168.63.129.16 [254/0] via 10.255.1.1
+        169.254.0.0/32 is subnetted, 1 subnets
+    S        169.254.169.254 [254/0] via 10.255.1.1
+    CSR1(config-router)#
+    ```
+
+
+
+
+## リモートネットワーク間の疎通を確認する  
+
+1. Router1(CSR1)の管理画面に接続する  
+
+1. Router1(CSR1)で以下のコマンドを実行し、リモートネットワーク間(10.X.1.0/24と10.X.3.0/24間)で通信できることを確認する      
+    CSR1(config-router)# ***end***   
+    CSR1# ***ping 10.255.3.254 source 10.255.1.254***  
+
+    ```
+    CSR1(config-router)#end
+    CSR1#ping 10.255.3.254 source 10.255.1.254
+    Type escape sequence to abort.
+    Sending 5, 100-byte ICMP Echos to 10.255.3.254, timeout is 2 seconds:
+    Packet sent with a source address of 10.255.1.254 
+    !!!!!
+    Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
+    CSR1#
+    ```
+
+    > 【確認ポイント】  
+    > 10.X.1.254と10.X.3.254の間でping疎通が確立できることを確認する   
+    > - [x] pingコマンドの実行結果が ! であること
+
+1. Router1(CSR1)で以下のコマンドを実行し、configを保存する        
+    CSR1# ***write***   
+
+    ```    
+    CSR1#write
+    Building configuration...
+    [OK]
+    CSR1#
+    ```
+
+
+
+1. Router2(CSR2)の管理画面に接続する  
+
+1. Router2(CSR2)で以下のコマンドを実行し、configを保存する        
+    CSR2# ***write***   
+
+    ```    
+    CSR2#write
+    Building configuration...
+    [OK]
+    CSR2#
+    ```
 
 
 
 Static Routeを削除する
 
-
-## 
 
 
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
