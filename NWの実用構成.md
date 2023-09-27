@@ -406,53 +406,169 @@ CSR2#
 
 ## NAPTを構成する  
 
-CSR1(config)# ip access-list Standard ACL_NAPT  
-CSR1(config-std-nacl)# permit 10.255.1.0 0.0.0.255  
-CSR1(config-std-nacl)# exit  
-CSR1(config)# ip nat inside source list ACL_NAPT interface GigabitEthernet 2 overload   
+1. Router1(CSR1)の管理画面に接続する  
 
-CSR1(config)# interface gigabitEthernet 1
-CSR1(config-if)# ip nat inside 
-CSR1(config-if)# exit 
-CSR1(config)# interface gigabitEthernet 2
-CSR1(config-if)# ip nat outside 
-CSR1(config-if)# exit  
-CSR1(config)# exit  
+1. Router1(CSR1)で以下のコマンドを実行し、10.X.1.0/24のIPアドレスをpermitする標準ACLを作成する    
 
-CSR1(config)# end  
-CSR1# write   
+    CSR1# ***conf t***   
+    CSR1(config)# ***ip access-list Standard ACL_NAPT***   
+    CSR1(config-std-nacl)# ***permit 10.255.1.0 0.0.0.255 log***   
+    CSR1(config-std-nacl)# ***exit***   
 
+    ```
+    CSR1#conf t
+    Enter configuration commands, one per line.  End with CNTL/Z.
+    CSR1(config)#ip access-list Standard ACL_NAPT  
+    CSR1(config-std-nacl)#permit 10.255.1.0 0.0.0.255 log  
+    CSR1(config-std-nacl)#exit  
+    CSR1(config)#
+    ```
 
+1. Router1(CSR1)で以下のコマンドを実行し、内部ネットワークの送信元アドレスをGigabitEhternet2インターフェイスのIPアドレスに変換するNAPTを構成する    
 
+    CSR1(config)# ***ip nat inside source list ACL_NAPT interface GigabitEthernet 2 overload***   
 
-CSR1(config)# end 
+    ```
+    CSR1(config)# ip nat inside source list ACL_NAPT interface GigabitEthernet 2 overload   
+    ```
 
-
-
-
-CSR1#show ip nat translations 
-Pro  Inside global         Inside local          Outside local         Outside global
-udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:57013    10.255.2.105:57013
-tcp  10.255.2.253:5063     10.255.1.103:60735    10.255.2.105:80       10.255.2.105:80
-udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:59623    10.255.2.105:59623
-udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:64805    10.255.2.105:64805
-tcp  10.255.2.253:5065     10.255.1.103:60739    10.255.2.105:1080     10.255.2.105:1080
-udp  10.255.2.253:512      10.255.1.104:389      10.255.2.105:57013    10.255.2.105:57013
-tcp  10.255.2.253:5062     10.255.1.103:60734    10.255.2.105:80       10.255.2.105:80
-udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:61280    10.255.2.105:61280
-udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:50277    10.255.2.105:50277
-tcp  10.255.2.253:5064     10.255.1.103:60736    10.255.2.105:80       10.255.2.105:80
-udp  10.255.2.253:513      10.255.1.104:53       10.255.2.105:59624    10.255.2.105:59624
-udp  10.255.2.253:512      10.255.1.104:389      10.255.2.105:59731    10.255.2.105:59731
-Total number of translations: 12
-
-CSR1#
+    > 【補足】
+    > overloadオプションは、1つのIPアドレスを共有するオプションです。  
+    > NAPT(PAT、IPマスカレード、拡張NATとも)を構成します。  
 
 
+1. Router1(CSR1)で以下のコマンドを実行し、GigabitEthernet1インターフェイスを内部(inside)に設定し、GigabitEthernet2インターフェイスを外部(outside)に設定する  
+    CSR1(config)# ***interface gigabitEthernet 1***   
+    CSR1(config-if)# ***ip nat inside***    
+    CSR1(config-if)# ***exit***   
+    CSR1(config)# ***interface gigabitEthernet 2***   
+    CSR1(config-if)# ***ip nat outside***  
+    CSR1(config-if)# ***end***    
+    CSR1#   
 
-Webサーバーのログをみる
+    ```
+    CSR1(config)# interface gigabitEthernet 1
+    CSR1(config-if)# ip nat inside 
+    CSR1(config-if)# exit 
+    CSR1(config)# interface gigabitEthernet 2
+    CSR1(config-if)# ip nat outside 
+    CSR1(config-if)# end  
+    CSR1#   
+    ```
 
 
+
+
+
+
+
+
+
+## NAPTの動作を確認する  
+
+1. ClientのWebブラウザからWebアクセスし、NAPT経由でWebサーバー(Windows Server 2)と通信する      
+    1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
+    1. Windows Client(WinClient)の管理画面に "admin" で接続する   
+    1. WinClientでWebブラウザ(Google Chrome)を起動する  
+    1. Webブラウザのアドレス欄に [http://Web1.example.local/web1] と入力し、[Enter]キーを押下する  
+    1. 認証情報を入力するポップアップが表示されたことを確認する  
+    1. 以下のパラメータを入力する  
+        | 項目 | パラメータ |  
+        | :----- | :----- |  
+        | ユーザー名 | Tom |   
+        | パスワード | Pa$$w0rd |   
+    1. 上のパラメータを入力し、[ログイン]をクリックする  
+    1. Webコンテンツにアクセスできることを確認する  
+
+
+1. Windows Server 1のWebブラウザからWebアクセスし、NAPT経由でWebサーバー(Windows Server 2)と通信する      
+    1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
+    1. Windows Server 1(WinSrv1)の管理画面に "admin" で接続する   
+    1. WinSrv1(Google Chrome)を起動する  
+    1. Webブラウザのアドレス欄に [http://Web1.example.local/web1] と入力し、[Enter]キーを押下する  
+    1. 認証情報を入力するポップアップが表示されたことを確認する  
+    1. 以下のパラメータを入力する  
+        | 項目 | パラメータ |  
+        | :----- | :----- |  
+        | ユーザー名 | Jerry |   
+        | パスワード | Pa$$w0rd |   
+    1. 上のパラメータを入力し、[ログイン]をクリックする  
+    1. Webコンテンツにアクセスできることを確認する  
+  
+
+
+1. Router1(CSR1)でアドレス変換の記録を確認する  
+    1. Router1(CSR1)で以下のコマンドを実行してアドレス変換テーブルを表示し、WidClientとWinSrv1のアドレスがRouter1(CSR1)のGigabitEthernet2のIPアドレスに変換されていることを確認する        
+    CSR1# ***show ip nat translations***
+
+
+    ```
+    CSR1#show ip nat translations 
+    Total number of translations: 0
+
+    CSR1#show ip nat translations 
+    Pro  Inside global         Inside local          Outside local         Outside global
+    tcp  10.255.2.253:5072     10.255.1.104:56706    10.255.2.105:3260     10.255.2.105:3260
+    tcp  10.255.2.253:5066     10.255.1.104:56676    10.255.2.105:3260     10.255.2.105:3260
+    tcp  10.255.2.253:5070     10.255.1.104:56679    10.255.2.105:80       10.255.2.105:80
+    tcp  10.255.2.253:5065     10.255.1.103:60241    10.255.2.105:80       10.255.2.105:80
+    tcp  10.255.2.253:5068     10.255.1.104:56677    10.255.2.105:3260     10.255.2.105:3260
+    tcp  10.255.2.253:5062     10.255.1.104:63422    10.255.2.105:3260     10.255.2.105:3260
+    tcp  10.255.2.253:5069     10.255.1.104:56678    10.255.2.105:80       10.255.2.105:80
+    tcp  10.255.2.253:5064     10.255.1.103:60240    10.255.2.105:80       10.255.2.105:80
+    tcp  10.255.2.253:5063     10.255.1.104:56675    10.255.2.105:3260     10.255.2.105:3260
+    tcp  10.255.2.253:5071     10.255.1.104:56696    10.255.2.105:1080     10.255.2.105:1080
+    tcp  10.255.2.253:5067     10.255.1.103:60243    10.255.2.105:1080     10.255.2.105:1080
+    Total number of translations: 11
+
+    CSR1#
+    ```
+
+    > 【確認ポイント】
+    > "Outside global" が "10.X.2.105:80" (Web1.example.local) であるNATエントリについて確認します。  
+    > - [x] "Inside global" がCSR1のIPアドレスであること
+    > - [x] "Inside local" がWidClientとWinSrv1のIPアドレスであること
+
+
+    > 【補足】
+    > show ip nat translations で表示されるアドレス変換テーブルの各項目について、説明します。
+    >
+    > - "Inside global":   
+    >   - 変換後の送信元IPアドレス  
+    >   - 今回の構成では、CSR1のGigabitEther2のIPアドレス(10.X.2.253)  が使用される
+    > 
+    > - "Inside local":  
+    >   - 変換前の送信元IPアドレス  
+    >   - Windows ClientやWindows Server 1に設定されているIPアドレス(10.X.1.103や10.X.1.104)が表示される  
+    > 
+    > - "Outside local": 
+    >   - 宛先IPアドレスについての内部ネットワーク固有の識別情報
+    >   - 一部のNATシナリオで重要になる場合があるが、今回の演習では無視してよい
+    > 
+    > - "Outside global":
+    >   - 宛先IPアドレス
+    >   - 今回の動作確認においては、Web1.example.local(Windows Server 2)のIPアドレス(10.X.2.105)が表示される  
+    > 　
+
+
+1. Webサーバー(WinSrv2)のアクセスログを確認し、接続してきたクライアントの送信元IPアドレスが変換されていることを確認する  
+    1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
+    1. Windows Server 2(WinSrv2)の管理画面に "admin" で接続する   
+    1. "C:\\inetpub\\logs\\LogFiles\\W3SV1" フォルダを開く  
+    1. logファイルを確認する  
+        <kbd>![img](image/16/32.png)</kbd>   
+
+        > 【確認ポイント】
+        > WinClientとWinSrv1が、1つのIPアドレス共用するNAPTを経てWebサーバー(Windows Server 2)と通信していることを確認する  
+        > - [x] WinClient(Tom)の送信元IPアドレスが、10.X.2.253であること
+        > - [x] WinSrv1(Jerry)の送信元IPアドレスが、10.X.2.253であること
+
+
+1. Router1(CSR1)でconfigを保存する  
+    CSR1# ***write***   
+
+
+---  
 
 ## 静的ルーティングを削除する  
 
@@ -588,8 +704,8 @@ Webサーバーのログをみる
 
 
 1. 以下のコマンドを実行し、AS番号 65001 としてBGPプロセスをRouter-ID 10.X.100.1で開始する  
-    CSR1(config)# ***router bgp 65001***
-    CSR1(config-router)# ***bgp router-id 10.X.100.1***
+    CSR1(config)# ***router bgp 65001***  
+    CSR1(config-router)# ***bgp router-id 10.X.100.1***  
 
 
 1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
@@ -670,7 +786,7 @@ Webサーバーのログをみる
     CSR2(config-router)# ***bgp router-id 10.255.100.2***   
 
 1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
-    CSR2(config-router)#do show ip protocols  
+    CSR2(config-router)# ***do show ip protocols***  
 
 
     ```
@@ -1104,6 +1220,12 @@ filterring
 
 
 
+
+## 演習完了  
+ここまでの手順で、以下の項目を学習できました。
+- [x] アドレス変換(NAPT)を構成する
+- [x] リモートルーターとBGPピアリングを構成する  
+- [x] networkコマンドでBGPルートを生成し、BGPネイバーにアドバタイズする
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
