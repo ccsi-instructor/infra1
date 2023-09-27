@@ -573,7 +573,7 @@ Webサーバーのログをみる
 
 
 
-## Router1(CSR1)で、BGPピアリングを構成する  
+## Router1(CSR1)で、BGPプロセスを構成する  
 
 1. Router1(CSR1)の管理画面に接続する 
 
@@ -588,17 +588,12 @@ Webサーバーのログをみる
 
 
 1. 以下のコマンドを実行し、AS番号 65001 としてBGPプロセスをRouter-ID 10.X.100.1で開始する  
-    ＞ ***router bgp 65001***
-    ＞ ***bgp router-id 10.X.100.1***
-
-    ```
-    CSR1(config)#router bgp 65001
-    CSR1(config-router)#bgp router-id 10.255.100.1
-    ```
+    CSR1(config)# ***router bgp 65001***
+    CSR1(config-router)# ***bgp router-id 10.X.100.1***
 
 
 1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
-    ＞ ***do show ip protocols***
+    CSR1(config-router)# ***do show ip protocols***
 
     ```
     CSR1(config-router)#do show ip protocols
@@ -631,20 +626,19 @@ Webサーバーのログをみる
     > 【確認ポイント】
     > Routing Protocol is "bgp 65001" のセクションが表示されていることを確認する  
 
-1. 以下のコマンドを実行し、AS番号 65001 としてBGPプロセスをRouter-ID 10.X.100.1で開始する  
-    ＞ ***router bgp 65001***
-    ＞ ***bgp router-id 10.X.100.1***
+
+1. 以下のコマンドを実行し、BGPネイバーとしてRouter2(CSR2)を指定する      
+    CSR1(config-router)# ***neighbor 10.X.2.254 remote-as 65002***
 
     ```
-    CSR1(config)#router bgp 65001
-    CSR1(config-router)#bgp router-id 10.255.100.1
-    ```
-
-
-
-
     CSR1(config-router)#neighbor 10.255.2.254 remote-as 65002
+    CSR1(config-router)#
+    ```
 
+1. 以下のコマンドを実行し、BGPネイバーのステータスを確認する  
+    CSR1(config-router)# ***do show ip bgp summary***
+
+    ```
     CSR1(config-router)#do show ip bgp summary
     BGP router identifier 10.255.100.1, local AS number 65001
     BGP table version is 1, main routing table version 1
@@ -653,17 +647,33 @@ Webサーバーのログをみる
     10.255.2.254    4        65002       0       0        1    0    0 00:00:03 Idle
 
     CSR1(config-router)#
+    ```
 
-
-    StateがIdleであることを確認する
+    > 【確認ポイント】
+    > Router2(CSR2)をBGPネイバーとして指定するパラメータが正しいことを確認する  
+    > - [x] NeighborのIPアドレスが、Router2(CSR2)のIPアドレスであること  
+    > - [x] AS番号が 65002 であること  
+    > - [x] State/PfxRcdがIdleであること  
+    
+    > 【補足】
+    > State/PfxRcdの項には、ネイバーから受信した経路情報の個数が表示されます。    
+    > 現時点ではまだRouter2(CSR2)のBGPが構成されていないため、数字ではなく Idle と表示されています。  
 
 
 ## Router2(CSR2)で、BGPピアリングを構成する  
 
-
 1. Router2(CSR2)の管理画面に接続する 
 
 1. 以下のコマンドを実行し、AS番号 65002 としてBGPプロセスをRouter-ID 10.X.100.2で開始する  
+
+    CSR2(config)# ***router bgp  65002***  
+    CSR2(config-router)# ***bgp router-id 10.255.100.2***  
+
+1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
+    CSR2(config-router)#do show ip protocols
+
+
+    ```
     CSR2(config)#router bgp  65002
     CSR2(config-router)#bgp router-id 10.255.100.2
     CSR2(config-router)#do show ip protocols
@@ -691,10 +701,14 @@ Webサーバーのログをみる
     Distance: external 20 internal 200 local 200
 
     CSR2(config-router)#
+    ```
+
+    > 【確認ポイント】
+    > Routing Protocol is "bgp 65002" のセクションが表示されていることを確認する  
 
 
 1. 以下のコマンドを実行し、Router1(CSR1)をAS番号65001のBGPネイバーとして構成する   
-    ＞ ***neighbor 10.255.2.253 remote-as 65001***
+    CSR2(config-router)# ***neighbor 10.255.2.253 remote-as 65001***
 
     ```
     CSR2(config-router)#neighbor 10.255.2.253 remote-as 65001
@@ -702,7 +716,7 @@ Webサーバーのログをみる
 
 
 1. 以下のコマンドを実行し、Router1(CSR1)とRouter2(CSR2)がBGPのピアリング関係を構築していることを確認する  
-    ＞ ***do show ip bgp summary***
+    CSR2(config-router)# ***do show ip bgp summary***
 
     ```
     CSR2(config-router)#do show ip bgp summary
@@ -711,6 +725,8 @@ Webサーバーのログをみる
 
     Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
     10.255.2.253    4        65001       4       4        1    0    0 00:00:02        0
+
+    CSR2(config-router)#
     ```
 
     
@@ -719,8 +735,8 @@ Webサーバーのログをみる
 
 
 
-1. Router2(CSR2)が、まだ経路情報をRouter1(CSR1)から受信していないことを確認する  
-    ＞ ***do show ip route***
+1. Router2(CSR2)で以下のコマンドを実行し、Router2(CSR2)がまだ経路情報をRouter1(CSR1)から受信していないことを確認する  
+    CSR2(config-router)# ***do show ip route***
 
     ```
     CSR2(config-router)#do show ip route
@@ -757,25 +773,8 @@ Webサーバーのログをみる
 
 
 
-
-1. 以下のコマンドを実行し、Router1(CSR1)とRouter2(CSR2)がBGPのピアリング関係を構築していることを確認する  
-    ＞ ***do show ip bgp summary***
-
-    ```
-    CSR1(config-router)#do show ip bgp summary
-    BGP router identifier 10.255.100.1, local AS number 65001
-    BGP table version is 1, main routing table version 1
-
-    Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
-    10.255.2.254    4        65002       4       4        1    0    0 00:00:20        0
-    ```
-
-    > 【確認ポイント】
-    > 10.X.2.254(Router2/CSR2)のエントリの "State/PfxRcd" が 0 であること (Idleでないこと) を確認する。  
-
-
-1. Router1(CSR1)が、まだ経路情報をRouter2(CSR2)から受信していないことを確認する  
-    ＞ ***do show ip route***
+1. Router1(CSR1)で以下のコマンドを実行し、Router1(CSR1)がまだ経路情報をRouter2(CSR2)から受信していないことを確認する  
+    CSR1(config-router)#  ***do show ip route***
 
     ```
     CSR1(config-router)#do show ip route
@@ -814,6 +813,8 @@ Webサーバーのログをみる
 
 
 
+
+## Router1(CSR1)で、BGPプロセスを構成する  
 
 
 
