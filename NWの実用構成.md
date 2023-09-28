@@ -435,7 +435,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
         ```
 
 
-## 拡張ACL(Access Control List)をインターフェイスに適用し、パケットフィルターを実装する  
+## 拡張ACL(Access Control List)をインターフェイスに適用し、パケットフィルタを実装する  
 
 1. 以下のコマンドを実行し、インターフェイス コンフィギュレーションのために GigabitEthernet 2を選択する  
     CSR2# ***conf t***
@@ -447,7 +447,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     CSR2(config-if)# 
     ```
 
-1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルターとしての拡張ACLを着信方向(in)で適用する    
+1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルタとしての拡張ACLを着信方向(in)で適用する    
     CSR2(config-if)# ***ip access-group ACL_PACKETFILTER in***  
 
     ```
@@ -455,7 +455,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     ```
 
 
-1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルターとして適用されたACLを確認する      
+1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルタとして適用されたACLを確認する      
     CSR2# ***show ip interface GigabitEthernet 2 ***  
     
     ```
@@ -477,17 +477,14 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     CSR2# 
     ```
 
+## パケットフィルターの動作を確認する  
 
+1. Linux2の管理画面に接続する  
 
-
-
-## 動作確認  
-
-
-1. Web
-    ＞ `wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`
-    ＞ ls  
-    ＞ cat web1
+1. Linux2からWindows Server 2のWebサービスへの通信が成功することを確認する  
+    ＞ ***`wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***  
+    ＞ ***ls***  
+    ＞ ***cat web1.1***  
 
     ```
     [admin@linux2 ~]$ wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd
@@ -532,8 +529,12 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     [admin@linux2 ~]$ 
     ```
 
-Linux1 
+    > 【補足】
+    > "30 permit tcp any host 10.255.2.105 eq www 443 1080"の条件を満たすためpermitと判定され、パケットフィルタで通信が許可されます。  
+
+1. Linux2から、Linux1のWebサービスへの通信ができないことを確認する   
     ＞ wget http://10.X.1.102/index.html
+
 
     ```
     [admin@linux2 ~]$ wget http://10.255.1.102/index.html
@@ -541,19 +542,63 @@ Linux1
     Connecting to 10.255.1.102:80... failed: No route to host.
     [admin@linux2 ~]$ 
     ```
+    > 【補足】
+    > "20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS"の条件を満たすためdenyと判定され、パケットフィルタで通信が禁止されます。  
+
+1. Linux2からWindows Server 1にDNS問い合わせができることを確認する  
+    1. Linux2のコマンドラインで以下のコマンドを実行し、nslookupツールを開始する  
+        ＞ ***nslookup***    
+
+    1. Linux2のコマンドラインのnslookupツールで以下のコマンドを実行し、Windows Server 1に "Web1.example.local." の名前解決要求を送信できることを確認する  
+        ＞ ***server 10.X.1.104***  
+        ＞ ***Web1.example.local.***   
+
+        ```
+        [admin@linux2 ~]$ nslookup
+        > server 10.255.1.104
+        Default server: 10.255.1.104
+        Address: 10.255.1.104#53
+        > 
+        > Web1.example.local.
+        Server:10.255.1.104
+        Address:10.255.1.104#53
+
+        Web1.example.local canonical name = WSrv2-230802255.example.local.
+        Name:WSrv2-230802255.example.local
+        Address: 10.255.2.105
+        > 
+        ```
+
+        > 【補足】
+        > "10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain"の条件を満たすためpermitと判定され、パケットフィルタで通信が許可されます。  
 
 
-CSR2# show ip access-lists ACL_PACKETFILTER
-Extended IP access list ACL_PACKETFILTER
-    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain (2 matches)
-    20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active) (4 matches)
-    30 permit tcp any host 10.255.2.105 eq www 443 1080 (32 matches)
-    99 deny ip any any log (17 matches)
-CSR2#
+1. Linux2からWindows Server 2にDNS問い合わせができないことを確認する  
 
+    1. Linux2のコマンドラインのnslookupツールで以下のコマンドを実行し、Windows Server 2に名前解決要求送信できないことを確認する  
+        ＞ ***server 10.X.2.105***  
+        ＞ ***Web2.example.local.***   
+        ＞ ***exit***   
 
-保存
-    CSR2# write
+        ```
+        > server 10.255.2.105
+        Default server: 10.255.2.105
+        Address: 10.255.2.105#53
+
+        > 
+        > Web2.example.local.
+
+        ;; connection timed out; no servers could be reached
+        > 
+        > exit
+        [admin@linux2 ~]$
+        ```
+
+        > 【補足】
+        > "99 deny ip any any log"の条件を満たすためdenyと判定され、パケットフィルタで通信が禁止されます。  
+
+1. Router2(CSR2)で以下のコマンドを実行し、configを保存する      
+    CSR2# ***write***
 
 
 
