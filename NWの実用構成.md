@@ -281,7 +281,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 1. Linux2からWindows Server 1へのDNS通信を許可する  
 
     1. Router2(CSR2)で以下のコマンドを実行し、Linux2(10.X.3.106)からWindows Server 1(10.X.1.104)へのDNS問い合わせを許可するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する      
-        CSR2(config-ext-nacl)# ***permit udp host 10.255.3.106 host 10.255.1.104 eq 53***  
+        CSR2(config-ext-nacl)# ***permit udp host 10.X.3.106 host 10.X.1.104 eq 53***  
 
 
         ```
@@ -375,7 +375,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     1. Router2(CSR2)で以下のコマンドを実行し、Time Range "WEEKDAYS" (月~金)の期間はNW3(10.X.3.0/24)からNW1(10.X.1.0/24)へのアクセスを禁止するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する          
         CSR2# ***conf t***  
         CSR2(config)# ***ip access-list extended ACL_PACKETFILTER***    
-        CSR2(config-ext-nacl)# ***20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS***  
+        CSR2(config-ext-nacl)# ***20 deny ip 10.X.3.0 0.0.0.255 10.X.1.0 0.0.0.255 time-range WEEKDAYS***  
         CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***    
 
         ```
@@ -391,7 +391,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 1. Windows Server 2のWebサービスへのアクセスを、全ての送信元IPアドレスに対して許可する  
     1. Router2(CSR2)で以下のコマンドを実行し、全ての送信元IPアドレスからWindows Server 2のWebサービスへのWeb通信を許可するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する             
-        CSR2(config-ext-nacl)# ***30 permit tcp any host 10.255.2.105 eq 80 443 1080***   
+        CSR2(config-ext-nacl)# ***30 permit tcp any host 10.X.2.105 eq 80 443 1080***   
         CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***   
 
 
