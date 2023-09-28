@@ -38,7 +38,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     1. Linux2の管理画面に接続する  
 
     1. コマンドラインで以下のコマンドを実行し、Windows Server 2のWebサービスに接続できることを確認する  
-        ＞ ***`wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***
+        ＞ ***`wget http://10.X.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***  
         ＞ ***ls***  
         ＞ ***cat web1***  
 
@@ -98,7 +98,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     1. Linux2の管理画面に接続する  
 
     1. Linux2のコマンドラインで以下のコマンドを実行し、Linux1のWebサービスに接続できることを確認する  
-        ＞ ***`wget http://10.X.1.102/index.html`***
+        ＞ ***`wget http://10.X.1.102/index.html`***  
         ＞ ***ls***  
         ＞ ***cat index.html***
 
@@ -247,10 +247,12 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 ## Router2(CSR2)のACLを構成する  
 
+<!--
 - [x] Linux2(10.X.3.106)からWindows Server 1(10.X.1.104)へのDNS問い合わせを許可する   
 - [x] 平日(月~金)は、NW3(10.X.3.0/24)からNW1(10.X.1.0/24)へのアクセスを禁止する   
 - [x] 全ホストから、Windows Server 2のWebサービスへのアクセスを許可する   
 - [x] これ以外のすべての通信を拒否し、logにカウントする   
+-->
 
 
 1. Router2(CSR2)の管理画面に接続する  
@@ -456,7 +458,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 
 1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルタとして適用されたACLを確認する      
-    CSR2# ***show ip interface GigabitEthernet 2 ***  
+    CSR2# ***show ip interface GigabitEthernet 2***  
     
     ```
     CSR2# 
@@ -471,7 +473,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
     Outgoing Common access list is not set 
     Outgoing access list is not set
     Inbound Common access list is not set 
-    Inbound  access list is ACL_PACKETFILTER                      ← "ACL_PACKETFILTER"がインターフェイスに適用されていることを確認する  
+    Inbound  access list is ACL_PACKETFILTER             ← "ACL_PACKETFILTER"がインターフェイスに適用されていることを確認する  
     Proxy ARP is enabled
     Local Proxy ARP is disabled
     CSR2# 
@@ -482,7 +484,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 1. Linux2の管理画面に接続する  
 
 1. Linux2からWindows Server 2のWebサービスへの通信が成功することを確認する  
-    ＞ ***`wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***  
+    ＞ ***`wget http://10.X.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***  
     ＞ ***ls***  
     ＞ ***cat web1.1***  
 
@@ -979,7 +981,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 1. 以下のコマンドを実行し、AS番号 65002 としてBGPプロセスをRouter-ID 10.X.100.2で開始する  
 
     CSR2(config)# ***router bgp  65002***  
-    CSR2(config-router)# ***bgp router-id 10.255.100.2***   
+    CSR2(config-router)# ***bgp router-id 10.X.100.2***   
 
 1. 以下のコマンドを実行し、BGPプロセスが開始されたことを確認する    
     CSR2(config-router)# ***do show ip protocols***  
@@ -1020,7 +1022,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 
 1. 以下のコマンドを実行し、Router1(CSR1)をAS番号65001のBGPネイバーとして構成する   
-    CSR2(config-router)# ***neighbor 10.255.2.253 remote-as 65001***  
+    CSR2(config-router)# ***neighbor 10.X.2.253 remote-as 65001***  
 
     ```
     CSR2(config-router)#neighbor 10.255.2.253 remote-as 65001
@@ -1352,7 +1354,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 1. Router1(CSR1)で以下のコマンドを実行し、リモートネットワーク間(10.X.1.0/24と10.X.3.0/24間)で通信できることを確認する      
     CSR1(config-router)# ***end***   
-    CSR1# ***ping 10.255.3.254 source 10.255.1.254***  
+    CSR1# ***ping 10.X.3.254 source 10.X.1.254***  
 
     ```
     CSR1(config-router)#end
