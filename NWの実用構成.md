@@ -435,121 +435,51 @@ Ciscoルータで実用的な企業ネットワークを構成します。
         ```
 
 
-CSR2(config-ext-nacl)# 99 deny ip any any log 
-CSR2(config-ext-nacl)# exit
-CSR2(config)# do 
-CSR2(config)# do sh ip access-list ACL_PACKETFILTER              
-Extended IP access list ACL_PACKETFILTER
-    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
-    20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
-    30 permit tcp any host 10.255.2.105 eq www 443 1080
-    99 deny ip any any log
-CSR2(config)#
+## 拡張ACL(Access Control List)をインターフェイスに適用し、パケットフィルターを実装する  
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+1. 以下のコマンドを実行し、インターフェイス コンフィギュレーションのために GigabitEthernet 2を選択する  
+    CSR2# ***conf t***
+    CSR2(config)# ***interface GigabitEthernet 2***   
 
+    ```
+    CSR2# ***conf t***
+    CSR2(config)# interface GigabitEthernet 2
+    CSR2(config-if)# 
+    ```
 
-1. Router2(CSR2)で以下のコマンドを実行し、10.X.1.0/    
+1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルターとしての拡張ACLを着信方向(in)で適用する    
+    CSR2(config-if)# ***ip access-group ACL_PACKETFILTER in***  
 
-
-CSR2(config)# ip access-list extended ACL_PACKETFILTER   
-CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER
-Extended IP access list ACL_PACKETFILTER
-CSR2(config-ext-nacl)#
-CSR2(config-ext-nacl)# permit udp host 10.255.3.106 host 10.255.1.104 eq 53  
-CSR2(config-ext-nacl)# exit  
-CSR2(config)# do show ip access-list ACL_PACKETFILTER             
-Extended IP access list ACL_PACKETFILTER
-    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
-CSR2(config)# 
+    ```
+    CSR2(config-if)# ip access-group ACL_PACKETFILTER in  
+    ```
 
 
-
-
-<!--
-ネットワークデバイスの一部機能を安定提供するために時刻合わせが必要になる場合があります。  
-例えば、DHCPサーバー機能は時刻のズレがあると安定動作しない場合があります。
--->
-CSR2# show clock  
-7:58:03.663 UTC Mon Sep 25 2023
-CSR2# 
-CSR2# conf t
-CSR2(config)# timezone JST 9 
-CSR2(config)# end
-CSR2#
-CSR2# show clock  
-16:00:03.663 JST Mon Sep 25 2023
-CSR2#
-
-    (option)
-    CSR2# clock set 16:00:00 Sep 25 2023 
-    CSR2#
-
-CSR2# conf t
-CSR2(config)# 
-CSR2(config)# time-range WEEKDAYS 
-CSR2(config-time-range)# periodic Monday Friday 00:00 to 23:59 
-CSR2(config-time-range)# exit
-CSR2(config)# 
-CSR2(config)# do show time-range        
-time-range entry: WEEKDAYS (active)
-   periodic Monday Friday 0:00 to 23:59
-CSR2(config)#  
-
-CSR2(config)# ip access-list extended ACL_PACKETFILTER  
-CSR2(config-ext-nacl)# 20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS
-CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER                            
-Extended IP access list ACL_PACKETFILTER
-    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
-    20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
-CSR2(config-ext-nacl)#
+1. 以下のコマンドを実行し、GigabitEthernet 2のインターフェイスにパケットフィルターとして適用されたACLを確認する      
+    CSR2# ***show ip interface GigabitEthernet 2 ***  
+    
+    ```
+    CSR2# 
+    CSR2#show ip interface GigabitEthernet 2 
+    GigabitEthernet2 is up, line protocol is up
+    Internet address is 10.255.3.254/24
+    Broadcast address is 255.255.255.255
+    Address determined by DHCP
+    MTU is 1500 bytes
+    Helper address is not set
+    Directed broadcast forwarding is disabled
+    Outgoing Common access list is not set 
+    Outgoing access list is not set
+    Inbound Common access list is not set 
+    Inbound  access list is ACL_PACKETFILTER                      ← "ACL_PACKETFILTER"がインターフェイスに適用されていることを確認する  
+    Proxy ARP is enabled
+    Local Proxy ARP is disabled
+    CSR2# 
+    ```
 
 
 
-CSR2(config)# ip access-list extended ACL_PACKETFILTER  
-CSR2(config-ext-nacl)# 30 permit tcp any host 10.255.2.105 eq 80 443 1080 
 
-
-<!--
-宛先ポート番号の指定を複数個記述することもできます。  
--->
-CSR2(config-ext-nacl)# 99 deny ip any any log 
-CSR2(config-ext-nacl)# exit
-CSR2(config)# do 
-CSR2(config)# do sh ip access-list ACL_PACKETFILTER              
-Extended IP access list ACL_PACKETFILTER
-    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
-    20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
-    30 permit tcp any host 10.255.2.105 eq www 443 1080
-    99 deny ip any any log
-CSR2(config)#
-
-
-CSR2(config)# interface GigabitEthernet 2
-CSR2(config-if)# ip access-group ACL_PACKETFILTER in
-CSR2(config-if)# exit
-CSR2(config)# end
-CSR2# 
-CSR2#show ip interface GigabitEthernet 2 
-GigabitEthernet2 is up, line protocol is up
-  Internet address is 10.255.3.254/24
-  Broadcast address is 255.255.255.255
-  Address determined by DHCP
-  MTU is 1500 bytes
-  Helper address is not set
-  Directed broadcast forwarding is disabled
-  Outgoing Common access list is not set 
-  Outgoing access list is not set
-  Inbound Common access list is not set 
-  Inbound  access list is ACL_PACKETFILTER                      ← "ACL_PACKETFILTER"がインターフェイスに適用されていることを確認する  
-  Proxy ARP is enabled
-  Local Proxy ARP is disabled
-CSR2# 
-
-
-
-保存
-    CSR2# write
 
 ## 動作確認  
 
@@ -621,6 +551,9 @@ Extended IP access list ACL_PACKETFILTER
     99 deny ip any any log (17 matches)
 CSR2#
 
+
+保存
+    CSR2# write
 
 
 
