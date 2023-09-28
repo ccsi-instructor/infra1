@@ -31,7 +31,7 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
 ---
 
-## フィルタ前の動作確認
+## パケットフィルタ実装前の動作確認
 
 1. Linux2からWindows Server 2のWebサービスに接続できることを確認する  
 
@@ -39,8 +39,8 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
     1. コマンドラインで以下のコマンドを実行し、Windows Server 2のWebサービスに接続できることを確認する  
         ＞ ***`wget http://10.255.2.105/web1 --user=Tom --password=Pa\$\$w0rd`***
-        ＞ ls  
-        ＞ cat web1
+        ＞ ***ls***  
+        ＞ ***cat web1***  
 
 
         > 【補足】
@@ -97,10 +97,10 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
     1. Linux2の管理画面に接続する  
 
-    1. コマンドラインで以下のコマンドを実行し、Linux1のWebサービスに接続できることを確認する  
+    1. Linux2のコマンドラインで以下のコマンドを実行し、Linux1のWebサービスに接続できることを確認する  
         ＞ ***`wget http://10.X.1.102/index.html`***
-        ＞ ls  
-        ＞ cat index.html
+        ＞ ***ls***  
+        ＞ ***cat index.html***
 
         ```
         [admin@linux2 ~]$ wget http://10.255.1.102/index.html
@@ -132,110 +132,288 @@ Ciscoルータで実用的な企業ネットワークを構成します。
 
         <kbd>![img](image/16/12.png)</kbd>  
 
+
+
+<!--
+
 1. DNS動作確認の準備をする  
     1. nslookupを実行する
-    ＞ nslookup
+    ＞ ***nslookup***
+
 
     > 【補足】
-    > nslookupが実行できない場合は以下の手順を実行し、DNS nslookupツールをインストールする 
+    > nslookupが実行できない場合は以下の手順を実行し、nslookupツールをインストールする 
     > ＞ sudo yum -y install bind-utils
     > ＞ yum list installed | grep bind-utils
 
 
-<details>
-<summary>[参考]yum実行時のログ出力例 (クリックで表示):</summary>
+        <details>
+        <summary>[参考]yum実行時のログ出力例 (クリックで表示):</summary>
 
-    ```
-    [admin@linux2 ~]$ sudo yum -y install bind-utils
-    Loaded plugins: langpacks
-    Resolving Dependencies
-    --> Running transaction check
-    ---> Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 will be installed
-    --> Finished Dependency Resolution
+            ```
+            [admin@linux2 ~]$ sudo yum -y install bind-utils
+            Loaded plugins: langpacks
+            Resolving Dependencies
+            ーー> Running transaction check
+            ーーー> Package bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14 will be installed
+            ーー> Finished Dependency Resolution
 
-    Dependencies Resolved
+            Dependencies Resolved
 
-    ========================================================================================================================================================================================
-    Package                                 Arch                                Version                                               Repository                                      Size
-    ========================================================================================================================================================================================
-    Installing:
-    bind-utils                              x86_64                              32:9.11.4-26.P2.el7_9.14                              updates-openlogic                              262 k
+            ========================================================================================================================================================================================
+            Package                                 Arch                                Version                                               Repository                                      Size
+            ========================================================================================================================================================================================
+            Installing:
+            bind-utils                              x86_64                              32:9.11.4-26.P2.el7_9.14                              updates-openlogic                              262 k
 
-    Transaction Summary
-    ========================================================================================================================================================================================
-    Install  1 Package
+            Transaction Summary
+            ========================================================================================================================================================================================
+            Install  1 Package
 
-    Total download size: 262 k
-    Installed size: 584 k
-    Downloading packages:
-    bind-utils-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                                      | 262 kB  00:00:00     
-    Running transaction check
-    Running transaction test
-    Transaction test succeeded
-    Running transaction
-    Installing : 32:bind-utils-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                           1/1 
-    Verifying  : 32:bind-utils-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                           1/1 
+            Total download size: 262 k
+            Installed size: 584 k
+            Downloading packages:
+            bind-utils-9.11.4-26.P2.el7_9.14.x86_64.rpm                                                                                                                      | 262 kB  00:00:00     
+            Running transaction check
+            Running transaction test
+            Transaction test succeeded
+            Running transaction
+            Installing : 32:bind-utils-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                           1/1 
+            Verifying  : 32:bind-utils-9.11.4-26.P2.el7_9.14.x86_64                                                                                                                           1/1 
 
-    Installed:
-    bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14                                                                                                                                            
+            Installed:
+            bind-utils.x86_64 32:9.11.4-26.P2.el7_9.14                                                                                                                                            
 
-    Complete!
-    [admin@linux2 ~]$ yum list installed | grep bind-utils
-    bind-utils.x86_64              32:9.11.4-26.P2.el7_9.14       @updates-openlogic
-    [admin@linux2 ~]$ 
-    ```
+            Complete!
+            [admin@linux2 ~]$ yum list installed | grep bind-utils
+            bind-utils.x86_64              32:9.11.4-26.P2.el7_9.14       @updates-openlogic
+            [admin@linux2 ~]$ 
+            ```
 
-</details>
+        </details>
 
+-->
 
-1. Windows Server 1 と Windows Server 2のDNSに問い合わせできることを確認する  
-    ＞ nslookup  
-    ＞ server 10.X.1.104  
-    ＞ Web1.example.local.  
-    ＞ server 10.X.2.105   
-    ＞ exit  
+1. Linux2からWindows Server 1にDNS問い合わせができることを確認する  
+    1. Linux2のコマンドラインで以下のコマンドを実行し、nslookupツールを開始する  
+        ＞ ***nslookup***    
 
+    1. Linux2のコマンドラインのnslookupツールで以下のコマンドを実行し、Windows Server 1に "Web1.example.local." の名前解決要求を送信できることを確認する  
+        ＞ ***server 10.X.1.104***  
+        ＞ ***Web1.example.local.***   
 
-    ```
-    [admin@linux2 ~]$ nslookup
-    > server 10.255.1.104
-    Default server: 10.255.1.104
-    Address: 10.255.1.104#53
-    > 
-    > Web1.example.local.
-    Server:10.255.1.104
-    Address:10.255.1.104#53
+            ```
+            [admin@linux2 ~]$ nslookup
+            > server 10.255.1.104
+            Default server: 10.255.1.104
+            Address: 10.255.1.104#53
+            > 
+            > Web1.example.local.
+            Server:10.255.1.104
+            Address:10.255.1.104#53
 
-    Web1.example.local canonical name = WSrv2-230802255.example.local.
-    Name:WSrv2-230802255.example.local
-    Address: 10.255.2.105
-    > 
-    > server 10.255.2.105
-    Default server: 10.255.2.105
-    Address: 10.255.2.105#53
-    > 
-    > Web2.example.local.
-    Server:10.255.2.105
-    Address:10.255.2.105#53
+            Web1.example.local canonical name = WSrv2-230802255.example.local.
+            Name:WSrv2-230802255.example.local
+            Address: 10.255.2.105
+            > 
+            ```
 
-    Web2.example.localc anonical name = Linux1.example.local.
-    Name:Linux1.example.local
-    Address: 10.255.1.102
-    > 
-    > exit
-    [admin@linux2 ~]$
-    ```
+1. Linux2からWindows Server 2にDNS問い合わせができることを確認する  
+
+    1. Linux2のコマンドラインのnslookupツールで以下のコマンドを実行し、Windows Server 2に "Web2.example.local." の名前解決要求を送信できることを確認する  
+        ＞ ***server 10.X.2.105***  
+        ＞ ***Web2.example.local.***   
+        ＞ ***exit***   
+
+        ```
+        > server 10.255.2.105
+        Default server: 10.255.2.105
+        Address: 10.255.2.105#53
+        > 
+        > Web2.example.local.
+        Server:10.255.2.105
+        Address:10.255.2.105#53
+
+        Web2.example.localc anonical name = Linux1.example.local.
+        Name:Linux1.example.local
+        Address: 10.255.1.102
+        > 
+        > exit
+        [admin@linux2 ~]$
+        ```
+
 
 
 
 ## Router2(CSR2)のACLを構成する  
 
-Linux2(10.X.3.106)からWindows Server 1(10.X.1.104)へのDNS問い合わせを許可する  
-NW3(10.X.3.0/24)から、NW1(10.X.1.0/24)へのアクセスを禁止する  
-全ホストから、Windows Server 2のWebサービスへのアクセスを許可する  
-これ以外のすべての通信を拒否し、logにカウントする  
+- [x] Linux2(10.X.3.106)からWindows Server 1(10.X.1.104)へのDNS問い合わせを許可する   
+- [x] 平日(月~金)は、NW3(10.X.3.0/24)からNW1(10.X.1.0/24)へのアクセスを禁止する   
+- [x] 全ホストから、Windows Server 2のWebサービスへのアクセスを許可する   
+- [x] これ以外のすべての通信を拒否し、logにカウントする   
 
 
+1. Router2(CSR2)の管理画面に接続する  
+
+1. 拡張ACL "ACL_PACKETFILTER" を作成する 
+    1. Router2(CSR2)で以下のコマンドを実行し、"ACL_PACKETFILTER"という名前の拡張ACLを作成する    
+        CSR2# ***conf t***  
+        CSR2(config)# ***ip access-list extended ACL_PACKETFILTER***   
+
+        ```    
+        CSR2# conf t  
+        CSR2(config)# ip access-list extended ACL_PACKETFILTER   
+        CSR2(config-ext-nacl)#  
+        ```
+
+
+    1. Router2(CSR2)で以下のコマンドを実行し、作成した拡張ACL "ACL_PACKETFILTER" にはまだエントリが登録されていないことを確認する    
+        CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***  
+        Extended IP access list ACL_PACKETFILTER   
+        CSR2(config-ext-nacl)#   
+
+        ```
+        CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER
+        Extended IP access list ACL_PACKETFILTER
+        CSR2(config-ext-nacl)#
+        ```
+
+1. Linux2からWindows Server 1へのDNS通信を許可する  
+
+    1. Router2(CSR2)で以下のコマンドを実行し、Linux2(10.X.3.106)からWindows Server 1(10.X.1.104)へのDNS問い合わせを許可するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する      
+        CSR2(config-ext-nacl)# ***permit udp host 10.255.3.106 host 10.255.1.104 eq 53***  
+
+
+        ```
+        CSR2(config-ext-nacl)# permit udp host 10.255.3.106 host 10.255.1.104 eq 53  
+        ```
+
+    1. Router2(CSR2)で以下のコマンドを実行し、拡張ACL "ACL_PACKETFILTER" に登録されたエントリを確認する       
+        CSR2(config-ext-nacl)# ***end***      
+        CSR2# ***show ip access-list ACL_PACKETFILTER***   
+
+        ```
+        CSR2(config-ext-nacl)# end    
+        CSR2# show ip access-list ACL_PACKETFILTER             
+        Extended IP access list ACL_PACKETFILTER
+            10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
+        CSR2# 
+        ```
+
+        >【確認ポイント】  
+        > 要件に沿ったAccess Control条件式が記述できていることを確認する  
+        > - [x] Linux2(10.X.3.106)を送信元とし、Windows Server 1(10.X.1.104)のudp53番(DNS)を宛先とする通信をpermitしていること  
+
+        >【補足】
+        > show ip access-list で表記されるdomainは、UDP 53番で通信するDNS(Domain Name System)を意味します。    
+
+1. 平日(月~金)は、NW3(10.X.3.0/24)からNW1(10.X.1.0/24)へのアクセスを禁止する 
+
+    1. Router2(CSR2)で以下のコマンドを実行し、タイムゾーン設定がUTCであることを確認する  
+        CSR2# ***show clock***    
+        7:58:03.663 UTC Mon Sep 25 2023  
+        CSR2#   
+
+        ```    
+        CSR2# show clock  
+        7:58:03.663 UTC Mon Sep 25 2023
+        CSR2# 
+        ```
+
+    1. Router2(CSR2)で以下のコマンドを実行し、タイムゾーン設定をJSTに変更する    
+        CSR2# ***conf t***  
+        CSR2(config)# ***timezone JST 9***  
+        CSR2(config)# ***end***  
+        CSR2# ***show clock***  
+
+
+        ```    
+        CSR2# conf t
+        CSR2(config)# timezone JST 9 
+        CSR2(config)# end
+        CSR2#
+        CSR2# show clock  
+        16:00:03.663 JST Mon Sep 25 2023
+        CSR2#
+        ```
+
+    1. (オプション.省略可) もしも現在時刻が大きくズレている場合は、Router2(CSR2)で以下のコマンドを実行し、正しい現在時刻を設定する      
+        CSR2# ***clock set 16:00:00 Sep 25 2023**  
+        
+        ```
+        CSR2# show clock  
+        15:00:03.663 JST Mon Sep 24 2022
+        CSR2# 
+        CSR2# clock set 16:00:00 Sep 25 2023
+        CSR2# 
+        CSR2# show clock  
+        16:00:03.663 JST Mon Sep 25 2023
+        CSR2# 
+        ```
+
+    1. Router2(CSR2)で以下のコマンドを実行し、平日(月~金)を定義するTime Range "WEEKDAYS" を構成する      
+        CSR2# ***conf t***   
+        CSR2(config)# ***time-range WEEKDAYS***    
+        CSR2(config-time-range)# ***periodic Monday Friday 00:00 to 23:59***    
+        CSR2(config-time-range)# ***end***   
+        CSR2# ***show time-range***        
+
+
+        ```
+        CSR2# conf t
+        CSR2(config)# 
+        CSR2(config)# time-range WEEKDAYS 
+        CSR2(config-time-range)# periodic Monday Friday 00:00 to 23:59 
+        CSR2(config-time-range)# end
+        CSR2# show time-range        
+        time-range entry: WEEKDAYS (active)
+        periodic Monday Friday 0:00 to 23:59
+        CSR2#  
+        ```
+
+
+    1. Router2(CSR2)で以下のコマンドを実行し、Time Range "WEEKDAYS" (月~金)の期間はNW3(10.X.3.0/24)からNW1(10.X.1.0/24)へのアクセスを禁止するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する          
+        CSR2# ***conf t***  
+        CSR2(config)# ***ip access-list extended ACL_PACKETFILTER***    
+        CSR2(config-ext-nacl)# ***20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS***  
+        CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***    
+
+        ```
+        CSR2# conf t
+        CSR2(config)# ip access-list extended ACL_PACKETFILTER  
+        CSR2(config-ext-nacl)# 20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS
+        CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER                            
+        Extended IP access list ACL_PACKETFILTER
+            10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
+            20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
+        CSR2(config-ext-nacl)#
+        ```
+
+1. Windows Server 2のWebサービスへのアクセスを、全ての送信元IPアドレスに対して許可する  
+        1. Router2(CSR2)で以下のコマンドを実行し、全ての送信元IPアドレスからWindows Server 2のWebサービスへのWeb通信を許可するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する             
+            CSR2(config-ext-nacl)# ***30 permit tcp any host 10.255.2.105 eq 80 443 1080***   
+            CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***   
+
+
+            ```
+            CSR2(config-ext-nacl)# 30 permit tcp any host 10.255.2.105 eq 80 443 1080  
+            CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER 
+            Extended IP access list ACL_PACKETFILTER
+                10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
+                20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
+                30 permit tcp any host 10.255.2.105 eq www 443 1080
+            CSR2(config-ext-nacl)#
+            ```
+
+            > 【補足】
+            > Windows Server 2(WinSrv2)のIISでは、TCP80とTCP1080のサービスを現在提供しています。  
+            > 後の演習で、TCP443番のサービスも提供するように構成します。  
+            > TCP443番は、HTTPS通信で使用されます。  
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+1. Router2(CSR2)で以下のコマンドを実行し、10.X.1.0/    
 
 
 CSR2(config)# ip access-list extended ACL_PACKETFILTER   
