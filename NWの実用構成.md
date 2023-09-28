@@ -390,25 +390,61 @@ Ciscoルータで実用的な企業ネットワークを構成します。
         ```
 
 1. Windows Server 2のWebサービスへのアクセスを、全ての送信元IPアドレスに対して許可する  
-        1. Router2(CSR2)で以下のコマンドを実行し、全ての送信元IPアドレスからWindows Server 2のWebサービスへのWeb通信を許可するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する             
-            CSR2(config-ext-nacl)# ***30 permit tcp any host 10.255.2.105 eq 80 443 1080***   
-            CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***   
+    1. Router2(CSR2)で以下のコマンドを実行し、全ての送信元IPアドレスからWindows Server 2のWebサービスへのWeb通信を許可するエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する             
+        CSR2(config-ext-nacl)# ***30 permit tcp any host 10.255.2.105 eq 80 443 1080***   
+        CSR2(config-ext-nacl)# ***do show ip access-list ACL_PACKETFILTER***   
 
 
-            ```
-            CSR2(config-ext-nacl)# 30 permit tcp any host 10.255.2.105 eq 80 443 1080  
-            CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER 
-            Extended IP access list ACL_PACKETFILTER
-                10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
-                20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
-                30 permit tcp any host 10.255.2.105 eq www 443 1080
-            CSR2(config-ext-nacl)#
-            ```
+        ```
+        CSR2(config-ext-nacl)# 30 permit tcp any host 10.255.2.105 eq 80 443 1080  
+        CSR2(config-ext-nacl)# do show ip access-list ACL_PACKETFILTER 
+        Extended IP access list ACL_PACKETFILTER
+            10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
+            20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
+            30 permit tcp any host 10.255.2.105 eq www 443 1080
+        CSR2(config-ext-nacl)#
+        ```
 
-            > 【補足】
-            > Windows Server 2(WinSrv2)のIISでは、TCP80とTCP1080のサービスを現在提供しています。  
-            > 後の演習で、TCP443番のサービスも提供するように構成します。  
-            > TCP443番は、HTTPS通信で使用されます。  
+        > 【補足】
+        > Windows Server 2(WinSrv2)のIISでは、TCP80とTCP1080のサービスを現在提供しています。  
+        > 後の演習で、TCP443番のサービスも提供するように構成します。  
+        > TCP443番は、HTTPS通信で使用されます。  
+
+
+1. ここまで条件で許可されなかった残りすべての通信を拒否し、マッチ回数をlogにカウントする   
+    1. Router2(CSR2)で以下のコマンドを実行し、ここまでの条件で許可されなかったすべての通信を禁止してログにカウントするエントリ (Access Control 条件式) を拡張ACL "ACL_PACKETFILTER" に登録する             
+        CSR2(config-ext-nacl)# ***99 deny ip any any log***   
+
+        ```
+        CSR2(config-ext-nacl)# 99 deny ip any any log   
+        ```
+
+    1. ここまでの手順で定義された拡張ACL "ACL_PACKETFILTER" のconfigを確認する  
+        CSR2(config-ext-nacl)# ***end***   
+        CSR2# ***show ip access-list ACL_PACKETFILTER***   
+
+        ```
+        CSR2(config-ext-nacl)# end   
+        CSR2# sh ip access-list ACL_PACKETFILTER              
+        Extended IP access list ACL_PACKETFILTER
+            10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
+            20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
+            30 permit tcp any host 10.255.2.105 eq www 443 1080
+            99 deny ip any any log
+        CSR2#  
+        ```
+
+
+CSR2(config-ext-nacl)# 99 deny ip any any log 
+CSR2(config-ext-nacl)# exit
+CSR2(config)# do 
+CSR2(config)# do sh ip access-list ACL_PACKETFILTER              
+Extended IP access list ACL_PACKETFILTER
+    10 permit udp host 10.255.3.106 host 10.255.1.104 eq domain
+    20 deny ip 10.255.3.0 0.0.0.255 10.255.1.0 0.0.0.255 time-range WEEKDAYS (active)
+    30 permit tcp any host 10.255.2.105 eq www 443 1080
+    99 deny ip any any log
+CSR2(config)#
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
