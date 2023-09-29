@@ -184,9 +184,9 @@
 
         <kbd>![img](image/09/14.png)</kbd>  
 
-    1. 以下のコマンドを実行し、DNSリゾルバの問い合わせ先("Address")がWindows Sever1(WinSrv1)であることを確認する
-        ＞ nslookup 
-        ＞ exit
+    1. 以下のコマンドを実行し、DNSリゾルバの問い合わせ先("Address")がWindows Sever1(WinSrv1)であることを確認する  
+        ＞ nslookup  
+        ＞ exit  
         ```
         PS C:\Windows\system32> nslookup
         既定のサーバー:  UnKnown
