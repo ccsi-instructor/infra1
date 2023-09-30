@@ -474,11 +474,16 @@
 
         <kbd>![img](image/17/62.png)</kbd> 
 
-1. (オプション.省略可)"HttpsCert.csr" ファイルをメモ帳(notepad)で開き、Base64エンコードされた証明書署名要求が記述されていることを確認する 
-        <kbd>![img](image/17/63.png)</kbd> 
+1. (オプション.省略可) "HttpsCert.csr" ファイルをメモ帳(notepad)で開き、Base64エンコードされた証明書署名要求が記述されていることを確認する 
+    <kbd>![img](image/17/63.png)</kbd> 
 
 
-1. (オプション.省略可) 秘密キー
+1. (オプション.省略可) 秘密キーが "C:\\ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys" フォルダに保存されていることを確認する  
+    <kbd>![img](image/17/64.png)</kbd> 
+
+
+
+
 
 ---  
 
