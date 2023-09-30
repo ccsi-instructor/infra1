@@ -487,6 +487,20 @@
 
 ---  
 
+<!--
+【補足】
+NAPTのconfigがCSR1に残っている場合、WinSrv2からWinSrv1に通信できません。  
+これは、戻りのパケットの送信元IPアドレスがNAPT変換されて、WinSrv2の認識とは異なる値になるためです。  
+
+例: DNS Query src 10.X.2.105 dest 10.X.1.104  
+    DNS Response src 10.X.2.253 dest 10.X.2.105  
+
+WinSrv2で通信パケット(DNS Response)は受信できていますが、アプリケーションでは正しく処理されません。  
+興味のある方は、Wiresharkでパケットキャプチャーしてみてください。  
+-->
+
+
+## 証明書を発行する  
 
 
 

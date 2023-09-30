@@ -762,11 +762,38 @@ Ciscoルータで実用的な企業ネットワークを構成します。
         > - [x] WinSrv1(Jerry)の送信元IPアドレスが、10.X.2.253であること
 
 
+
+## NAPTの構成を削除する  
+
+> 【補足】
+> NAPT処理が演習環境で動作する一部のサービスの正常な動作を妨げる場合があります。  
+> 後の演習を円滑に進めるために、NAPTの動作を確認して学習に区切りをつけた後、NAPT構成を削除します。  
+
+
+1. Router1(CSR1)の管理画面に接続する 
+
+1. Router1(CSR1)で以下のコマンドを実行し、NAPT構成を削除する    
+
+    CSR1# ***conf t***   
+    CSR1(config)# ***no ip nat inside source list ACL_NAPT interface GigabitEthernet 2 overload***   
+    CSR1(config)# ***end***   
+
+    ```
+    CSR1#conf t
+    Enter configuration commands, one per lin
+    CSR1(config)# no ip nat inside source list ACL_NAPT interface GigabitEthernet 2 overload  
+    CSR1(config)# end  
+    CSR1#
+    ``` 
+
 1. Router1(CSR1)でconfigを保存する  
     CSR1# ***write***   
 
 
+
 ---  
+
+
 
 ## 静的ルーティングを削除する  
 
