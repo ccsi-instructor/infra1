@@ -929,6 +929,7 @@ WinSrv2で通信パケット(DNS Response)は受信できていますが、ア�
         <kbd>![img](image/17/139.png)</kbd> 
 
 
+## (オプション)GPOでルートCA証明書をClientに配布する  
 
 
 
