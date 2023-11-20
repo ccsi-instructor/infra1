@@ -110,8 +110,22 @@
         <kbd>![img](image/18/014.png)</kbd>  
 
 
-        [!NOTE]   
-        memo  
+       > [!NOTE]   
+       > memo  
+
+> [!TIP]
+> Optional information to help a user be more successful.
+
+    > [!IMPORTANT]
+    > Essential information required for user success.
+
+    > [!CAUTION]
+    > Negative potential consequences of an action.
+
+    > [!WARNING]
+    > Dangerous certain consequences of an action.
+
+    
 ---
 
 ## 演習完了  
