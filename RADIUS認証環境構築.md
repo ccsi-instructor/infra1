@@ -109,6 +109,9 @@
     
         <kbd>![img](image/18/014.png)</kbd>  
 
+
+        > [!NOTE]   
+        > memo  
 ---
 
 ## 演習完了  
