@@ -19,7 +19,7 @@
 ---
 
 
-## RADIUS認証用のActive Directoryユーザーグループを作成する  
+## RADIUS用のActive Directoryユーザーグループを作成する  
 
 1. Active Directory サーバー(WinSrv1)の管理画面に接続する  
 1. Active Directoryユーザー 管理コンソール("Active Directoryユーザーとコンピューター")を起動する  
@@ -72,8 +72,9 @@
 
     ```mermaid
     graph TD;
-        Router(認可)-->RADIUSサーバー;
-        RADIUSサーバー-->DL_Router_RemoteConnect;
+        Routerの認証（RADIUSクライアント）-->RADIUSサーバー;
+        RADIUSサーバー-->Active Directory（認証サーバー）;
+        Active Directory（認証サーバー）-->DL_Router_RemoteConnect;
         DL_Router_RemoteConnect-->G_NwAdmins;
         G_NwAdmins-->Tom;
     ```
