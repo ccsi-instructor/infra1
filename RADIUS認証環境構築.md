@@ -39,8 +39,8 @@
     - [x] セキュリティ  
     - [ ] 配布  
 
-> [!CAUTION]
-> "G_NwAdmins"グループのスコープは "グローバル" を選択します  
+    > [!CAUTION]
+    > "G_NwAdmins"グループのスコープは "グローバル" を選択します  
 
 1. 作成した"G_NwAdmins"グループのメンバーとして、Active Directoryユーザーの"Tom"を追加する  
 
@@ -60,8 +60,8 @@
     - [x] セキュリティ  
     - [ ] 配布  
 
-> [!CAUTION]
-> "DL_Router_RemoteConnect"グループのスコープは "ドメインローカル" を選択します  
+    > [!CAUTION]
+    > "DL_Router_RemoteConnect"グループのスコープは "ドメインローカル" を選択します  
 
 1. 作成した"DL_Router_RemoteConnect"グループのメンバーとして、Active Directoryグループの"G_NwAdmins"を追加する  
 
