@@ -19,7 +19,7 @@
 ---
 
 
-## NW管理者用のActive Directoryユーザーグループを作成する  
+## RADIUS認証用のActive Directoryユーザーグループを作成する  
 
 1. Active Directory サーバー(WinSrv1)の管理画面に接続する  
 1. Active Directoryユーザー 管理コンソール("Active Directoryユーザーとコンピューター")を起動する  
@@ -39,7 +39,7 @@
     - [x] セキュリティ  
     - [ ] 配布  
 
-    > [!CAUTION]
+    > 【注意】  
     > "G_NwAdmins"グループのスコープは "グローバル" を選択します  
 
 1. 作成した"G_NwAdmins"グループのメンバーとして、Active Directoryユーザーの"Tom"を追加する  
@@ -60,21 +60,23 @@
     - [x] セキュリティ  
     - [ ] 配布  
 
-    > [!CAUTION]
-    > "DL_Router_RemoteConnect"グループのスコープは "ドメインローカル" を選択します  
+
+    > 【注意】  
+    > "DL_Router_RemoteConnect"グループのスコープは "ドメインローカル" を選択します   
 
 1. 作成した"DL_Router_RemoteConnect"グループのメンバーとして、Active Directoryグループの"G_NwAdmins"を追加する  
 
-> [!NOTE]   
-> [Tom]   
+    > 【補足】
+    > この演習では、Active DirectoryユーザーのTomがRouterに管理接続できるように構成します。
 
-```mermaid
-graph TD;
-    Router(認可)-->RADIUSサーバー;
-    RADIUSサーバー-->DL_Router_RemoteConnect;
-    DL_Router_RemoteConnect-->G_NwAdmins;
-    G_NwAdmins-->Tom;
-```
+
+    ```mermaid
+    graph TD;
+        Router(認可)-->RADIUSサーバー;
+        RADIUSサーバー-->DL_Router_RemoteConnect;
+        DL_Router_RemoteConnect-->G_NwAdmins;
+        G_NwAdmins-->Tom;
+    ```
 
 
 ---   
