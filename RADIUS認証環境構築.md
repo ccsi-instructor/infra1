@@ -177,6 +177,8 @@
         -->
 
 
+1. RADIUSクライアントの登録を確認する  
+
     1. [RADIUSクライアント]の一覧に、Router2の情報が追加されていることを確認する  
     
         <kbd>![img](image/18/014.png)</kbd>  
@@ -249,21 +251,49 @@
     1. [条件の指定]画面で、[次へ]をクリックする  
         <kbd>![img](image/18/030.png)</kbd>  
 
+    1. [アクセス許可の指定]画面で、[次へ]をクリックする  
+        <kbd>![img](image/18/031.png)</kbd>  
 
-> [!NOTE]   
-> memo  
+    1. [認証方法の構成]画面で、以下のパラメータを選択する  
+    
+        EAPの種類:  
+        `<空欄>`  
 
-> [!TIP]
-> Optional information to help a user be more successful.
+        セキュリティレベルの低い認証方法:  
+        - [x] Microsoft暗号化認証バージョン 2 (MS-CHAP v2)   
+            - [x] パスワードの期限が切れた後も、ユーザーにパスワードの変更を許可する   
+        - [x] Microsoft暗号化認証 (MS-CHAP)   
+            - [x] パスワードの期限が切れた後も、ユーザーにパスワードの変更を許可する  
+        - [ ] 暗号化認証 (CHAP)  
+        - [x] 暗号化されていない認証 (PAP、SAP)  
+        - [ ] 認証方法をネゴシエートせずにクライアントに接続を許可する   
+        
+        <kbd>![img](image/18/032.png)</kbd>  
+        
+    1. [認証方法の構成]画面で、[次へ]をクリックする  
 
-    > [!IMPORTANT]
-    > Essential information required for user success.
+    1. [接続要求ポリシー]のポップアップで、[いいえ]をクリックする  
 
-    > [!CAUTION]
-    > Negative potential consequences of an action.
+        <kbd>![img](image/18/033.png)</kbd>  
 
-    > [!WARNING]
-    > Dangerous certain consequences of an action.
+    1. [制約の構成]画面で、[次へ]をクリックする   
+
+        <kbd>![img](image/18/034.png)</kbd>  
+
+    1. [設定の構成]画面で、[次へ]をクリックする  
+
+        <kbd>![img](image/18/035.png)</kbd>  
+
+    1. [新しいネットワーク ポリシーの完了]画面で、[完了]をクリックする  
+
+        <kbd>![img](image/18/036.png)</kbd>  
+
+1. ネットワークポリシーを確認する  
+
+    1. [ネットワーク ポリシー]の一覧に、[Active Directory Authentication]が追加されていることを確認する  
+    
+        <kbd>![img](image/18/037.png)</kbd>  
+
 
 
 ---
