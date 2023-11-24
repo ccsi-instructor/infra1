@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" type="text/css" href="css/style.css">
 # RADIUS認証環境を構築する  
 
 ---
@@ -21,6 +21,9 @@
 
 
 ## RADIUSサーバーの役割を追加  
+
+1. RADIUSサーバー(WinSrv2)の管理画面に接続する  
+
 1. 役割と機能の追加ウィザードを開始する  
     1. [スタートメニュー]をクリックする  
     1. スタートメニュー内の[サーバー マネージャー]をクリックし、サーバーマネージャを起動する    
@@ -52,6 +55,7 @@
 ---  
 
 ## RADIUSクライアントをNPSに登録する    
+
 1. ネットワーク ポリシー サーバー(NPS)管理コンソールを起動する  
     1. サーバーマネージャーウィンドウ右上の[ツール]をクリックする  
     1. メニュー内の[ネットワーク ポリシー サーバー]をクリックし、NPS管理コンソールを起動する  
@@ -110,8 +114,30 @@
         <kbd>![img](image/18/014.png)</kbd>  
 
 
-       > [!NOTE]   
-       > memo  
+---  
+
+## ネットワークポリシーを構成する    
+
+1. ネットワークポリシーを作成する  
+    1. 左側コンソールツリーの[NPS(ローカル)]-[ポリシー]-[ネットワーク ポリシー]をクリックする  
+    1. [ネットワーク ポリシー]を右クリックし、コンテキストメニュー内の[新規]をクリックする  
+        <kbd>![img](image/18/021.png)</kbd>  
+
+    1. [新しいネットワーク ポリシー]ウィンドウが表示されたことを確認する  
+        <kbd>![img](image/18/022.png)</kbd>  
+
+
+
+        ポリシー名:
+        | Active Directory Authentication | 
+        | :----- | 
+
+        - [x] ネットワークアクセスサーバーの種類
+        
+        <div class="box">aaa</div>
+
+> [!NOTE]   
+> memo  
 
 > [!TIP]
 > Optional information to help a user be more successful.
@@ -125,7 +151,7 @@
     > [!WARNING]
     > Dangerous certain consequences of an action.
 
-    
+
 ---
 
 ## 演習完了  
