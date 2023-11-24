@@ -67,28 +67,23 @@
 1. 作成した"DL_Router_RemoteConnect"グループのメンバーとして、Active Directoryグループの"G_NwAdmins"を追加する  
 
     > 【補足】
-    > この演習では、Active DirectoryユーザーのTomがRouterに管理接続できるように構成します。
-
-
-
-    ```mermaid
-    graph TD;
-        Routerの認証\(RADIUSクライアント\)-->NPS\(RADIUSサーバー\);
-        NPS\(RADIUSサーバー\)-->ActiveDirectory認証サーバー;
-        ActiveDirectory認証サーバー-->DL_Router_RemoteConnect;
-        DL_Router_RemoteConnect-->G_NwAdmins;
-        G_NwAdmins-->Tom;
-    ```
+    > この演習では、Active DirectoryユーザーのTomがRouterに管理接続できるように構成します。  
+    > 最終的に、以下のフローでTomのRouter管理接続が許可されます。  
 
 
     ```mermaid
     graph TD;
-        Routerの認証（RADIUSクライアント）-->NPS（RADIUSサーバー）;
-        NPS（RADIUSサーバー）-->ActiveDirectory（認証サーバー）;
-        ActiveDirectory（認証サーバー）-->DL_Router_RemoteConnect;
-        DL_Router_RemoteConnect-->G_NwAdmins;
-        G_NwAdmins-->Tom;
+        TomがClientからRouterに管理接続-->RADIUSクライアントのRouter
+        RADIUSクライアントのRouter-->RADIUSサーバーのネットワークポリシーサーバー;
+        RADIUSサーバーのネットワークポリシーサーバー-->認証サーバーのActiveDirectory;
+        認証サーバーのActiveDirectory-->DL_Router_RemoteConnectグループ;
+        DL_Router_RemoteConnectグループ-->G_NwAdminsグループ;
+        G_NwAdminsグループ-->Tomユーザー;
+        Tomユーザー-->Tomの管理接続を許可する;
+        
     ```
+
+
 
 
 ---   
