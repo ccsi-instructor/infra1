@@ -1,14 +1,3 @@
-<style type="text/css">
-.box {
-    margin: 2em auto;
-    padding: 1em;
-    width: 100%;
-    color: #000;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    }
-</style>
-<link rel="stylesheet" type="text/css" href="css/style.css">
 # RADIUS認証環境を構築する  
 
 ---
@@ -29,6 +18,66 @@
 
 ---
 
+
+## NW管理者用のActive Directoryユーザーグループを作成する  
+
+1. Active Directory サーバー(WinSrv1)の管理画面に接続する  
+1. Active Directoryユーザー 管理コンソール("Active Directoryユーザーとコンピューター")を起動する  
+1. [Active Directory ユーザーとコンピューター]-[example.local]-[Groups]に、新しいActive Directory ユーザーグループ(G_NwAdmins)を以下のパラメータで作成する  
+
+    | 項目 | パラメータ |
+    | :----- | :----- |
+    | グループ名 | G_NwAdmins |
+    | グループ名(Windows2000より以前) | G_NwAdmins |
+
+    グループのスコープ:  
+    - [ ] ドメイン ローカル  
+    - [x] グローバル  
+    - [ ] ユニバーサル  
+
+    グループの種類:  
+    - [x] セキュリティ  
+    - [ ] 配布  
+
+> [!CAUTION]
+> "G_NwAdmins"グループのスコープは "グローバル" を選択します  
+
+1. 作成した"G_NwAdmins"グループのメンバーとして、Active Directoryユーザーの"Tom"を追加する  
+
+1. [Active Directory ユーザーとコンピューター]-[example.local]-[Groups]に、新しいActive Directory ユーザーグループ(DL_Router_RemoteConnect)を以下のパラメータで作成する  
+
+    | 項目 | パラメータ |
+    | :----- | :----- |
+    | グループ名 | DL_Router_RemoteConnect |
+    | グループ名(Windows2000より以前) | DL_Router_RemoteConnect |
+
+    グループのスコープ:  
+    - [x] ドメイン ローカル  
+    - [ ] グローバル  
+    - [ ] ユニバーサル  
+
+    グループの種類:  
+    - [x] セキュリティ  
+    - [ ] 配布  
+
+> [!CAUTION]
+> "DL_Router_RemoteConnect"グループのスコープは "ドメインローカル" を選択します  
+
+1. 作成した"DL_Router_RemoteConnect"グループのメンバーとして、Active Directoryグループの"G_NwAdmins"を追加する  
+
+> [!NOTE]   
+> [Tom]   
+
+```mermaid
+graph TD;
+    Router(認可)-->RADIUSサーバー;
+    RADIUSサーバー-->DL_Router_RemoteConnect;
+    DL_Router_RemoteConnect-->G_NwAdmins;
+    G_NwAdmins-->Tom;
+```
+
+
+---   
 
 ## RADIUSサーバーの役割を追加  
 
@@ -127,26 +176,45 @@
 ---  
 
 ## ネットワークポリシーを構成する    
+ 
+1. 左側コンソールツリーの[NPS(ローカル)]-[ポリシー]-[ネットワーク ポリシー]をクリックする  
+1. [ネットワーク ポリシー]を右クリックし、コンテキストメニュー内の[新規]をクリックする  
+    <kbd>![img](image/18/021.png)</kbd>  
 
-1. ネットワークポリシーを作成する  
-    1. 左側コンソールツリーの[NPS(ローカル)]-[ポリシー]-[ネットワーク ポリシー]をクリックする  
-    1. [ネットワーク ポリシー]を右クリックし、コンテキストメニュー内の[新規]をクリックする  
-        <kbd>![img](image/18/021.png)</kbd>  
+1. [新しいネットワーク ポリシー]ウィンドウが表示されたことを確認する  
+    <kbd>![img](image/18/022.png)</kbd>  
 
-    1. [新しいネットワーク ポリシー]ウィンドウが表示されたことを確認する  
-        <kbd>![img](image/18/022.png)</kbd>  
+1. [新しいネットワーク ポリシー]ウィンドウで、以下の手順の操作をする  
+
+    1. [ネットワークポリシー名と接続の種類の指定]画面で、以下のパラメータを入力する  
+
+        ポリシー名:  
+        `Active Directory Authentication`   
+
+        - [x] ネットワークアクセスサーバーの種類    
+        `指定なし`   
+
+        - [ ] ベンダー固有
+        `10`   
+
+        <kbd>![img](image/18/023.png)</kbd>  
+
+    1. [ネットワークポリシー名と接続の種類の指定]画面で、[次へ]をクリックする  
+
+    1. [条件の指定]画面で、[追加]をクリックする   
+        <kbd>![img](image/18/024.png)</kbd>  
+    1. [条件の選択]ウィンドウが表示されたことを確認する   
+    1. [条件の選択]ウィンドウで、[ユーザーグループ]をクリックして選択する    
+    1. [条件の選択]ウィンドウで、[追加]をクリックする  
+        <kbd>![img](image/18/025.png)</kbd>  
+    1. [ユーザーグループ]ウィンドウが表示されたことを確認する   
+        <kbd>![img](image/18/026.png)</kbd>  
+    1. [ユーザーグループ]ウィンドウで、[グループの追加]をクリックする  
 
 
 
-        ポリシー名:
-        | Active Directory Authentication | 
-        | :----- | 
-
-        - [x] ネットワークアクセスサーバーの種類
 
 
-
-        <div class="box">aaa</div>
 
 > [!NOTE]   
 > memo  
