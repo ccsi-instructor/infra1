@@ -73,8 +73,8 @@
 
     ```mermaid
     graph TD;
-        Routerの認証RADIUSクライアント-->NPSRADIUSサーバー;
-        NPSRADIUSサーバー-->ActiveDirectory認証サーバー;
+        Routerの認証\(RADIUSクライアント\)-->NPS\(RADIUSサーバー\);
+        NPS\(RADIUSサーバー\)-->ActiveDirectory認証サーバー;
         ActiveDirectory認証サーバー-->DL_Router_RemoteConnect;
         DL_Router_RemoteConnect-->G_NwAdmins;
         G_NwAdmins-->Tom;
