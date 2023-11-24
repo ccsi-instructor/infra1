@@ -133,7 +133,18 @@
         | :----- | 
 
         - [x] ネットワークアクセスサーバーの種類
-        
+
+<style type="text/css">
+.box {
+    margin: 2em auto;
+    padding: 1em;
+    width: 100%;
+    color: #000;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    }
+</style>
+
         <div class="box">aaa</div>
 
 > [!NOTE]   
