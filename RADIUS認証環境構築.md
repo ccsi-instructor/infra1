@@ -345,13 +345,13 @@
     CSR2(config)#aaa authentication login LOGINRADIUS group RADIUSSERVERS local 
     ```
 
-    > 【補足】
-    > このコマンドでは、"LOGINRADIUS"という名称の認証プロファイルとして、以下の認証方式を指定しています。
-    > ① 管理ログイン時の認証方式として、RADIUSサーバー グループ(RADIUSSERVERS)を最優先で使用する
-    > ② ただし、RADIUSサーバーに接続できない場合は、ローカルユーザーDB(local)を使用する(フォールバック認証)  
+    > 【補足】  
+    > このコマンドでは、"LOGINRADIUS"という名称の認証プロファイルとして、以下の認証方式を指定しています。  
+    > ① 管理ログイン時の認証方式として、RADIUSサーバー グループ(RADIUSSERVERS)を最優先で使用する  
+    > ② ただし、RADIUSサーバーに接続できない場合は、ローカルユーザーDB(local)を使用する(フォールバック認証)    
 
 
-1. 以下のコマンドを実行し、管理接続時           
+1. 以下のコマンドを実行し、管理接続の通信プロトコルと認証方式を指定する             
     Router2(config)# ***line vty 14 15***  
     Router2(config-line)# ***transport input all***  
     Router2(config-line)# ***login authentication LOGINRADIUS***  
@@ -367,10 +367,10 @@
     ```
 
     > 【補足】
-    > 演習環境のIOS-XEには、0から20までの仮想端末回線が設けられています。  
-    > そのうちの一部(14から15まで)の設定を変更します。  
-    > 管理接続プロトコルとしてall(SSHとTelnet)を許可し、接続時の認証方式としてLOGINRADIUSを採用します。  
-    > なお、この後の動作確認においては、作業の混乱を避けるためにTelnetを使用してRouterに管理接続します。
+    > 演習環境のIOS-XEには、0から20までの仮想端末回線(vty)が設けられています。    
+    > そのうちの一部(14から15まで)の設定を変更します。    
+    > 管理接続プロトコルとしてall(SSHとTelnet)を許可し、接続時の認証方式としてLOGINRADIUSを採用します。    
+    > なお、この後の動作確認においては、作業の混乱を避けるためにTelnetを使用してRouterに管理接続します。  
 
 ---  
 
@@ -381,10 +381,151 @@
     1. Windows Client(WinClient)の管理画面に "admin" で接続する   
     1. [スタートメニュー]-[T]-[Tera Term]-[Tera Term]をクリックする  
         <kbd>![img](image/18/051.png)</kbd>  
-    1. 
+    1. [Tera Term]が起動されたことを確認する  
+        <kbd>![img](image/18/052.png)</kbd>  
+
+1. Router2にTelnetで接続し、RADIUS認証が成功することを確認する     
+
+    1. [Tera Term:新しい接続]ポップアップで以下のパラメータを入力する
+
+        - [x] TCP/IP  
+            ホスト:
+            `10.X.2.254`
+
+            - [x] ヒストリ
+
+            サービス:
+            - [x] Telnet  
+            - [ ] SSH  
+            - [ ] その他
+
+            TCPポート番号:
+            `23`
+
+            SSHバージョン:
+            `SSH2`
+
+            IPバージョン:
+            `AUTO`
+
+        - [ ] シリアル  
+            ポート:
+            `COM2 CoOmmunications Port(COM2)`
+
+        <kbd>![img](image/18/053.png)</kbd>  
+
+    1. [Tera Term:新しい接続]ポップアップで[OK]をクリックする  
+    1. Telnet接続のための認証プロンプトが表示されたことを確認する  
+        <kbd>![img](image/18/054.png)</kbd>  
+
+    1. Telnet接続の認証情報としてTomのユーザー名とパスワードを入力する    
+        
+
+        User Access Verification    
+        username: ***Tom***    
+        Password: ***Pa\$\$w0rd***
+
+    1. Router2に接続できたことを確認する  
+
+        <kbd>![img](image/18/055.png)</kbd>  
+
+1. 特権モードで操作する認可がないことを確認する
+    1. Tera Termのプロンプトで以下のコマンドを実行し、特権モードに遷移できないことを確認する  
+
+        Router2> ***enable***  
+        
+        ```
+        CSR2>enable
+        % Error in authentication.
+
+        CSR2>
+        ```
+
+        > 【補足】  
+        > 管理接続開始時は、ユーザーモード状態です。ユーザーモードは管理操作を実行できません。  
+        > ユーザーモード状態でenableコマンドを実行することで、特権モードに遷移できます。  
+        > しかし、この時点ではRADIUS認証後の認可をまだ構成していないため、Tomはenableコマンドで特権モードにログインできません。
+        > この後の演習手順を進めることで、特権モードにログインできるようになります。
 
 
+        <kbd>![img](image/18/056.png)</kbd>  
 
+
+---  
+
+## ネットワークポリシーを編集し、RADIUS認可を構成する     
+
+1. RADIUSサーバー(WinSrv2)の管理画面に接続する  
+
+1. ネットワーク ポリシー サーバー(NPS)管理コンソールを起動する  
+
+1. 左側コンソールツリーの[NPS(ローカル)]-[ポリシー]-[ネットワーク ポリシー]をクリックする  
+
+1. 右側ペインのネットワーク ポリシー一覧の[Active Directory Authentication]を右クリックし、コンテキストメニュー内の[プロパティ]をクリックする  
+    <kbd>![img](image/18/061.png)</kbd>  
+
+1. [Active Directory AUthenticationのプロパティ]ウィンドウが表示されたことを確認する  
+
+    <kbd>![img](image/18/063.png)</kbd>  
+
+1. [設定]タブをクリックして選択する  
+
+1. [RADIUS属性]-[ベンダー固有]をクリックして選択し、[追加]をクリックする  
+    <kbd>![img](image/18/062.png)</kbd>  
+
+1. [ベンダー固有の属性の追加]ウィンドウが表示されたことを確認する  
+
+    <kbd>![img](image/18/064.png)</kbd> 
+
+1. [ベンダー固有の属性の追加]ウィンドウで、以下のパラメータを選択する  
+
+    ベンダー(V):
+    `Cisco`
+
+    <kbd>![img](image/18/065.png)</kbd> 
+
+1. [ベンダー固有の属性の追加]ウィンドウで、以下のパラメータをクリックして選択する  
+
+    属性:
+    `Cisco-AV-Pair    Cisco`
+
+    <kbd>![img](image/18/066.png)</kbd> 
+
+1. [ベンダー固有の属性の追加]ウィンドウで、[追加]をクリックする  
+
+1. [属性の情報]ウィンドウが表示されたことを確認する  
+
+    <kbd>![img](image/18/067.png)</kbd> 
+
+1. [属性の情報]ウィンドウで、[追加]をクリックする  
+
+1. [属性の情報]ウィンドウが表示されたことを確認する  
+
+    <kbd>![img](image/18/068.png)</kbd> 
+
+1. [属性の情報]ウィンドウで、以下のパラメータを入力する  
+
+    属性値:  
+    `shellpriv-lvl=15`
+
+    > 【補足】
+    > このRADIUS属性値は、ログイン認証後の管理操作(SHell)における権利レベル(Privilege Level)が、特権モード(15)であることを意味します。  
+
+    <kbd>![img](image/18/069.png)</kbd>     
+
+1. [属性の情報]ウィンドウで、[OK]をクリックする  
+
+1. [属性の情報]ウィンドウで、属性値が追加されていることを確認し、[OK]をクリックする  
+
+    <kbd>![img](image/18/070.png)</kbd>  
+
+1. [ベンダー固有の属性の追加]ウィンドウで、属性値が追加されていることを確認し、[閉じる]をクリックする  
+
+    <kbd>![img](image/18/071.png)</kbd>  
+
+1. [Active Directory AUthenticationのプロパティ]ウィンドウで、属性が追加されていることを確認し、[OK]をクリックする  
+
+    <kbd>![img](image/18/072.png)</kbd>  
 
 ---
 
