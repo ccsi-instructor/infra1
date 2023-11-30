@@ -186,7 +186,7 @@
 
 ---  
 
-## ネットワークポリシーを構成する    
+## ネットワークポリシーを作成し、RADIUS認証を構成する      
  
 1. 左側コンソールツリーの[NPS(ローカル)]-[ポリシー]-[ネットワーク ポリシー]をクリックする  
 1. [ネットワーク ポリシー]を右クリックし、コンテキストメニュー内の[新規]をクリックする  
@@ -293,6 +293,96 @@
     1. [ネットワーク ポリシー]の一覧に、[Active Directory Authentication]が追加されていることを確認する  
     
         <kbd>![img](image/18/037.png)</kbd>  
+
+---   
+
+## Cisco IOS-XEのAAAを構成し、RADIUS認証で管理ログインする  
+
+1. Router2の管理画面に接続する   
+
+1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
+    Router2# ***conf t***  
+
+1. 以下のコマンドを実行し、RADIUSサーバー(WinSrv2)の接続情報を定義する     
+    Router2(config)# ***radius server WINRADIUS***  
+    Router2(config-radius-server)# ***address ipv4 10.X.2.105***    
+    Router2(config-radius-server)# ***key Pa\$\$w0rd***   
+    Router2(config-radius-server)# ***exit***   
+    Router2(config)# ***exit***   
+
+    ```
+    CSR2(config)#radius server WINRADIUS
+    CSR2(config-radius-server)#address ipv4 10.255.2.105
+    CSR2(config-radius-server)#key Pa$$w0rd
+    CSR2(config-radius-server)#exit
+    CSR2(config)#
+    ```
+
+
+1. 以下のコマンドを実行し、IOS-XEのAAA(aaa new-model)機能を有効化する       
+    Router2(config)# ***aaa new-model***   
+
+    ```
+    CSR2(config)#aaa new-model  
+    ```
+
+1. 以下のコマンドを実行し、AAAで使用するRADIUS サーバーのグループを構成する          
+    Router2(config)# ***aaa group server radius RADIUSSERVERS***  
+    Router2(config-sg-radius)# ***server name WINRADIUS***  
+    Router2(config-sg-radius)# ***exit***  
+
+    ```
+    CSR2(config)#aaa group server radius RADIUSSERVERS
+    CSR2(config-sg-radius)#server name WINRADIUS
+    CSR2(config-sg-radius)#exit
+    CSR2(config)#
+    ```
+
+1. 以下のコマンドを実行し、管理ログイン時に使用する認証方式を指定する           
+    Router2(config)# ***aaa authentication login LOGINRADIUS group RADIUSSERVERS local***  
+    
+    ```
+    CSR2(config)#aaa authentication login LOGINRADIUS group RADIUSSERVERS local 
+    ```
+
+    > 【補足】
+    > このコマンドでは、"LOGINRADIUS"という名称の認証プロファイルとして、以下の認証方式を指定しています。
+    > ① 管理ログイン時の認証方式として、RADIUSサーバー グループ(RADIUSSERVERS)を最優先で使用する
+    > ② ただし、RADIUSサーバーに接続できない場合は、ローカルユーザーDB(local)を使用する(フォールバック認証)  
+
+
+1. 以下のコマンドを実行し、管理接続時           
+    Router2(config)# ***line vty 14 15***  
+    Router2(config-line)# ***transport input all***  
+    Router2(config-line)# ***login authentication LOGINRADIUS***  
+    Router2(config-line)# ***exit***  
+
+     
+    ```
+    CSR2(config)#line vty 14 15
+    CSR2(config-line)#transport input all
+    CSR2(config-line)#login authentication LOGINRADIUS
+    CSR2(config-line)#exit
+    CSR2(config)#
+    ```
+
+    > 【補足】
+    > 演習環境のIOS-XEには、0から20までの仮想端末回線が設けられています。  
+    > そのうちの一部(14から15まで)の設定を変更します。  
+    > 管理接続プロトコルとしてall(SSHとTelnet)を許可し、接続時の認証方式としてLOGINRADIUSを採用します。  
+    > なお、この後の動作確認においては、作業の混乱を避けるためにTelnetを使用してRouterに管理接続します。
+
+---  
+
+# RAIDUS認証の動作を確認する  
+
+1. Clientでターミナルソフト(Teraterm)を起動する    
+    1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
+    1. Windows Client(WinClient)の管理画面に "admin" で接続する   
+    1. [スタートメニュー]-[T]-[Tera Term]-[Tera Term]をクリックする  
+        <kbd>![img](image/18/051.png)</kbd>  
+    1. 
+
 
 
 
