@@ -303,6 +303,12 @@
 1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
     Router2# ***conf t***  
 
+    ```
+    CSR2#conf t
+    Enter configuration commands, one per line.  End with CNTL/Z.
+    CSR2(config)#
+    ```
+
 1. 以下のコマンドを実行し、RADIUSサーバー(WinSrv2)の接続情報を定義する     
     Router2(config)# ***radius server WINRADIUS***  
     Router2(config-radius-server)# ***address ipv4 10.X.2.105***    
@@ -470,6 +476,31 @@
 
 1. [設定]タブをクリックして選択する  
 
+1. [RADIUS属性]-[標準]をクリックして選択する  
+
+1. "属性:"欄の[Service-Type]をクリックして選択し、[編集]をクリックする  
+
+    <kbd>![img](image/18/081.png)</kbd>  
+
+1. [属性の情報]ウィンドウが表示されたことを確認する  
+
+    <kbd>![img](image/18/082.png)</kbd>  
+
+1. [属性の情報]ウィンドウで、以下のパラメータを選択する  
+
+    - [ ] ダイヤルアップまたはVPNで一般的に使用する  
+    - [ ] 802.1Xで一般的に使用する  
+    - [x] その他
+        `Adminitrative`
+
+    <kbd>![img](image/18/083.png)</kbd>  
+
+1. [属性の情報]ウィンドウで、[OK]をクリックする    
+
+1. "属性:"欄の[Service-Type]の値が "Adminitrative" であることを確認する  
+
+    <kbd>![img](image/18/084.png)</kbd>  
+
 1. [RADIUS属性]-[ベンダー固有]をクリックして選択し、[追加]をクリックする  
     <kbd>![img](image/18/062.png)</kbd>  
 
@@ -506,7 +537,7 @@
 1. [属性の情報]ウィンドウで、以下のパラメータを入力する  
 
     属性値:  
-    `shellpriv-lvl=15`
+    `shell:priv-lvl=15`
 
     > 【補足】
     > このRADIUS属性値は、ログイン認証後の管理操作(SHell)における権利レベル(Privilege Level)が、特権モード(15)であることを意味します。  
@@ -526,6 +557,133 @@
 1. [Active Directory AUthenticationのプロパティ]ウィンドウで、属性が追加されていることを確認し、[OK]をクリックする  
 
     <kbd>![img](image/18/072.png)</kbd>  
+
+
+
+
+---   
+
+## Cisco AAAのRADIUS認可を構成し、Active DirecotryユーザーTomの特権モード アクセスを許可する    
+
+1. Router2の管理画面に接続する   
+
+1. 以下のコマンドを実行し、特権モードからグローバルコンフィギュレーションモードに遷移する  
+    Router2# ***conf t***  
+
+    ```
+    CSR2#conf t
+    Enter configuration commands, one per line.  End with CNTL/Z.
+    CSR2(config)#
+    ```
+
+1. 以下のコマンドを実行し、管理ログイン時に使用する認証方式を指定する           
+    Router2(config)# ***aaa authorization exec EXECRADIUS group RADIUSSERVERS local ***  
+    
+    ```
+    CSR2(config)#aaa authorization exec EXECRADIUS group RADIUSSERVERS local
+    ```
+
+    > 【補足】  
+    > このコマンドでは、"EXECRADIUS"という名称の認可プロファイルを構成しています。    
+    > ① ログイン認証後に与える認可レベルの決定方式として、RADIUSサーバー グループ(RADIUSSERVERS)を最優先で使用する  
+    > ② ただし、RADIUSサーバーに接続できない場合は、ローカルユーザーDB(local)を使用する    
+
+1. 以下のコマンドを実行し、管理接続時の認可方式を指定する        
+    Router2(config)# ***line vty 14 15***  
+    Router2(config-line)# ***authorization exec EXECRADIUS***  
+    Router2(config-line)# ***exit***  
+
+     
+    ```
+    CSR2(config)#line vty 14 15
+    CSR2(config-line)#authorization exec EXECRADIUS
+    CSR2(config-line)#exit
+    CSR2(config)#
+    ```
+
+
+---  
+
+# RAIDUS認証と認可の動作を確認する  
+
+1. Clientでターミナルソフト(Teraterm)を起動する    
+    1. 操作コンピュータを変更するため、演習環境のトップページに戻る  
+    1. Windows Client(WinClient)の管理画面に "admin" で接続する   
+    1. [スタートメニュー]-[T]-[Tera Term]-[Tera Term]をクリックする  
+    1. [Tera Term]が起動されたことを確認する  
+
+
+1. Router2にTelnetで接続し、RADIUS認証が成功することを確認する     
+
+    1. [Tera Term:新しい接続]ポップアップで以下のパラメータを入力する
+
+        - [x] TCP/IP  
+            ホスト:
+            `10.X.2.254`
+
+            - [x] ヒストリ
+
+            サービス:
+            - [x] Telnet  
+            - [ ] SSH  
+            - [ ] その他
+
+            TCPポート番号:
+            `23`
+
+            SSHバージョン:
+            `SSH2`
+
+            IPバージョン:
+            `AUTO`
+
+        - [ ] シリアル  
+            ポート:
+            `COM2 CoOmmunications Port(COM2)`
+
+        <kbd>![img](image/18/053.png)</kbd>  
+
+    1. [Tera Term:新しい接続]ポップアップで[OK]をクリックする  
+    1. Telnet接続のための認証プロンプトが表示されたことを確認する  
+        <kbd>![img](image/18/054.png)</kbd>  
+
+    1. Telnet接続の認証情報としてTomのユーザー名とパスワードを入力する    
+        
+
+        User Access Verification    
+        username: ***Tom***    
+        Password: ***Pa\$\$w0rd***
+
+    1. Router2に接続できたことを確認する  
+
+        <kbd>![img](image/18/091.png)</kbd>  
+
+1. 特権モードでログインしていることを確認する  
+
+    1. 以下のコマンドを実行し、特権モード(privilege level 15)でログインしていることを確認する  
+        Router2# ***show privilege***  
+
+        ```
+        CSR2#show privilege
+        Current privilege level is 15
+        CSR2#
+        ```
+
+        <kbd>![img](image/18/092.png)</kbd>  
+
+    1. 以下のコマンドを実行し、特権モードの管理操作(config保存)が実行できることを確認する  
+
+        Router2# ***write***  
+
+        ```
+        CSR2#write
+        Building configuration...
+        [OK]
+        CSR2#
+        ```
+
+        <kbd>![img](image/18/093.png)</kbd>  
+
 
 ---
 
