@@ -685,11 +685,34 @@
         <kbd>![img](image/18/093.png)</kbd>  
 
 
+
+<!--
+> 【補足1】
+> トラブルシュートに使用できるIOSコマンドは以下のとおりです。
+> # debug aaa authorization
+> # debug aaa authentication
+> # debug radius
+> # terminal monitor
+ 
+> 【補足2】
+> aaaのMethod(プロファイル)は、内部的にIDで識別されています。
+> そのため、同じ名前のaaa authorizationコマンドを複数回実行すると、line vtyとの紐づけに齟齬が生じる恐れがあります。
+> 対処方法:
+> line vty 14 15
+>   no authorization exec EXECRADIUS
+>   authorization exec EXECRADIUS
+-->
+
+
+
+
 ---
 
 ## 演習完了  
 ここまでの手順で、以下の項目を学習できました。
-- [x] 
+- [x] WindowsのネットワークポリシーサーバーでRADIUSサーバーを構築する  
+- [x] Cisco IOS-XEのAAAを設定し、RADIUS認証を構成する  
+- [x] RADIUS属性を指定して、RADIUS認可を構成する  
 
 
 
