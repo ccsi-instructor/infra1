@@ -1,4 +1,4 @@
-# Syslogによるログ管理環境を構築する  
+# SNMPによる監視環境を構築する  
 
 ---
 
@@ -7,8 +7,8 @@
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号  
-- Syslogサーバー役: Linux1
-- Syslogクライアント訳: Router1
+- SNMPマネージャー役: Linux1
+- SNMPエージェント役: Router1
 
 ## 注意
 - 手順例の画像は<B>pod255</B>に準拠したパラメータのものです
@@ -17,9 +17,123 @@
 ---
 
 
-# rsyslogの構成準備をする  
+# Net-SNMPの構成準備をする  
 
 1. Linux1の管理画面に接続する  
+
+1. Net-SNMPをインストールする  
+
+    ＞ ***sudo yum install net-snmp***  
+
+
+    <details>
+    <summary>[参考]yum install net-snmp ログ全文:</summary>  
+
+    ```     
+    [admin@linux1 ~]$ sudo yum install net-snmp
+    Loaded plugins: langpacks
+    base-openlogic                                                                                                                                                   | 3.1 kB  00:00:00     
+    extras-openlogic                                                                                                                                                 | 2.5 kB  00:00:00     
+    updates-openlogic                                                                                                                                                | 2.6 kB  00:00:00     
+    base                                                                                                                                                             | 3.6 kB  00:00:00     
+    docker-ce-stable                                                                                                                                                 | 3.5 kB  00:00:00     
+    extras                                                                                                                                                           | 2.9 kB  00:00:00     
+    openlogic                                                                                                                                                        | 2.9 kB  00:00:00     
+    updates                                                                                                                                                          | 2.9 kB  00:00:00     
+    (1/3): docker-ce-stable/7/x86_64/primary_db                                                                                                                      | 118 kB  00:00:00     
+    (2/3): updates/7/x86_64/primary_db                                                                                                                               |  24 MB  00:00:00     
+    (3/3): updates-openlogic/7/x86_64/primary_db                                                                                                                     |  24 MB  00:00:00     
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package net-snmp.x86_64 1:5.7.2-49.el7_9.3 will be installed
+    --> Processing Dependency: net-snmp-libs = 1:5.7.2-49.el7_9.3 for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Processing Dependency: net-snmp-agent-libs = 1:5.7.2-49.el7_9.3 for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Processing Dependency: perl(Data::Dumper) for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Processing Dependency: libnetsnmptrapd.so.31()(64bit) for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Processing Dependency: libnetsnmpmibs.so.31()(64bit) for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Processing Dependency: libnetsnmpagent.so.31()(64bit) for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Processing Dependency: libnetsnmp.so.31()(64bit) for package: 1:net-snmp-5.7.2-49.el7_9.3.x86_64
+    --> Running transaction check
+    ---> Package net-snmp-agent-libs.x86_64 1:5.7.2-49.el7_9.3 will be installed
+    ---> Package net-snmp-libs.x86_64 1:5.7.2-49.el7_9.3 will be installed
+    ---> Package perl-Data-Dumper.x86_64 0:2.145-3.el7 will be installed
+    --> Finished Dependency Resolution
+
+    Dependencies Resolved
+
+    ========================================================================================================================================================================================
+    Package                                         Arch                               Version                                         Repository                                     Size
+    ========================================================================================================================================================================================
+    Installing:
+    net-snmp                                        x86_64                             1:5.7.2-49.el7_9.3                              updates-openlogic                             325 k
+    Installing for dependencies:
+    net-snmp-agent-libs                             x86_64                             1:5.7.2-49.el7_9.3                              updates-openlogic                             707 k
+    net-snmp-libs                                   x86_64                             1:5.7.2-49.el7_9.3                              updates-openlogic                             752 k
+    perl-Data-Dumper                                x86_64                             2.145-3.el7                                     base-openlogic                                 47 k
+
+    Transaction Summary
+    ========================================================================================================================================================================================
+    Install  1 Package (+3 Dependent packages)
+
+    Total download size: 1.8 M
+    Installed size: 5.9 M
+    Is this ok [y/d/N]: y
+    Downloading packages:
+    (1/4): net-snmp-5.7.2-49.el7_9.3.x86_64.rpm                                                                                                                      | 325 kB  00:00:00     
+    (2/4): net-snmp-agent-libs-5.7.2-49.el7_9.3.x86_64.rpm                                                                                                           | 707 kB  00:00:00     
+    (3/4): net-snmp-libs-5.7.2-49.el7_9.3.x86_64.rpm                                                                                                                 | 752 kB  00:00:00     
+    (4/4): perl-Data-Dumper-2.145-3.el7.x86_64.rpm                                                                                                                   |  47 kB  00:00:00     
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Total                                                                                                                                                   4.3 MB/s | 1.8 MB  00:00:00     
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+    Installing : 1:net-snmp-libs-5.7.2-49.el7_9.3.x86_64                                                                                                                              1/4 
+    Installing : 1:net-snmp-agent-libs-5.7.2-49.el7_9.3.x86_64                                                                                                                        2/4 
+    Installing : perl-Data-Dumper-2.145-3.el7.x86_64                                                                                                                                  3/4 
+    Installing : 1:net-snmp-5.7.2-49.el7_9.3.x86_64                                                                                                                                   4/4 
+    Verifying  : perl-Data-Dumper-2.145-3.el7.x86_64                                                                                                                                  1/4 
+    Verifying  : 1:net-snmp-libs-5.7.2-49.el7_9.3.x86_64                                                                                                                              2/4 
+    Verifying  : 1:net-snmp-5.7.2-49.el7_9.3.x86_64                                                                                                                                   3/4 
+    Verifying  : 1:net-snmp-agent-libs-5.7.2-49.el7_9.3.x86_64                                                                                                                        4/4 
+
+    Installed:
+    net-snmp.x86_64 1:5.7.2-49.el7_9.3                                                                                                                                                    
+
+    Dependency Installed:
+    net-snmp-agent-libs.x86_64 1:5.7.2-49.el7_9.3                    net-snmp-libs.x86_64 1:5.7.2-49.el7_9.3                    perl-Data-Dumper.x86_64 0:2.145-3.el7                   
+
+    Complete!
+    [admin@linux1 ~]$ 
+    ```
+
+    </details>
+
+    <!--
+    detailsタグを使用する際は、3連バッククォートとの間にスペースなしの完全な空行を挿入する必要がある
+    -->
+
+
+<!--
+sudo yum install net-snmp net-snmp-utils
+-->
+
+
+1. Net-SNMPがインストールされたことを確認する  
+
+    ＞ ***yum list installed | grep net-snmp***  
+
+
+    ```
+    [admin@linux1 ~]$ yum list installed | grep net-snmp
+    net-snmp.x86_64                1:5.7.2-49.el7_9.3             @updates-openlogic
+    net-snmp-agent-libs.x86_64     1:5.7.2-49.el7_9.3             @updates-openlogic
+    net-snmp-libs.x86_64           1:5.7.2-49.el7_9.3             @updates-openlogic
+    [admin@linux1 ~]$ 
+    ```
+
+
 
 1. rsyslogが既定でインストールされていることを確認する 
     ＞ ***yum list installed | grep rsyslog***  
@@ -96,115 +210,6 @@
     < *.* ?perHostFile
     [admin@linux1 ~]$ 
     ```
-
-    <details>
-    <summary>[参考]rsyslog.conf 全文:</summary>  
-
-    ```   
-    [admin@linux1 ~]$ cat /etc/rsyslog.conf
-    # rsyslog configuration file
-
-    # For more information see /usr/share/doc/rsyslog-*/rsyslog_conf.html
-    # If you experience problems, see http://www.rsyslog.com/doc/troubleshoot.html
-
-    #### MODULES ####
-
-    # The imjournal module bellow is now used as a message source instead of imuxsock.
-    $ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
-    $ModLoad imjournal # provides access to the systemd journal
-    #$ModLoad imklog # reads kernel messages (the same are read from journald)
-    #$ModLoad immark  # provides --MARK-- message capability
-
-    # Provides UDP syslog reception
-    $ModLoad imudp
-    $UDPServerRun 514
-
-    # Provides TCP syslog reception
-    $ModLoad imtcp
-    $InputTCPServerRun 514
-
-
-    #### GLOBAL DIRECTIVES ####
-
-    # Where to place auxiliary files
-    $WorkDirectory /var/lib/rsyslog
-
-    # Use default timestamp format
-    $ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
-
-    # File syncing capability is disabled by default. This feature is usually not required,
-    # not useful and an extreme performance hit
-    #$ActionFileEnableSync on
-
-    # Include all config files in /etc/rsyslog.d/
-    $IncludeConfig /etc/rsyslog.d/*.conf
-
-    # Turn off message reception via local log socket;
-    # local messages are retrieved through imjournal now.
-    $OmitLocalLogging on
-
-    # File to store the position in the journal
-    $IMJournalStateFile imjournal.state
-
-
-    #### RULES ####
-    $template perHostFile,"/var/log/rsyslog/%fromhost-ip%.log"
-    *.* ?perHostFile
-
-    # Log all kernel messages to the console.
-    # Logging much else clutters up the screen.
-    #kern.*                                                 /dev/console
-
-    # Log anything (except mail) of level info or higher.
-    # Don't log private authentication messages!
-    *.info;mail.none;authpriv.none;cron.none                /var/log/messages
-
-    # The authpriv file has restricted access.
-    authpriv.*                                              /var/log/secure
-
-    # Log all the mail messages in one place.
-    mail.*                                                  -/var/log/maillog
-
-
-    # Log cron stuff
-    cron.*                                                  /var/log/cron
-
-    # Everybody gets emergency messages
-    *.emerg                                                 :omusrmsg:*
-
-    # Save news errors of level crit and higher in a special file.
-    uucp,news.crit                                          /var/log/spooler
-
-    # Save boot messages also to boot.log
-    local7.*                                                /var/log/boot.log
-
-
-    # ### begin forwarding rule ###
-    # The statement between the begin ... end define a SINGLE forwarding
-    # rule. They belong together, do NOT split them. If you create multiple
-    # forwarding rules, duplicate the whole block!
-    # Remote Logging (we use TCP for reliable delivery)
-    #
-    # An on-disk queue is created for this action. If the remote host is
-    # down, messages are spooled to disk and sent when it is up again.
-    #$ActionQueueFileName fwdRule1 # unique name prefix for spool files
-    #$ActionQueueMaxDiskSpace 1g   # 1gb space limit (use as much as possible)
-    #$ActionQueueSaveOnShutdown on # save messages to disk on shutdown
-    #$ActionQueueType LinkedList   # run asynchronously
-    #$ActionResumeRetryCount -1    # infinite retries if host is down
-    # remote host is: name/ip:port, e.g. 192.168.0.1:514, port optional
-    #*.* @@remote-host:514
-    # ### end of the forwarding rule ###
-    [admin@linux1 ~]$  
-    ```
-
-    </details>
-
-    <!--
-    detailsタグを使用する際は、3連バッククォートとの間にスペースなしの完全な空行を挿入する必要がある
-    -->
-
-
 
 1. rsyslogのconfigファイルの構成をチェックする        
     ＞ ***sudo rsyslogd -N 1***  
@@ -363,7 +368,7 @@
         [admin@linux2 ~]$ 
         ```
 
-        > 【補足】    
+        > 【補足】  
         > Router2のパケットフィルタによってFilterされているため、Linux1とLinux2の間で通信できない状態です。
         > 次の手順でパケットフィルタのルールを変更することで、通信できるようになります。
 
