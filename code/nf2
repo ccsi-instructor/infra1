@@ -1,0 +1,6 @@
+instances:
+  - name: "Linux1"
+    ip:
+      - "10.X.1.102"
+    dns:
+      - "Linux1.example.local"

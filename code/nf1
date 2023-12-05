@@ -14,4 +14,17 @@ sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 echo -e "[elasticsearch]\nname=Elasticsearch repository for 7.x packages\nbaseurl=https://artifacts.elastic.co/packages/7.x/yum\ngpgcheck=1\ngpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch\nenabled=0\nautorefresh=1\ntype=rpm-md" | sudo tee /etc/yum.repos.d/elasticsearch.repo
 
 
+echo -e "-Xms64m\n-Xmx64m" | sudo tee /etc/elasticsearch/jvm.options.d/heap.options
+
+sudo mkdir /etc/systemd/system/elasticsearch.service.d && \
+  echo -e "[Service]\nLimitNOFILE=131072\nLimitNPROC=8192\nLimitMEMLOCK=infinity\nLimitFSIZE=infinity\nLimitAS=infinity" | \
+  sudo tee /etc/systemd/system/elasticsearch.service.d/elasticsearch.conf > /dev/null
+
+
+sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca --pem
+
+sudo mkdir /etc/elasticsearch/certs && \
+  sudo unzip /usr/share/elasticsearch/elastic-stack-ca.zip -d /etc/elasticsearch/certs
+
+
 
