@@ -1,0 +1,8 @@
+sudo systemctl daemon-reload && \
+  sudo systemctl enable elasticsearch && \
+  sudo systemctl start elasticsearch
+
+sudo systemctl status elasticsearch
+
+sudo /usr/share/elasticsearch/bin/elasticsearch-setup-passwords interactive
+
