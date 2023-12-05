@@ -1,0 +1,1 @@
+echo -e "[elasticsearch]\nname=Elasticsearch repository for 7.x packages\nbaseurl=https://artifacts.elastic.co/packages/7.x/yum\ngpgcheck=1\ngpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch\nenabled=0\nautorefresh=1\ntype=rpm-md" | sudo tee /etc/yum.repos.d/elasticsearch.repo > /dev/null

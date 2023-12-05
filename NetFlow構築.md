@@ -1,4 +1,4 @@
-# Syslogによるログ管理環境を構築する  
+# NetFlowによる通信フロー収集環境を構築する  
 
 ---
 
@@ -7,8 +7,8 @@
 
 ## 演習における役割と、環境のパラメータ
 - X: ご自身のPod番号  
-- Syslogサーバー役: Linux1
-- Syslogクライアント役: Router1
+- NetFlow Collector役: Linux1
+- NetFlow Exporter役: Router1
 
 ## 注意
 - 手順例の画像は<B>pod255</B>に準拠したパラメータのものです
@@ -17,11 +17,30 @@
 ---
 
 
-# rsyslogの構成準備をする  
+# Flow-toolsの構成準備をする  
 
 1. Linux1の管理画面に接続する  
 
-1. rsyslogが既定でインストールされていることを確認する 
+
+https://docs.elastiflow.com/docs/flowcoll/install_linux
+
+wget https://elastiflow-releases.s3.us-east-2.amazonaws.com/flow-collector/flow-collector-6.4.0-1.x86_64.rpm
+
+sudo yum install -y flow-collector-6.4.0-1.x86_64.rpm
+
+
+
+
+
+1. Elasticsearchリポジトリの追加
+sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+1. Elasticsearchのインストール
+sudo yum install elasticsearch
+
+
+1. Flow-toolsをインストールする  
+    ＞ *** ***
     ＞ ***yum list installed | grep rsyslog***  
 
     ```
