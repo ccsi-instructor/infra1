@@ -18,8 +18,8 @@ action.destructive_requires_name: 'true'
 xpack.security.http.ssl.enabled: 'true'
 xpack.security.http.ssl.verification_mode: 'none'
 xpack.security.http.ssl.certificate_authorities: /etc/elasticsearch/certs/ca/ca.crt
-xpack.security.http.ssl.key: /etc/elasticsearch/certs/myhost/myhost.key
-xpack.security.http.ssl.certificate: /etc/elasticsearch/certs/myhost/myhost.crt
+xpack.security.http.ssl.key: /etc/elasticsearch/certs/Linux1/Linux1.key
+xpack.security.http.ssl.certificate: /etc/elasticsearch/certs/Linux1/Linux1.crt
 
 xpack.monitoring.enabled: 'true'
 xpack.monitoring.collection.enabled: 'true'
