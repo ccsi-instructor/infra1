@@ -20,11 +20,3 @@ sudo mkdir /etc/systemd/system/elasticsearch.service.d && \
   echo -e "[Service]\nLimitNOFILE=131072\nLimitNPROC=8192\nLimitMEMLOCK=infinity\nLimitFSIZE=infinity\nLimitAS=infinity" | \
   sudo tee /etc/systemd/system/elasticsearch.service.d/elasticsearch.conf > /dev/null
 
-
-sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca --pem
-
-sudo mkdir /etc/elasticsearch/certs && \
-  sudo unzip /usr/share/elasticsearch/elastic-stack-ca.zip -d /etc/elasticsearch/certs
-
-
-

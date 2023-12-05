@@ -1,0 +1,12 @@
+
+sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca --pem
+
+sudo mkdir /etc/elasticsearch/certs && \
+  sudo unzip /usr/share/elasticsearch/elastic-stack-ca.zip -d /etc/elasticsearch/certs
+
+
+sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in instances.yml --out certs.zip --pem --ca-cert /etc/elasticsearch/certs/ca/ca.crt --ca-key /etc/elasticsearch/certs/ca/ca.key
+
+sudo unzip /usr/share/elasticsearch/certs.zip -d /etc/elasticsearch/certs
+
+
