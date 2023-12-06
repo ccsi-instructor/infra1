@@ -1,0 +1,1 @@
+Install-WindowsFeature Web-Mgmt-Tools, RSAT-AD-Tools, RSAT-ADCS-Mgmt, RSAT-DNS-Server, RSAT-NPAS
