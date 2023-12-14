@@ -24,7 +24,7 @@ Linux Server1(Linux1)をLinux Webサーバーとして構築します。
 1. Linux1の管理画面に接続する  
     <kbd>![img](image/04/11.png)</kbd>
     
-1. カレントディレクトリが管理者アカウントのホームディレクトリであることを確認する
+1. カレントディレクトリが管理者アカウントのホームディレクトリであることを確認する  
     ＞ ***hostname***
     ＞ ***whoami***
     ＞ ***pwd***
@@ -90,10 +90,6 @@ Linux Server1(Linux1)をLinux Webサーバーとして構築します。
     ＞ Is this ok [y/d/N]: ***y***
 
     ```
-    [admin@linux1 ~]$ sudo yum localinstall nginx-1.22.1-1.el7.ngx.x86_64.rp
-    Loaded plugins: langpacks
-    Skipping: nginx-1.22.1-1.el7.ngx.x86_64.rp, filename does not end in .rpm.
-    Nothing to do
     [admin@linux1 ~]$ sudo yum localinstall nginx-1.22.1-1.el7.ngx.x86_64.rpm
     Loaded plugins: langpacks
     Examining nginx-1.22.1-1.el7.ngx.x86_64.rpm: 1:nginx-1.22.1-1.el7.ngx.x86_64
@@ -290,14 +286,14 @@ Linux Server1(Linux1)をLinux Webサーバーとして構築します。
 1. NGINX(nginx)サービスを再起動する  
     ＞ ***sudo systemctl restart nginx***  
 
-1. Webコンテンツのディレクトリを作成する
+1. Webコンテンツのディレクトリを作成する  
     ＞ ***sudo mkdir -p /var/www/html***  
 
 1. WebコンテンツとしてのHTMLファイル(/var/www/html/index.html)を作成し、任意の文言を記入して保存する  
     ＞ ***sudo touch /var/www/html/index.html***  
-    ＞ ***sudo cp /var/www/html/index.html /var/www/html/index.html.bak***
-    ＞ ***sudo vi /var/www/html/index.html***
-    ＞ ***diff /var/www/html/index.html /var/www/html/index.html.bak***
+    ＞ ***sudo cp /var/www/html/index.html /var/www/html/index.html.bak***  
+    ＞ ***sudo vi /var/www/html/index.html***  
+    ＞ ***diff /var/www/html/index.html /var/www/html/index.html.bak***  
 
     ```
     [admin@linux1 ~]$ diff /var/www/html/index.html /var/www/html/index.html.bak
