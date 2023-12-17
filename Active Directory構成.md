@@ -815,10 +815,10 @@
 1. File Serverのセキュリティ設定のために、以下のActive Directory セキュリティグループを構成する  
 
     | グループ名 | 所属するメンバー |
-    | :----- | :----- | :----- | 
-    | G_ | Tom |
+    | :----- | :----- |
+    | G_ClientAdmins | Tom |
     | DL_FileServer_ReadOnly | Domain Users |
-    | DL_FileServer_FullAccess |  G_ClientAdmins | 
+    | DL_FileServer_FullAccess |  G_ClientAdmins |
 
     1. Active Directoryユーザー 管理コンソールを起動する 
         1. Active Directory ドメイン コントローラー(WinSrv1)の管理画面に接続する  
@@ -911,7 +911,7 @@
 1. File Serverのセキュリティ設定のために、Active Directory セキュリティグループを利用する  
 
     | グループ名 | C:\ShareフォルダののNTFSアクセス権 |
-    | :----- | :----- | :----- | 
+    | :----- | :----- |
     | DL_FileServer_ReadOnly | 読み取り |
     | DL_FileServer_FullAccess |  フルコントロール | 
 
