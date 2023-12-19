@@ -22,10 +22,9 @@
 
 ---
 
-## Windows ServerでDNSサーバーを構築する   
 
 
-## Wndows Server 1のDNSサーバーの状態を確認する
+# Wndows Server 1のDNSサーバーの状態を確認する
 Active Directoryドメインコントローラー構築時に自動的にDNSサーバーの役割も追加されています。  
 "example.local" Active Directoryドメインのサービスを提供するために、DNSサーバーには "example.local" DNSゾーンが構成されていることを確認します。  
 
@@ -60,7 +59,7 @@ Active Directoryドメインコントローラー構築時に自動的にDNSサ�
 
 ---  
 
-## Windows Server 2にDNSサーバー役割をインストールする  
+# Windows Server 2にDNSサーバー役割をインストールする  
 1. 役割と機能の追加ウィザードを開始する  
     1. [スタートメニュー]をクリックする  
     1. スタートメニュー内の[サーバー マネージャー]をクリックし、サーバーマネージャを起動する    
