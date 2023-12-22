@@ -12,11 +12,10 @@
     - example.comゾーンの権威サーバー   
 
 - Windows DNSサーバー役: WinSrv1(WSrv1-yyMMddX)  
-    - example.local ゾーンの権威サーバーとして、"sub.example.local" ゾーンをLinux1に委譲する    
-    - Linux2にDNS問い合わせをフォワーディングする  
+    - "example.com"ドメインの問い合わせをLinux1にフォワーディングする  
 
 - クライアント デスクトップ環境: WinClient(WC1-yyMMddX)
-    - WinSrv1を優先DNSサーバーとして問い合わせに使用する  
+    - WinSrv1を優先DNSサーバーとして使用する  
 
 
 ## 注意
