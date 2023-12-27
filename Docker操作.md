@@ -25,9 +25,9 @@
 
 
 1. Linux1の管理操作環境を確認する    
-    ＞ ***hostname***
-    ＞ ***whoami***
-    ＞ ***pwd***
+    ＞ ***hostname***  
+    ＞ ***whoami***  
+    ＞ ***pwd***  
 
 
     ```
@@ -72,7 +72,7 @@
     [admin@linux1 ~]$ 
     ```
 
-    > 【補足】
+    > 【補足】  
     > Linux1(CentOS7.9)には、Python2(2.7.5)が既定でインストールされています。   
 
 1. Linux1には、すでにDockerがインストールされていることを確認する   
@@ -84,7 +84,7 @@
     [admin@linux1 ~]$ 
     ```
 
-    > 【補足】
+    > 【補足】  
     > 演習を円滑に進行するため、Linuxには事前にDockerがインストールされています。  
     > Dockerのインストールの手順については、本ページ末尾の参考資料を参照してください。  
 
@@ -269,7 +269,7 @@
 
     ```
     [admin@linux1 ~]$ touch Dockerfile
-    [admin@linux1 ~]$ cp Dockerfile Dockerfile.ba
+    [admin@linux1 ~]$ cp Dockerfile Dockerfile.bak
     [admin@linux1 ~]$ ls -l
     total 808
     -rw-rw-r-- 1 admin admin      0 Sep 20 05:14 Dockerfile
