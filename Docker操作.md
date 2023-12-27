@@ -242,7 +242,7 @@
     / # 
     ```
 
-1. python:3.11-alpine コンテナの対話操作を終了する
+1. python:3.11-alpine コンテナの対話操作を終了する  
     ＞ ***exit***  
     ＞ ***hostname***  
 
